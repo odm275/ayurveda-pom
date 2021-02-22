@@ -1,0 +1,31 @@
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+//==============================================================
+// START Enums and Input Objects
+//==============================================================
+
+export enum PomCycle {
+  LONGBREAK = "LONGBREAK",
+  POMODORO = "POMODORO",
+  SHORTBREAK = "SHORTBREAK",
+}
+
+export interface LogInInput {
+  code: string;
+}
+
+export interface UpdateUserSettingsInput {
+  pomDuration?: number | null;
+  shortBreakDuration?: number | null;
+  longBreakDuration?: number | null;
+  longBreakInterval?: number | null;
+  pomCycle?: PomCycle | null;
+  date?: string | null;
+}
+
+//==============================================================
+// END Enums and Input Objects
+//==============================================================
