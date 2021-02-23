@@ -1,4 +1,11 @@
-export interface Task {
+import { Task } from '@/database/types';
+
+export interface TasksData {
+  total: number;
+  result: Task[];
+}
+
+export interface TaskInput {
   title: string;
   amt: number;
 }

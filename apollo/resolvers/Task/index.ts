@@ -1,7 +1,7 @@
 import { NextApiRequest } from 'next';
 import { ObjectId } from 'mongodb';
 
-import { CreateTaskArgs } from './types';
+import { CreateTaskArgs, TasksData } from './types';
 import { Task, Database } from '../../../database/types';
 import { authorize } from '@/apollo/utils/authorize';
 
@@ -17,11 +17,11 @@ import { authorize } from '@/apollo/utils/authorize';
 
 export const taskResolver = {
   Mutation: {
-    createTask: async (
+    createTasks: async (
       _root: undefined,
       { input }: CreateTaskArgs,
       { db, req }: { db: Database; req: NextApiRequest }
-    ): Promise<Task> => {
+    ): Promise<TasksData> => {
       const viewer = await authorize(db, req);
 
       if (!viewer) {
@@ -32,6 +32,7 @@ export const taskResolver = {
       console.log('input tasks', input.tasks);
 
       const newTasks = input.tasks.map(({ title, amt }) => ({
+        _id: new ObjectId(),
         title,
         amt,
         user: viewer._id,
@@ -41,20 +42,18 @@ export const taskResolver = {
       // We can go ahead and create them
 
       const insertResult = await db.tasks.insertMany(newTasks);
+      const newTasksDataIds = Object.values(insertResult['insertedIds']);
 
-      const newTasksData = insertResult.ops[0];
-      // Updated User Id
+      // Merge new tasks with user's tasks.
 
-      await db.users.updateOne(
-        {
-          _id: viewer._id
-        },
-        {
-          $push: { tasks: newTask._id }
-        }
-      );
+      await db.users.findOneAndUpdate({ _id: viewer._id }, [
+        { $set: { tasks: { $concatArrays: ['$tasks', newTasksDataIds] } } }
+      ]);
 
-      return newTask;
+      return {
+        result: newTasks,
+        total: newTasks.length
+      };
     }
   },
   Task: {
