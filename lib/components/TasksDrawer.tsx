@@ -21,44 +21,6 @@ import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { Task } from '@/lib/components/Task';
 import AddTaskModal from '@/lib/components/AddTaskModal';
 
-const dummyTasks = [
-  {
-    title: 'Code in python',
-    amt: 5,
-    eta: new Date(),
-    category: 'personal',
-    new: false
-  },
-  {
-    title: 'React Course',
-    amt: 4,
-    eta: new Date(),
-    category: 'personal',
-    new: false
-  },
-  {
-    title: 'Read Complex Analysis',
-    amt: 2,
-    eta: new Date(),
-    category: 'personal',
-    new: false
-  },
-  {
-    title: 'Book Club Read',
-    amt: 2,
-    eta: new Date(),
-    category: 'personal',
-    new: false
-  },
-  {
-    title: 'Meditate',
-    amt: 1,
-    eta: new Date(),
-    category: 'personal',
-    new: false
-  }
-];
-
 interface AddTaskButtonProps {
   onClick: () => void;
 }
@@ -134,8 +96,8 @@ export const TasksDrawer = ({ isOpen, onClose, btnRef }: Props) => {
     </DragDropContext>
   );
 
-  const onSubmit = (data) => {
-    console.log('form data', data);
+  const onSubmit = () => {
+    console.log('tasks', tasks);
   };
 
   const handleOnClose = () => {

@@ -1,13 +1,4 @@
-import {
-  Flex,
-  Box,
-  Button,
-  Text,
-  Icon,
-  Stack,
-  Spinner,
-  useDisclosure
-} from '@chakra-ui/react';
+import { Flex, Button, Spinner, useDisclosure } from '@chakra-ui/react';
 import PomodoroTimer from '@/lib/components/PomodoroTimer';
 import AppHeaderSkeleton from '@/lib/components/AppHeaderSkeleton';
 import ErrorBanner from '@/lib/components/ErrorBanner';

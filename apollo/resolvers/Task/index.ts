@@ -29,7 +29,6 @@ export const taskResolver = {
       }
 
       // These are going be the new tasks
-      console.log('input tasks', input.tasks);
 
       const newTasks = input.tasks.map(({ title, amt }) => ({
         _id: new ObjectId(),

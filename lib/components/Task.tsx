@@ -70,6 +70,7 @@ export const Task = ({
       {eta.toString()}
     </Text>
   );
+
   return (
     <div
       {...provided.draggableProps}
@@ -77,7 +78,7 @@ export const Task = ({
       ref={innerRef}
     >
       <input
-        name={`task-${name}`}
+        name={`${title}`}
         type="number"
         value={amt}
         style={{ display: 'none' }}
