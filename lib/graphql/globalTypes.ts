@@ -17,6 +17,17 @@ export interface LogInInput {
   code: string;
 }
 
+export interface TaskInput {
+  title?: string | null;
+  amt?: number | null;
+  eta?: string | null;
+  isNew?: boolean | null;
+}
+
+export interface UpdateTaskUserInput {
+  tasks: (TaskInput | null)[];
+}
+
 export interface UpdateUserSettingsInput {
   pomDuration?: number | null;
   shortBreakDuration?: number | null;

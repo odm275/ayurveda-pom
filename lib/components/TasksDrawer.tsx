@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useMutation } from '@apollo/client';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import {
   Button,
@@ -18,8 +19,21 @@ import {
   useDisclosure
 } from '@chakra-ui/react';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
+import { UPDATE_TASKS } from '@/lib/graphql/mutations';
+
 import { Task } from '@/lib/components/Task';
 import AddTaskModal from '@/lib/components/AddTaskModal';
+import {
+  UpdateTasks as UpdatedTasksData,
+  UpdateTasksVariables
+} from '@/lib/graphql/mutations/UpdateTasks/__generated__/UpdateTasks';
+
+export interface TaskType {
+  title: string | null;
+  amt: number | null;
+  eta: string | null;
+  isNew: boolean | null;
+}
 
 interface AddTaskButtonProps {
   onClick: () => void;
@@ -47,8 +61,13 @@ interface Props {
   onClose: () => void;
   btnRef: any;
 }
+
 export const TasksDrawer = ({ isOpen, onClose, btnRef }: Props) => {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState<TaskType[]>([]);
+  const [updateTasks, { loading, error }] = useMutation<
+    UpdatedTasksData,
+    UpdateTasksVariables
+  >(UPDATE_TASKS);
   const { register, handleSubmit } = useForm();
   const {
     isOpen: openAddTask,
@@ -96,12 +115,18 @@ export const TasksDrawer = ({ isOpen, onClose, btnRef }: Props) => {
     </DragDropContext>
   );
 
-  const onSubmit = () => {
-    console.log('tasks', tasks);
+  const onSave = () => {
+    console.log('submit', tasks);
+    // console.log('tasks', tasks);
+    // updateTasks({
+    //   variables: {
+    //     input: { tasks }
+    //   }
+    // });
   };
 
   const handleOnClose = () => {
-    const oldTasks = tasks.filter((task) => !task.new);
+    const oldTasks = tasks.filter((task) => !task.isNew);
     setTasks(oldTasks);
     onClose();
   };
@@ -129,23 +154,21 @@ export const TasksDrawer = ({ isOpen, onClose, btnRef }: Props) => {
       finalFocusRef={btnRef}
       size="xl"
     >
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <DrawerOverlay>
-          <DrawerContent>
-            <DrawerCloseButton />
-            <DrawerHeader>My Tasks</DrawerHeader>
-            {drawerBody}
-            <DrawerFooter>
-              <Button variant="outline" mr={3} onClick={handleOnClose}>
-                Cancel
-              </Button>
-              <Button color="blue" type="submit">
-                Save
-              </Button>
-            </DrawerFooter>
-          </DrawerContent>
-        </DrawerOverlay>
-      </form>
+      <DrawerOverlay>
+        <DrawerContent>
+          <DrawerCloseButton />
+          <DrawerHeader>My Tasks</DrawerHeader>
+          {drawerBody}
+          <DrawerFooter>
+            <Button variant="outline" mr={3} onClick={handleOnClose}>
+              Cancel
+            </Button>
+            <Button color="blue" type="submit" onClick={onSave}>
+              Save
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </DrawerOverlay>
     </Drawer>
   );
 };

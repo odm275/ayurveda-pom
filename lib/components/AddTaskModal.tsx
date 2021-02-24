@@ -1,5 +1,4 @@
 import React from 'react';
-import { useMutation } from '@apollo/client';
 import {
   Button,
   Input,
@@ -31,17 +30,17 @@ interface Props {
   tasks: [Task];
 }
 
-const DEFAULT_TASK_NAME = '';
 const AddTaskModal = ({ isOpen, onClose, setTasks, tasks }: Props) => {
   const { register, handleSubmit } = useForm();
   const onSubmit = (data) => {
+    console.log('new tasks');
     const { title, amt } = data;
     const newTasks = [
       ...tasks,
       {
         title,
         amt: parseInt(amt),
-        eta: new Date(),
+        eta: '01-01-01',
         category: 'personal',
         new: true
       }

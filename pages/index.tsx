@@ -1,10 +1,10 @@
+import { useRef } from 'react';
 import { Flex, Button, Spinner, useDisclosure } from '@chakra-ui/react';
 import PomodoroTimer from '@/lib/components/PomodoroTimer';
 import AppHeaderSkeleton from '@/lib/components/AppHeaderSkeleton';
 import ErrorBanner from '@/lib/components/ErrorBanner';
 import { Layout } from '@/lib/components/Layout';
 import { useAuth } from '@/lib/context/AuthContext';
-import { useRef } from 'react';
 import { TasksDrawer } from '@/lib/components/TasksDrawer';
 
 const Index = () => {

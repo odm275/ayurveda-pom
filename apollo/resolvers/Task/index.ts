@@ -1,27 +1,18 @@
 import { NextApiRequest } from 'next';
 import { ObjectId } from 'mongodb';
 
-import { CreateTaskArgs, TasksData } from './types';
+import { UpdateTasksArgs, TasksData } from './types';
 import { Task, Database } from '../../../database/types';
 import { authorize } from '@/apollo/utils/authorize';
 
-/* 
-  Creating Tasks:
-   - We are going to take new tasks in the playload.
-   - We are going create new tasks from the payload.
-  Sorting Tasks:
-   - Tasks are going have a sortingId
-   - When querying for today's tasks, we're going query and order by the sorting Id.
-
-*/
-
 export const taskResolver = {
   Mutation: {
-    createTasks: async (
+    updateTasks: async (
       _root: undefined,
-      { input }: CreateTaskArgs,
+      { input }: UpdateTasksArgs,
       { db, req }: { db: Database; req: NextApiRequest }
     ): Promise<TasksData> => {
+      console.log('updateTasks');
       const viewer = await authorize(db, req);
 
       if (!viewer) {
@@ -35,7 +26,7 @@ export const taskResolver = {
         title,
         amt,
         user: viewer._id,
-        new: false
+        isNew: false
       }));
 
       // We can go ahead and create them

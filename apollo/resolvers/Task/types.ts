@@ -5,15 +5,18 @@ export interface TasksData {
   result: Task[];
 }
 
-export interface TaskInput {
+export interface TasksInput {
   title: string;
   amt: number;
+  category: string;
+  eta: string;
+  new: boolean;
 }
 
-export interface CreateTaskInput {
+export interface UpdateTasksInput {
   tasks: [Task];
 }
 
-export interface CreateTaskArgs {
-  input: CreateTaskInput;
+export interface UpdateTasksArgs {
+  input: UpdateTasksInput;
 }

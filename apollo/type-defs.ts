@@ -63,9 +63,15 @@ export const typeDefs = gql`
     date: String
   }
 
-  input CreateTaskUserInput {
+  input TaskInput {
     title: String
     amt: Int
+    eta: String
+    isNew: Boolean
+  }
+
+  input UpdateTaskUserInput {
+    tasks: [TaskInput]!
   }
 
   type Query {
@@ -77,6 +83,6 @@ export const typeDefs = gql`
     logIn(input: LogInInput, date: String): Viewer!
     logOut: Viewer!
     updateUserSettings(input: UpdateUserSettingsInput): Viewer!
-    createTasks(input: CreateTaskUserInput): Tasks!
+    updateTasks(input: UpdateTaskUserInput): Tasks!
   }
 `;

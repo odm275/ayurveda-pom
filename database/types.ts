@@ -26,6 +26,7 @@ export interface Task {
   user: string; // Reference to the owner(User's _id field)
   title: string;
   amt: number;
+  isNew: boolean;
 }
 
 export interface PomData {

@@ -17,7 +17,7 @@ import { Icon } from '@chakra-ui/react';
 interface Props {
   title: string;
   amt: number;
-  eta: Date;
+  eta: string;
   register: any;
   innerRef: any;
   provided: any;
