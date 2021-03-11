@@ -1,23 +1,25 @@
 import { NextApiRequest } from 'next';
 import { ObjectId } from 'mongodb';
-
+import { IResolvers } from 'graphql-tools';
 import { UpdateTasksArgs, TasksData } from './types';
 import { Task, Database } from '../../../database/types';
 import { authorize } from '@/apollo/utils/authorize';
 
-export const taskResolver = {
+export const taskResolvers: IResolvers = {
   Mutation: {
     updateTasks: async (
-      _root: undefined,
+      __root: undefined,
       { input }: UpdateTasksArgs,
       { db, req }: { db: Database; req: NextApiRequest }
     ): Promise<TasksData> => {
       console.log('updateTasks');
-      const viewer = await authorize(db, req);
+      console.log('input', input);
+      const testViewerId = '102370478380724182316';
+      // const viewer = await authorize(db, req);
 
-      if (!viewer) {
-        throw new Error('Viewer cannot be found!');
-      }
+      // if (!viewer) {
+      //   throw new Error('Viewer cannot be found!');
+      // }
 
       // These are going be the new tasks
 
@@ -25,7 +27,8 @@ export const taskResolver = {
         _id: new ObjectId(),
         title,
         amt,
-        user: viewer._id,
+        user: testViewerId,
+        // user: viewer._id,
         isNew: false
       }));
 
@@ -36,7 +39,7 @@ export const taskResolver = {
 
       // Merge new tasks with user's tasks.
 
-      await db.users.findOneAndUpdate({ _id: viewer._id }, [
+      await db.users.findOneAndUpdate({ _id: testViewerId }, [
         { $set: { tasks: { $concatArrays: ['$tasks', newTasksDataIds] } } }
       ]);
 
@@ -44,6 +47,10 @@ export const taskResolver = {
         result: newTasks,
         total: newTasks.length
       };
+    },
+    test: () => {
+      console.log('test');
+      return 'Task.test';
     }
   },
   Task: {

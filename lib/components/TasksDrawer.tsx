@@ -67,7 +67,11 @@ export const TasksDrawer = ({ isOpen, onClose, btnRef }: Props) => {
   const [updateTasks, { loading, error }] = useMutation<
     UpdatedTasksData,
     UpdateTasksVariables
-  >(UPDATE_TASKS);
+  >(UPDATE_TASKS, {
+    onError: (err) => {
+      console.log(err);
+    }
+  });
   const { register, handleSubmit } = useForm();
   const {
     isOpen: openAddTask,
@@ -116,13 +120,15 @@ export const TasksDrawer = ({ isOpen, onClose, btnRef }: Props) => {
   );
 
   const onSave = () => {
-    console.log('submit', tasks);
-    // console.log('tasks', tasks);
-    // updateTasks({
-    //   variables: {
-    //     input: { tasks }
-    //   }
-    // });
+    console.log('on save');
+    console.log('tasks', tasks);
+    updateTasks({
+      variables: {
+        input: { tasks }
+      }
+    })
+      .then((v) => console.log(v))
+      .catch((e) => console.log(e));
   };
 
   const handleOnClose = () => {

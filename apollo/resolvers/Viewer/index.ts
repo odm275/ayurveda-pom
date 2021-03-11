@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { IResolvers } from 'graphql-tools';
 import crypto from 'crypto';
 import Cryptr from 'cryptr';
 import dayjs from 'dayjs';
@@ -167,7 +168,7 @@ const addPomDateCounter = async (db: Database, viewer: User, input: any) => {
   return updatedViewer;
 };
 
-export const viewerResolvers = {
+export const viewerResolvers: IResolvers = {
   Query: {
     authUrl: (): string => {
       try {
@@ -183,6 +184,7 @@ export const viewerResolvers = {
       { input }: UpdateUserSettingsArgs,
       { db, req, res }: { db: Database; req: NextApiRequest; res: Response }
     ): Promise<User | undefined> => {
+      console.log('updateUserSettings');
       const viewer = await authorize(db, req);
       if (!viewer) {
         throw new Error('viewer cannot be found');
