@@ -15,6 +15,7 @@ export const taskResolvers: IResolvers = {
       console.log('updateTasks');
       console.log('input', input);
       const viewer = await authorize(db, req);
+      console.log('viewer', viewer);
 
       if (!viewer) {
         throw new Error('Viewer cannot be found!');
@@ -36,10 +37,22 @@ export const taskResolvers: IResolvers = {
       const newTasksDataIds = Object.values(insertResult['insertedIds']);
 
       // Merge new tasks with user's tasks.
-
-      await db.users.findOneAndUpdate({ _id: viewer._id }, [
-        { $set: { tasks: { $concatArrays: ['$tasks', newTasksDataIds] } } }
-      ]);
+      console.log('we dont got tasks', !viewer.tasks);
+      if (!viewer.tasks) {
+        await db.users.findOneAndUpdate({ _id: viewer._id }, [
+          {
+            $set: {
+              tasks: {
+                $concatArrays: [{ $ifNull: ['$tasks', newTasksDataIds] }]
+              }
+            }
+          }
+        ]);
+      } else {
+        await db.users.findOneAndUpdate({ _id: viewer._id }, [
+          { $set: { tasks: { $concatArrays: ['$tasks', newTasksDataIds] } } }
+        ]);
+      }
 
       return {
         result: newTasks,
