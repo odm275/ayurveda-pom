@@ -14,12 +14,11 @@ export const taskResolvers: IResolvers = {
     ): Promise<TasksData> => {
       console.log('updateTasks');
       console.log('input', input);
-      const testViewerId = '102370478380724182316';
-      // const viewer = await authorize(db, req);
+      const viewer = await authorize(db, req);
 
-      // if (!viewer) {
-      //   throw new Error('Viewer cannot be found!');
-      // }
+      if (!viewer) {
+        throw new Error('Viewer cannot be found!');
+      }
 
       // These are going be the new tasks
 
@@ -27,8 +26,7 @@ export const taskResolvers: IResolvers = {
         _id: new ObjectId(),
         title,
         amt,
-        user: testViewerId,
-        // user: viewer._id,
+        user: viewer._id,
         isNew: false
       }));
 
@@ -39,7 +37,7 @@ export const taskResolvers: IResolvers = {
 
       // Merge new tasks with user's tasks.
 
-      await db.users.findOneAndUpdate({ _id: testViewerId }, [
+      await db.users.findOneAndUpdate({ _id: viewer._id }, [
         { $set: { tasks: { $concatArrays: ['$tasks', newTasksDataIds] } } }
       ]);
 
