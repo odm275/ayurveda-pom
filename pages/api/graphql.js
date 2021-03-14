@@ -8,10 +8,6 @@ const apolloServer = new ApolloServer({
   context: async ({ req, res }) => {
     const db = await connectDatabase();
     return { db, req, res };
-  },
-  onError: ({ networkError, graphQLErrors }) => {
-    console.log('graphQLErrors', graphQLErrors);
-    console.log('networkError', networkError);
   }
 });
 

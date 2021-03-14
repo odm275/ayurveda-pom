@@ -287,6 +287,7 @@ export const viewerResolvers: IResolvers = {
     },
     tasks: async (
       viewer: Viewer,
+      _args: {},
       { db }: { db: Database }
     ): Promise<ViewerTasksData | null> => {
       // Array of tasks for the viewer [1111,2222,3333]
@@ -297,13 +298,10 @@ export const viewerResolvers: IResolvers = {
           total: 0,
           result: []
         };
-        console.log('tasks ids', viewer.tasks);
-        // Go into tasks, find the actual record for each id and return the tasks
-
         const cursor = await db.tasks.find({
           _id: { $in: viewer.tasks }
         });
-        console.log('2');
+
         data.total = await cursor.count();
         data.result = await cursor.toArray();
 
