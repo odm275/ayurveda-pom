@@ -9,6 +9,20 @@ import { LogInInput, PomCycle } from "./../../../globalTypes";
 // GraphQL mutation operation: LogIn
 // ====================================================
 
+export interface LogIn_logIn_tasks_result {
+  __typename: "Task";
+  title: string;
+  amt: number;
+  isNew: boolean;
+  isFinished: boolean;
+}
+
+export interface LogIn_logIn_tasks {
+  __typename: "Tasks";
+  total: number;
+  result: (LogIn_logIn_tasks_result | null)[];
+}
+
 export interface LogIn_logIn {
   __typename: "Viewer";
   id: string | null;
@@ -22,6 +36,7 @@ export interface LogIn_logIn {
   longBreakInterval: number | null;
   pomCycle: PomCycle | null;
   pomCount: number | null;
+  tasks: LogIn_logIn_tasks;
 }
 
 export interface LogIn {

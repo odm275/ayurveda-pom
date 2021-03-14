@@ -13,7 +13,7 @@ export const taskResolvers: IResolvers = {
       { db, req }: { db: Database; req: NextApiRequest }
     ): Promise<TasksData> => {
       console.log('updateTasks');
-      console.log('input', input);
+
       const viewer = await authorize(db, req);
       console.log('viewer', viewer);
 
@@ -28,7 +28,8 @@ export const taskResolvers: IResolvers = {
         title,
         amt,
         user: viewer._id,
-        isNew: false
+        isNew: false,
+        isFinished: true // Gotta make this come from the front end later
       }));
 
       // We can go ahead and create them

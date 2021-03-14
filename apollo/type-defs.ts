@@ -11,6 +11,20 @@ export const typeDefs = gql`
     count: Int!
   }
 
+  type Task {
+    id: ID!
+    title: String!
+    amt: Int!
+    user: String!
+    isNew: Boolean!
+    isFinished: Boolean!
+  }
+
+  type Tasks {
+    total: Int!
+    result: [Task]!
+  }
+
   type User {
     id: ID!
     name: String!
@@ -36,18 +50,7 @@ export const typeDefs = gql`
     longBreakInterval: Int
     pomCycle: PomCycle
     pomCount(date: String!): Int
-  }
-
-  type Task {
-    id: ID!
-    title: String!
-    amt: Int!
-    user: String!
-  }
-
-  type Tasks {
-    total: Int!
-    result: [Task]!
+    tasks: Tasks!
   }
 
   input LogInInput {
@@ -77,6 +80,7 @@ export const typeDefs = gql`
   type Query {
     viewer: User
     authUrl: String!
+    tasks: Tasks!
   }
 
   type Mutation {

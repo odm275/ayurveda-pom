@@ -3,7 +3,12 @@ import { IResolvers } from 'graphql-tools';
 import crypto from 'crypto';
 import Cryptr from 'cryptr';
 import dayjs from 'dayjs';
-import { UpdateUserSettingsArgs, LogInArgs, UserPomCountArgs } from './types';
+import {
+  UpdateUserSettingsArgs,
+  LogInArgs,
+  UserPomCountArgs,
+  ViewerTasksData
+} from './types';
 import { Viewer, Database, User, PomCycle } from '../../../database/types';
 import { Google } from '../../api/Google';
 import { authorize } from '@/apollo/utils/authorize';
@@ -239,7 +244,8 @@ export const viewerResolvers: IResolvers = {
           longBreakDuration: viewer.shortBreakDuration,
           longBreakInterval: viewer.longBreakInterval,
           pomCycle: viewer.pomCycle,
-          pomData: viewer.pomData
+          pomData: viewer.pomData,
+          tasks: viewer.tasks
         };
 
         return resViewer;
@@ -278,6 +284,32 @@ export const viewerResolvers: IResolvers = {
       const pomCount = todayViewerEntry ? todayViewerEntry.count : 0;
 
       return pomCount;
+    },
+    tasks: async (
+      viewer: Viewer,
+      { db }: { db: Database }
+    ): Promise<ViewerTasksData | null> => {
+      // Array of tasks for the viewer [1111,2222,3333]
+      console.log('tasks resolver');
+      try {
+        const data: ViewerTasksData = {
+          total: 0,
+          result: []
+        };
+        console.log('1');
+        // Go into tasks, find the actual record for each id and return the tasks
+        let cursor = await db.tasks.find({
+          _id: { $in: viewer.tasks }
+        });
+        console.log('2');
+        data.total = await cursor.count();
+        data.result = await cursor.toArray();
+
+        console.log('data.result', data.result);
+        return data;
+      } catch (error) {
+        throw new Error(`Failed to query viewer tasks ${error}`);
+      }
     }
   }
 };

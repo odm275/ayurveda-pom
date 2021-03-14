@@ -1,3 +1,5 @@
+import { Task } from '@/database/types';
+
 export interface LogInArgs {
   input: { code: string } | null;
   date: string | null;
@@ -22,4 +24,9 @@ export interface UpdateUserSettingsArgs {
 
 export interface UserPomCountArgs {
   date: string;
+}
+
+export interface ViewerTasksData {
+  total: number;
+  result: Task[];
 }

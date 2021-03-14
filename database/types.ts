@@ -6,6 +6,20 @@ export enum PomCycle {
   LongBreak = 'LONGBREAK'
 }
 
+export interface Task {
+  _id: ObjectId;
+  user: string; // Reference to the owner(User's _id field)
+  title: string;
+  amt: number;
+  isNew: boolean;
+  isFinished: boolean;
+}
+
+export interface Tasks {
+  total: number;
+  result: Task[];
+}
+
 export interface Viewer {
   _id?: string;
   token?: string;
@@ -19,14 +33,7 @@ export interface Viewer {
   pomCycle?: PomCycle;
   pomData?: PomData[];
   pomCount?: number;
-}
-
-export interface Task {
-  _id: ObjectId;
-  user: string; // Reference to the owner(User's _id field)
-  title: string;
-  amt: number;
-  isNew: boolean;
+  tasks: Tasks;
 }
 
 export interface PomData {

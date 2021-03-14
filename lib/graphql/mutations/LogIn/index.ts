@@ -14,6 +14,15 @@ export const LOG_IN = gql`
       longBreakInterval
       pomCycle
       pomCount(date: $date)
+      tasks {
+        total
+        result {
+          title
+          amt
+          isNew
+          isFinished
+        }
+      }
     }
   }
 `;
