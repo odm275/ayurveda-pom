@@ -33,7 +33,7 @@ export interface Viewer {
   pomCycle?: PomCycle;
   pomData?: PomData[];
   pomCount?: number;
-  tasks: Tasks;
+  tasks: ObjectId[];
 }
 
 export interface PomData {
