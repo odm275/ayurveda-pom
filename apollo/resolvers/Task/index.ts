@@ -5,6 +5,24 @@ import { UpdateTasksArgs, TasksData } from './types';
 import { Task, Database } from '../../../database/types';
 import { authorize } from '@/apollo/utils/authorize';
 
+const concatTasksToUser = async (db, viewer, newTasksDataIds) => {
+  if (!viewer.tasks) {
+    await db.users.findOneAndUpdate({ _id: viewer._id }, [
+      {
+        $set: {
+          tasks: {
+            $concatArrays: [{ $ifNull: ['$tasks', newTasksDataIds] }]
+          }
+        }
+      }
+    ]);
+  } else {
+    await db.users.findOneAndUpdate({ _id: viewer._id }, [
+      { $set: { tasks: { $concatArrays: ['$tasks', newTasksDataIds] } } }
+    ]);
+  }
+};
+
 export const taskResolvers: IResolvers = {
   Mutation: {
     updateTasks: async (
@@ -38,22 +56,7 @@ export const taskResolvers: IResolvers = {
       const newTasksDataIds = Object.values(insertResult['insertedIds']);
 
       // Merge new tasks with user's tasks.
-      console.log('we dont got tasks', !viewer.tasks);
-      if (!viewer.tasks) {
-        await db.users.findOneAndUpdate({ _id: viewer._id }, [
-          {
-            $set: {
-              tasks: {
-                $concatArrays: [{ $ifNull: ['$tasks', newTasksDataIds] }]
-              }
-            }
-          }
-        ]);
-      } else {
-        await db.users.findOneAndUpdate({ _id: viewer._id }, [
-          { $set: { tasks: { $concatArrays: ['$tasks', newTasksDataIds] } } }
-        ]);
-      }
+      await concatTasksToUser(db, viewer, newTasksDataIds);
 
       return {
         result: newTasks,
