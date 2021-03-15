@@ -8,9 +8,8 @@ export interface TasksData {
 export interface TasksInput {
   title: string;
   amt: number;
-  category: string;
-  eta: string;
-  new: boolean;
+  isNew: boolean;
+  isFinished: boolean;
 }
 
 export interface UpdateTasksInput {

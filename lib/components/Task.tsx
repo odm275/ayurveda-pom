@@ -40,11 +40,14 @@ export const Task = ({
     setAmt(amt - 1);
   };
 
+  // const etaElement = (
+  //   <Text color="gray.500" d={['none', 'block']}>
+  //     {eta.toString()}
+  //   </Text>
+  // );
+
   const taskMenu = (
     <Flex align="center">
-      <Text color="gray.500" d={['none', 'block']}>
-        {eta.toString()}
-      </Text>
       <Button
         borderStyle="solid"
         borderColor="black"
@@ -65,11 +68,11 @@ export const Task = ({
       </Menu>
     </Flex>
   );
-  const mobileEta = (
-    <Text color="gray.500" d={['block', 'none']}>
-      {eta.toString()}
-    </Text>
-  );
+  // const mobileEta = (
+  //   <Text color="gray.500" d={['block', 'none']}>
+  //     {eta.toString()}
+  //   </Text>
+  // );
 
   return (
     <div
@@ -89,9 +92,9 @@ export const Task = ({
         <Spacer />
         {taskMenu}
       </Flex>
-      <Text color="gray.500" d={['block', 'none']}>
+      {/* <Text color="gray.500" d={['block', 'none']}>
         {mobileEta}
-      </Text>
+      </Text> */}
     </div>
   );
 };

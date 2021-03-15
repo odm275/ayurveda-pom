@@ -27,6 +27,8 @@ import {
   UpdateTasks as UpdatedTasksData,
   UpdateTasksVariables
 } from '@/lib/graphql/mutations/UpdateTasks/__generated__/UpdateTasks';
+import { useAuth } from '@/lib/context/AuthContext';
+import { newPayload } from '@/lib/utils/omitTypename';
 
 export interface TaskType {
   title: string | null;
@@ -63,7 +65,12 @@ interface Props {
 }
 
 export const TasksDrawer = ({ isOpen, onClose, btnRef }: Props) => {
-  const [tasks, setTasks] = useState<TaskType[]>([]);
+  const { viewer } = useAuth();
+  console.log('tasks', viewer.tasks);
+  const _tasks = viewer?.tasks?.result ? newPayload(viewer.tasks.result) : [];
+  console.log('newPayload', newPayload);
+
+  const [tasks, setTasks] = useState<TaskType[]>(_tasks);
   const [updateTasks, { loading, error }] = useMutation<
     UpdatedTasksData,
     UpdateTasksVariables
@@ -122,9 +129,10 @@ export const TasksDrawer = ({ isOpen, onClose, btnRef }: Props) => {
   const onSave = () => {
     console.log('on save');
     console.log('tasks', tasks);
+    const newTasks = tasks.filter((task) => task.isNew);
     updateTasks({
       variables: {
-        input: { tasks }
+        input: { tasks: newTasks }
       }
     })
       .then((v) => console.log(v))

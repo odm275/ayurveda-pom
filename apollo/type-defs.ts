@@ -71,6 +71,7 @@ export const typeDefs = gql`
     amt: Int
     eta: String
     isNew: Boolean
+    isFinished: Boolean
   }
 
   input UpdateTaskUserInput {

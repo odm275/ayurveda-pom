@@ -290,22 +290,24 @@ export const viewerResolvers: IResolvers = {
       _args: {},
       { db }: { db: Database }
     ): Promise<ViewerTasksData | null> => {
-      // Array of tasks for the viewer [1111,2222,3333]
       console.log('tasks resolver');
-
+      console.log('viewer', viewer);
       try {
         const data: ViewerTasksData = {
           total: 0,
           result: []
         };
-        const cursor = await db.tasks.find({
-          _id: { $in: viewer.tasks }
-        });
+        if (viewer?.tasks) {
+          const cursor = await db.tasks.find({
+            _id: { $in: viewer.tasks }
+          });
 
-        data.total = await cursor.count();
-        data.result = await cursor.toArray();
+          data.total = await cursor.count();
+          data.result = await cursor.toArray();
 
-        console.log('data.result', data.result);
+          console.log(data.result);
+        }
+        console.log('data', data);
         return data;
       } catch (error) {
         throw new Error(`Failed to query viewer tasks ${error}`);

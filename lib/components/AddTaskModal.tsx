@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/react';
 import NumberInput from '@/lib/components/NumberInput';
 import { useForm } from 'react-hook-form';
+import { useAuth } from '@/lib/context/AuthContext';
 
 interface Task {
   title: string;
@@ -32,6 +33,7 @@ interface Props {
 
 const AddTaskModal = ({ isOpen, onClose, setTasks, tasks }: Props) => {
   const { register, handleSubmit } = useForm();
+
   const onSubmit = (data) => {
     console.log('new tasks');
     const { title, amt } = data;
