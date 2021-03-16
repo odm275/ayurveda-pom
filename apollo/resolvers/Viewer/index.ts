@@ -304,10 +304,7 @@ export const viewerResolvers: IResolvers = {
 
           data.total = await cursor.count();
           data.result = await cursor.sort({ positionId: 1 }).toArray();
-
-          console.log(data.result);
         }
-        console.log('data', data);
         return data;
       } catch (error) {
         throw new Error(`Failed to query viewer tasks ${error}`);

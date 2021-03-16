@@ -5,10 +5,11 @@ import { UpdateTasksArgs, TasksData } from './types';
 import { Task, Database } from '../../../database/types';
 import { authorize } from '@/apollo/utils/authorize';
 import { position } from '@chakra-ui/react';
+import { identitytoolkit } from 'googleapis/build/src/apis/identitytoolkit';
 
 const concatTasksToUser = async (db, viewer, newTasksDataIds) => {
   if (!viewer.tasks) {
-    const res = await db.users.findOneAndUpdate({ _id: viewer._id }, [
+    await db.users.findOneAndUpdate({ _id: viewer._id }, [
       {
         $set: {
           tasks: {
@@ -17,14 +18,24 @@ const concatTasksToUser = async (db, viewer, newTasksDataIds) => {
         }
       }
     ]);
-    console.log('res.value', res.value);
   } else {
-    const res = await db.users.findOneAndUpdate({ _id: viewer._id }, [
+    await db.users.findOneAndUpdate({ _id: viewer._id }, [
       { $set: { tasks: { $concatArrays: ['$tasks', newTasksDataIds] } } }
     ]);
-
-    console.log('res.value', res.value);
   }
+};
+
+const updateTasksPositions = async (db, tasksData) => {
+  const bulkWriteData = tasksData.map(({ id, positionId }) => {
+    return {
+      updateOne: {
+        filter: { _id: new ObjectId(id) },
+        update: { $set: { positionId } }
+      }
+    };
+  });
+
+  await db.tasks.bulkWrite(bulkWriteData);
 };
 
 export const taskResolvers: IResolvers = {
@@ -42,52 +53,91 @@ export const taskResolvers: IResolvers = {
         throw new Error('Viewer cannot be found!');
       }
 
+      // Set positions
+
+      const tasksWPosition = input.tasks.map((task, i) => {
+        return {
+          ...task,
+          positionId: i
+        };
+      });
+
       // Create ONLY New Tasks
-      const newTasksData = input.tasks.filter((task) => task.isNew);
+
+      const newTasksData = tasksWPosition.filter((task) => task.isNew);
+
       if (newTasksData.length > 0) {
-        const newTasks = newTasksData.map(({ title, amt }, i) => ({
+        const oldTasksData = tasksWPosition.filter((task) => !task.isNew);
+        const newTasks = newTasksData.map(({ title, amt, positionId }, i) => ({
           _id: new ObjectId(),
           title,
           amt,
           user: viewer._id,
           isNew: false,
           isFinished: false, // Gotta make this come from the front end later
-          positionId: -1
+          positionId: positionId
         }));
+
+        const updateNewTasksPositionsData = newTasks.map(
+          ({ _id, positionId }) => {
+            return {
+              id: _id.toString(),
+              positionId
+            };
+          }
+        );
+
+        const updateOldTasksPositionsData = oldTasksData.map(
+          ({ id, positionId }) => {
+            return {
+              id,
+              positionId
+            };
+          }
+        );
+
+        const allTasksData = [
+          ...updateOldTasksPositionsData,
+          ...updateNewTasksPositionsData
+        ];
+
+        console.log('allTasksData', allTasksData);
 
         const insertResult = await db.tasks.insertMany(newTasks);
         const newTasksDataIds = Object.values(insertResult['insertedIds']);
         // Merge new tasks with user's tasks.
         await concatTasksToUser(db, viewer, newTasksDataIds);
-      }
 
-      // Get all the tasks are not finished
+        await updateTasksPositions(db, allTasksData);
 
-      const bulkWriteData = input.tasks.map((task, i) => {
+        const cursor = await db.tasks.find({
+          isFinished: false
+        });
+        const unfinishedTasks = await cursor.toArray();
+        const total = await cursor.count();
+
         return {
-          updateOne: {
-            filter: { _id: new ObjectId(task.id) },
-            update: { $set: { positionId: i } }
-          }
+          result: unfinishedTasks,
+          total: total
         };
-      });
+      } else {
+        // Get all the tasks are not finished
 
-      console.log('bulkWriteData', JSON.stringify(bulkWriteData));
+        await updateTasksPositions(db, tasksWPosition);
 
-      await db.tasks.bulkWrite(bulkWriteData);
+        const cursor = await db.tasks.find({
+          isFinished: false
+        });
+        const unfinishedTasks = await cursor.toArray();
+        const total = await cursor.count();
 
-      const cursor = await db.tasks.find({
-        isFinished: false
-      });
-      const unfinishedTasks = await cursor.toArray();
-      const total = await cursor.count();
+        // Update their position index
 
-      // Update their position index
-
-      return {
-        result: unfinishedTasks,
-        total: total
-      };
+        return {
+          result: unfinishedTasks,
+          total: total
+        };
+      }
     },
     test: () => {
       console.log('test');
