@@ -17,6 +17,7 @@ export const LOG_IN = gql`
       tasks {
         total
         result {
+          id
           title
           amt
           isNew

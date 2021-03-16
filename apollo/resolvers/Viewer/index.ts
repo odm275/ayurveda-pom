@@ -303,7 +303,7 @@ export const viewerResolvers: IResolvers = {
           });
 
           data.total = await cursor.count();
-          data.result = await cursor.toArray();
+          data.result = await cursor.sort({ positionId: 1 }).toArray();
 
           console.log(data.result);
         }

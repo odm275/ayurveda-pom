@@ -67,6 +67,7 @@ export const typeDefs = gql`
   }
 
   input TaskInput {
+    id: String
     title: String
     amt: Int
     eta: String

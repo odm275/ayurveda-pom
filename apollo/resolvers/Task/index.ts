@@ -4,10 +4,11 @@ import { IResolvers } from 'graphql-tools';
 import { UpdateTasksArgs, TasksData } from './types';
 import { Task, Database } from '../../../database/types';
 import { authorize } from '@/apollo/utils/authorize';
+import { position } from '@chakra-ui/react';
 
 const concatTasksToUser = async (db, viewer, newTasksDataIds) => {
   if (!viewer.tasks) {
-    await db.users.findOneAndUpdate({ _id: viewer._id }, [
+    const res = await db.users.findOneAndUpdate({ _id: viewer._id }, [
       {
         $set: {
           tasks: {
@@ -16,10 +17,13 @@ const concatTasksToUser = async (db, viewer, newTasksDataIds) => {
         }
       }
     ]);
+    console.log('res.value', res.value);
   } else {
-    await db.users.findOneAndUpdate({ _id: viewer._id }, [
+    const res = await db.users.findOneAndUpdate({ _id: viewer._id }, [
       { $set: { tasks: { $concatArrays: ['$tasks', newTasksDataIds] } } }
     ]);
+
+    console.log('res.value', res.value);
   }
 };
 
@@ -33,34 +37,56 @@ export const taskResolvers: IResolvers = {
       console.log('updateTasks');
 
       const viewer = await authorize(db, req);
-      console.log('viewer', viewer);
 
       if (!viewer) {
         throw new Error('Viewer cannot be found!');
       }
 
-      // These are going be the new tasks
+      // Create ONLY New Tasks
+      const newTasksData = input.tasks.filter((task) => task.isNew);
+      if (newTasksData.length > 0) {
+        const newTasks = newTasksData.map(({ title, amt }, i) => ({
+          _id: new ObjectId(),
+          title,
+          amt,
+          user: viewer._id,
+          isNew: false,
+          isFinished: false, // Gotta make this come from the front end later
+          positionId: -1
+        }));
 
-      const newTasks = input.tasks.map(({ title, amt }) => ({
-        _id: new ObjectId(),
-        title,
-        amt,
-        user: viewer._id,
-        isNew: false,
-        isFinished: true // Gotta make this come from the front end later
-      }));
+        const insertResult = await db.tasks.insertMany(newTasks);
+        const newTasksDataIds = Object.values(insertResult['insertedIds']);
+        // Merge new tasks with user's tasks.
+        await concatTasksToUser(db, viewer, newTasksDataIds);
+      }
 
-      // We can go ahead and create them
+      // Get all the tasks are not finished
 
-      const insertResult = await db.tasks.insertMany(newTasks);
-      const newTasksDataIds = Object.values(insertResult['insertedIds']);
+      const bulkWriteData = input.tasks.map((task, i) => {
+        return {
+          updateOne: {
+            filter: { _id: new ObjectId(task.id) },
+            update: { $set: { positionId: i } }
+          }
+        };
+      });
 
-      // Merge new tasks with user's tasks.
-      await concatTasksToUser(db, viewer, newTasksDataIds);
+      console.log('bulkWriteData', JSON.stringify(bulkWriteData));
+
+      await db.tasks.bulkWrite(bulkWriteData);
+
+      const cursor = await db.tasks.find({
+        isFinished: false
+      });
+      const unfinishedTasks = await cursor.toArray();
+      const total = await cursor.count();
+
+      // Update their position index
 
       return {
-        result: newTasks,
-        total: newTasks.length
+        result: unfinishedTasks,
+        total: total
       };
     },
     test: () => {

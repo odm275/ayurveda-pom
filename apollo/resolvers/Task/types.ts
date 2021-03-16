@@ -6,6 +6,7 @@ export interface TasksData {
 }
 
 export interface TasksInput {
+  id: string;
   title: string;
   amt: number;
   isNew: boolean;
@@ -13,7 +14,7 @@ export interface TasksInput {
 }
 
 export interface UpdateTasksInput {
-  tasks: [Task];
+  tasks: [TasksInput];
 }
 
 export interface UpdateTasksArgs {

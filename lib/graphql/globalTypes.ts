@@ -18,6 +18,7 @@ export interface LogInInput {
 }
 
 export interface TaskInput {
+  id?: string | null;
   title?: string | null;
   amt?: number | null;
   eta?: string | null;

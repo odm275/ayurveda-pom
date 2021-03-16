@@ -13,6 +13,7 @@ export interface Task {
   amt: number;
   isNew: boolean;
   isFinished: boolean;
+  positionId: number;
 }
 
 export interface Tasks {

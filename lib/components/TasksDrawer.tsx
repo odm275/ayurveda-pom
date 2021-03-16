@@ -35,6 +35,7 @@ export interface TaskType {
   amt: number | null;
   eta: string | null;
   isNew: boolean | null;
+  positionId: number;
 }
 
 interface AddTaskButtonProps {
@@ -129,10 +130,9 @@ export const TasksDrawer = ({ isOpen, onClose, btnRef }: Props) => {
   const onSave = () => {
     console.log('on save');
     console.log('tasks', tasks);
-    const newTasks = tasks.filter((task) => task.isNew);
     updateTasks({
       variables: {
-        input: { tasks: newTasks }
+        input: { tasks: tasks }
       }
     })
       .then((v) => console.log(v))

@@ -11,6 +11,7 @@ import { LogInInput, PomCycle } from "./../../../globalTypes";
 
 export interface LogIn_logIn_tasks_result {
   __typename: "Task";
+  id: string;
   title: string;
   amt: number;
   isNew: boolean;
