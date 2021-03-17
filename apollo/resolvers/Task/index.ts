@@ -26,15 +26,15 @@ const concatTasksToUser = async (db, viewer, newTasksDataIds) => {
 };
 
 const updateTasksPositions = async (db, tasksData) => {
-  const bulkWriteData = tasksData.map(({ id, positionId }) => {
+  const bulkWriteData = tasksData.map(({ id, positionId, amt }) => {
     return {
       updateOne: {
         filter: { _id: new ObjectId(id) },
-        update: { $set: { positionId } }
+        update: { $set: { positionId, amt } }
       }
     };
   });
-
+  console.log(JSON.stringify(bulkWriteData));
   await db.tasks.bulkWrite(bulkWriteData);
 };
 
@@ -46,6 +46,7 @@ export const taskResolvers: IResolvers = {
       { db, req }: { db: Database; req: NextApiRequest }
     ): Promise<TasksData> => {
       console.log('updateTasks');
+      console.log(input.tasks);
 
       const viewer = await authorize(db, req);
 
@@ -58,6 +59,7 @@ export const taskResolvers: IResolvers = {
       const tasksWPosition = input.tasks.map((task, i) => {
         return {
           ...task,
+          amt: task.amt,
           positionId: i
         };
       });
@@ -68,7 +70,7 @@ export const taskResolvers: IResolvers = {
 
       if (newTasksData.length > 0) {
         const oldTasksData = tasksWPosition.filter((task) => !task.isNew);
-        const newTasks = newTasksData.map(({ title, amt, positionId }, i) => ({
+        const newTasks = newTasksData.map(({ title, amt, positionId }) => ({
           _id: new ObjectId(),
           title,
           amt,
@@ -79,18 +81,20 @@ export const taskResolvers: IResolvers = {
         }));
 
         const updateNewTasksPositionsData = newTasks.map(
-          ({ _id, positionId }) => {
+          ({ _id, positionId, amt }) => {
             return {
               id: _id.toString(),
+              amt,
               positionId
             };
           }
         );
 
         const updateOldTasksPositionsData = oldTasksData.map(
-          ({ id, positionId }) => {
+          ({ id, positionId, amt }) => {
             return {
               id,
+              amt,
               positionId
             };
           }
@@ -100,8 +104,6 @@ export const taskResolvers: IResolvers = {
           ...updateOldTasksPositionsData,
           ...updateNewTasksPositionsData
         ];
-
-        console.log('allTasksData', allTasksData);
 
         const insertResult = await db.tasks.insertMany(newTasks);
         const newTasksDataIds = Object.values(insertResult['insertedIds']);
@@ -141,6 +143,52 @@ export const taskResolvers: IResolvers = {
     },
     test: () => {
       console.log('test');
+
+      [
+        {
+          updateOne: {
+            filter: { _id: '6050e6b76de72a2282c6422b' },
+            update: { $set: { positionId: 0, amt: 1 } }
+          }
+        },
+        {
+          updateOne: {
+            filter: { _id: '6050e6b76de72a2282c6422a' },
+            update: { $set: { positionId: 1, amt: 1 } }
+          }
+        },
+        {
+          updateOne: {
+            filter: { _id: '6050e6686de72a2282c64225' },
+            update: { $set: { positionId: 2, amt: 1 } }
+          }
+        },
+        {
+          updateOne: {
+            filter: { _id: '6050e67c6de72a2282c64226' },
+            update: { $set: { positionId: 3, amt: 1 } }
+          }
+        },
+        {
+          updateOne: {
+            filter: { _id: '6050e6946de72a2282c64228' },
+            update: { $set: { positionId: 4, amt: 1 } }
+          }
+        },
+        {
+          updateOne: {
+            filter: { _id: '6050e67c6de72a2282c64227' },
+            update: { $set: { positionId: 5, amt: 1 } }
+          }
+        },
+        {
+          updateOne: {
+            filter: { _id: '6050e6946de72a2282c64229' },
+            update: { $set: { positionId: 6, amt: 1 } }
+          }
+        }
+      ];
+
       return 'Task.test';
     }
   },

@@ -15,30 +15,28 @@ import { AiOutlineEllipsis } from 'react-icons/ai';
 import { Icon } from '@chakra-ui/react';
 
 interface Props {
-  title: string;
-  amt: number;
-  eta: string;
+  task: any;
   register: any;
   innerRef: any;
   provided: any;
+  addAmtTask: any;
 }
 
 export const Task = ({
-  title,
-  amt: taskAmt,
-  eta,
   register,
   innerRef,
-  provided
+  provided,
+  task,
+  addAmtTask
 }: Props) => {
-  const [amt, setAmt] = useState(taskAmt);
-  const addAmtTask = () => setAmt(amt + 1);
-  const subAmtTask = () => {
-    if (amt <= 0) {
-      return;
-    }
-    setAmt(amt - 1);
-  };
+  const { amt, title } = task;
+
+  // const subAmtTask = () => {
+  //   if (amt <= 0) {
+  //     return;
+  //   }
+  //   setAmt(amt - 1);
+  // };
 
   // const etaElement = (
   //   <Text color="gray.500" d={['none', 'block']}>
@@ -63,7 +61,7 @@ export const Task = ({
         </MenuButton>
         <MenuList>
           <MenuItem onClick={addAmtTask}>Add More</MenuItem>
-          <MenuItem onClick={subAmtTask}>Remove</MenuItem>
+          <MenuItem onClick={addAmtTask}>Remove</MenuItem>
         </MenuList>
       </Menu>
     </Flex>
@@ -81,14 +79,14 @@ export const Task = ({
       ref={innerRef}
     >
       <input
-        name={`${title}`}
+        name={`${task.title}`}
         type="number"
         value={amt}
         style={{ display: 'none' }}
         ref={register}
       />
       <Flex justify="space-between" align="center">
-        <Text>{title}</Text>
+        <Text>{task.title}</Text>
         <Spacer />
         {taskMenu}
       </Flex>

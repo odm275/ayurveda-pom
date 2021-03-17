@@ -87,22 +87,6 @@ export const TasksDrawer = ({ isOpen, onClose, btnRef }: Props) => {
     onClose: closeAddTaskForm
   } = useDisclosure();
 
-  const tasksCards = tasks.map(({ title, amt, eta }, i) => (
-    <Draggable key={`${i}`} draggableId={`${i}`} index={i}>
-      {(provided) => (
-        <Task
-          title={title}
-          amt={amt}
-          eta={eta}
-          key={i}
-          register={register}
-          innerRef={provided.innerRef}
-          provided={provided}
-        />
-      )}
-    </Draggable>
-  ));
-
   const handleOnDragEnd = (result) => {
     if (!result.destination) return;
     const items = Array.from(tasks);
@@ -111,6 +95,47 @@ export const TasksDrawer = ({ isOpen, onClose, btnRef }: Props) => {
 
     setTasks(items);
   };
+
+  const onSave = () => {
+    updateTasks({
+      variables: {
+        input: { tasks: tasks }
+      }
+    });
+  };
+
+  const handleOnClose = () => {
+    const oldTasks = tasks.filter((task) => !task.isNew);
+    setTasks(oldTasks);
+    onClose();
+  };
+
+  const tasksCards = tasks.map((task, i) => {
+    const addAmtTask = (prevTasks) => {
+      const copyAllTasks = Array.from(tasks);
+      const updatedTaskData = {
+        ...task,
+        amt: task.amt + 1
+      };
+      copyAllTasks.splice(i, 1, updatedTaskData);
+
+      return copyAllTasks;
+    };
+    return (
+      <Draggable key={`${i}`} draggableId={`${i}`} index={i}>
+        {(provided) => (
+          <Task
+            task={task}
+            key={i}
+            register={register}
+            innerRef={provided.innerRef}
+            provided={provided}
+            addAmtTask={() => setTasks(addAmtTask)}
+          />
+        )}
+      </Draggable>
+    );
+  });
 
   const draggableTaskCards = (
     <DragDropContext onDragEnd={handleOnDragEnd}>
@@ -126,24 +151,6 @@ export const TasksDrawer = ({ isOpen, onClose, btnRef }: Props) => {
       </Droppable>
     </DragDropContext>
   );
-
-  const onSave = () => {
-    console.log('on save');
-    console.log('tasks', tasks);
-    updateTasks({
-      variables: {
-        input: { tasks: tasks }
-      }
-    })
-      .then((v) => console.log(v))
-      .catch((e) => console.log(e));
-  };
-
-  const handleOnClose = () => {
-    const oldTasks = tasks.filter((task) => !task.isNew);
-    setTasks(oldTasks);
-    onClose();
-  };
 
   const drawerBody = (
     <DrawerBody>
