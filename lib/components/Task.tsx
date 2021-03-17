@@ -16,19 +16,12 @@ import { Icon } from '@chakra-ui/react';
 
 interface Props {
   task: any;
-  register: any;
   innerRef: any;
   provided: any;
   addAmtTask: any;
 }
 
-export const Task = ({
-  register,
-  innerRef,
-  provided,
-  task,
-  addAmtTask
-}: Props) => {
+export const Task = ({ innerRef, provided, task, addAmtTask }: Props) => {
   const { amt, title } = task;
 
   // const subAmtTask = () => {
@@ -78,13 +71,6 @@ export const Task = ({
       {...provided.dragHandleProps}
       ref={innerRef}
     >
-      <input
-        name={`${task.title}`}
-        type="number"
-        value={amt}
-        style={{ display: 'none' }}
-        ref={register}
-      />
       <Flex justify="space-between" align="center">
         <Text>{task.title}</Text>
         <Spacer />

@@ -126,8 +126,6 @@ export const TasksDrawer = ({ isOpen, onClose, btnRef }: Props) => {
         {(provided) => (
           <Task
             task={task}
-            key={i}
-            register={register}
             innerRef={provided.innerRef}
             provided={provided}
             addAmtTask={() => setTasks(addAmtTask)}
