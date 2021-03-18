@@ -7,13 +7,8 @@ import { Layout } from '@/lib/components/Layout';
 import { useAuth } from '@/lib/context/AuthContext';
 import { TasksDrawer } from '@/lib/components/TasksDrawer';
 import { newPayload } from '@/lib/utils/omitTypename';
-export interface TaskType {
-  title: string | null;
-  amt: number | null;
-  eta: string | null;
-  isNew: boolean | null;
-  positionId: number;
-}
+import { TaskType } from '@/lib/types';
+
 const Index = () => {
   const { viewer, error } = useAuth();
 
@@ -71,6 +66,8 @@ const Index = () => {
         longBreakDuration={viewer.longBreakDuration}
         longBreakInterval={viewer.longBreakInterval}
         pomCount={viewer.pomCount}
+        tasks={tasks}
+        setTasks={setTasks}
       />
     </Layout>
   );

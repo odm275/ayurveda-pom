@@ -34,6 +34,13 @@ import {
   displaySuccessNotification
 } from '@/lib/utils/index';
 import SuccessBanner from '@/lib/components/SuccessBanner';
+import { TaskType } from '@/lib/types';
+
+import {
+  UpdateTasks as UpdatedTasksData,
+  UpdateTasksVariables
+} from '@/lib/graphql/mutations/UpdateTasks/__generated__/UpdateTasks';
+import { UPDATE_TASKS } from '@/lib/graphql/mutations';
 
 interface Props {
   pomCycle: PomCycle;
@@ -42,6 +49,8 @@ interface Props {
   longBreakDuration: number;
   longBreakInterval: number;
   pomCount: number;
+  tasks: TaskType[];
+  setTasks: any;
 }
 
 function successfulCycleAlert(message: string) {
@@ -60,8 +69,14 @@ const PomodoroTimer = ({
   shortBreakDuration,
   longBreakDuration,
   longBreakInterval,
-  pomCount
+  pomCount,
+  tasks,
+  setTasks
 }: Props) => {
+  const [updateTasks, { loading, error }] = useMutation<
+    UpdatedTasksData,
+    UpdateTasksVariables
+  >(UPDATE_TASKS);
   const initialState = {
     cycle: pomCycle,
     timer: selectTimePerCycle({
@@ -119,7 +134,7 @@ const PomodoroTimer = ({
       const newTime = state.timer - second;
       dispatch({ type: NEW_TIME, payload: newTime });
     },
-    state.isRunning ? 100 : null
+    state.isRunning ? 10 : null
   );
 
   const timeForPomodoro =
@@ -140,18 +155,20 @@ const PomodoroTimer = ({
   }, timeEnded);
 
   useEffectWithoutOnMount(() => {
-    if (timeForShortBreak) {
-      dispatch({ type: SHORT_BREAK, payload: durationValues });
-      successfulCycleAlert(
-        'Take a short Break -- go to the bathroom or medidate'
-      );
-    } else if (timeForLongBreak) {
-      dispatch({ type: LONG_BREAK, payload: durationValues });
-      successfulCycleAlert('Take a long break! Take a nap or go outside :)');
-    }
-  }, state.pomCount);
+    const removeAmtCurrentTask = (tasks: TaskType[]) => {
+      const copyAllTasks = Array.from(tasks);
+      const [currentTask] = copyAllTasks.slice(0, 1);
+      const updatedTaskData = {
+        ...currentTask,
+        amt: currentTask.amt - 1
+      };
+      copyAllTasks.splice(0, 1, updatedTaskData);
+      return copyAllTasks;
+    };
 
-  useEffectWithoutOnMount(() => {
+    const newTasksData = removeAmtCurrentTask(tasks);
+    setTasks(newTasksData);
+
     if (timeForShortBreak) {
       dispatch({ type: SHORT_BREAK, payload: durationValues });
       successfulCycleAlert(
@@ -173,6 +190,14 @@ const PomodoroTimer = ({
       }
     });
   }, state.cycle);
+
+  useEffectWithoutOnMount(() => {
+    updateTasks({
+      variables: {
+        input: { tasks: tasks }
+      }
+    });
+  }, tasks);
 
   const progressPercentage = (state.timer / selectTimePerCycle(state)) * 100;
 

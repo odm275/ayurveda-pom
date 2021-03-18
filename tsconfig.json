@@ -22,7 +22,8 @@
       "@/lib/utils/*": ["lib/utils/*"],
       "@/lib/assets/*": ["lib/assets/*"],
       "@/apollo/utils/*": ["apollo/utils/*"],
-      "@/database/*": ["database/*"]
+      "@/database/*": ["database/*"],
+      "@/lib/*": ["lib/*"]
     }
   },
   "include": [

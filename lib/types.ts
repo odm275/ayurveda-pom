@@ -19,3 +19,11 @@ export interface Task {
   eta: string | null;
   isNew: boolean | null;
 }
+
+export interface TaskType {
+  title: string | null;
+  amt: number | null;
+  eta: string | null;
+  isNew: boolean | null;
+  positionId: number;
+}
