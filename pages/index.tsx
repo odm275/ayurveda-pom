@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Flex, Button, Spinner, useDisclosure } from '@chakra-ui/react';
 import PomodoroTimer from '@/lib/components/PomodoroTimer';
 import AppHeaderSkeleton from '@/lib/components/AppHeaderSkeleton';
@@ -6,10 +6,27 @@ import ErrorBanner from '@/lib/components/ErrorBanner';
 import { Layout } from '@/lib/components/Layout';
 import { useAuth } from '@/lib/context/AuthContext';
 import { TasksDrawer } from '@/lib/components/TasksDrawer';
-
+import { newPayload } from '@/lib/utils/omitTypename';
+export interface TaskType {
+  title: string | null;
+  amt: number | null;
+  eta: string | null;
+  isNew: boolean | null;
+  positionId: number;
+}
 const Index = () => {
   const { viewer, error } = useAuth();
+
+  const _tasks = viewer?.tasks?.result ? newPayload(viewer.tasks.result) : [];
+
+  const [tasks, setTasks] = useState<TaskType[] | null>(_tasks);
+
+  useEffect(() => {
+    setTasks(_tasks);
+  }, [viewer.didRequest]);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   const btnRef = useRef();
   // User is loading
   if (!viewer.didRequest && !error) {
@@ -32,12 +49,16 @@ const Index = () => {
     <ErrorBanner description="We aren't able to verify if you were logged in. Please try again later!" />
   ) : null;
 
-  console.log('viewer', viewer);
-
   return (
     <Layout>
       {logInErrorBannerElement}
-      <TasksDrawer isOpen={isOpen} onClose={onClose} btnRef={btnRef} />
+      <TasksDrawer
+        tasks={tasks}
+        setTasks={setTasks}
+        isOpen={isOpen}
+        onClose={onClose}
+        btnRef={btnRef}
+      />
       <Flex justifyContent="center">
         <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>
           My Tasks

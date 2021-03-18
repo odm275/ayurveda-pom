@@ -17,11 +17,19 @@ import {
 import { Viewer } from '../types';
 
 const initialViewer: Viewer = {
-  id: null,
-  token: null,
-  avatar: null,
+  avatar:
+    'https://lh3.googleusercontent.com/a-/AOh14GgON61oEh2hXDeGJ_uTAyUrzbfA_3iE_aDJH15SKQ=s100',
+  didRequest: false,
   hasWallet: null,
-  didRequest: false
+  id: null,
+  longBreakDuration: null,
+  longBreakInterval: null,
+  pomCount: null,
+  pomCycle: null,
+  pomDuration: null,
+  shortBreakDuration: null,
+  tasks: null,
+  token: null
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function

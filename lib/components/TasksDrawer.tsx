@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { useMutation } from '@apollo/client';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import {
@@ -41,6 +40,14 @@ export interface TaskType {
 interface AddTaskButtonProps {
   onClick: () => void;
 }
+
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+  btnRef: any;
+  tasks: TaskType[];
+  setTasks: (any) => void;
+}
 const AddTaskButton = ({ onClick }: AddTaskButtonProps) => (
   <Flex justify="center">
     <Button
@@ -59,28 +66,17 @@ const AddTaskButton = ({ onClick }: AddTaskButtonProps) => (
   </Flex>
 );
 
-interface Props {
-  isOpen: boolean;
-  onClose: () => void;
-  btnRef: any;
-}
-
-export const TasksDrawer = ({ isOpen, onClose, btnRef }: Props) => {
-  const { viewer } = useAuth();
-  console.log('tasks', viewer.tasks);
-  const _tasks = viewer?.tasks?.result ? newPayload(viewer.tasks.result) : [];
-  console.log('newPayload', newPayload);
-
-  const [tasks, setTasks] = useState<TaskType[]>(_tasks);
+export const TasksDrawer = ({
+  isOpen,
+  onClose,
+  btnRef,
+  tasks,
+  setTasks
+}: Props) => {
   const [updateTasks, { loading, error }] = useMutation<
     UpdatedTasksData,
     UpdateTasksVariables
-  >(UPDATE_TASKS, {
-    onError: (err) => {
-      console.log(err);
-    }
-  });
-  const { register, handleSubmit } = useForm();
+  >(UPDATE_TASKS);
   const {
     isOpen: openAddTask,
     onOpen: openNewTaskForm,
@@ -102,6 +98,7 @@ export const TasksDrawer = ({ isOpen, onClose, btnRef }: Props) => {
         input: { tasks: tasks }
       }
     });
+    onClose();
   };
 
   const handleOnClose = () => {
