@@ -158,10 +158,17 @@ const PomodoroTimer = ({
     const removeAmtCurrentTask = (tasks: TaskType[]) => {
       const copyAllTasks = Array.from(tasks);
       const [currentTask] = copyAllTasks.slice(0, 1);
+      const newAmt = currentTask.amt - 1;
+      const isFinished = newAmt < 1;
+
       const updatedTaskData = {
         ...currentTask,
-        amt: currentTask.amt - 1
+        amt: newAmt,
+        isFinished: isFinished
       };
+
+      console.log('updatedTaskData', updatedTaskData);
+
       copyAllTasks.splice(0, 1, updatedTaskData);
       return copyAllTasks;
     };

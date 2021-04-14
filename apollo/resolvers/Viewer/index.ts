@@ -299,7 +299,8 @@ export const viewerResolvers: IResolvers = {
         };
         if (viewer?.tasks) {
           const cursor = await db.tasks.find({
-            _id: { $in: viewer.tasks }
+            _id: { $in: viewer.tasks },
+            isFinished: false
           });
 
           data.total = await cursor.count();

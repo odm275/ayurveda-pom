@@ -22,7 +22,7 @@ interface Props {
 }
 
 export const Task = ({ innerRef, provided, task, addAmtTask }: Props) => {
-  const { amt, title } = task;
+  const { amt, title, isFinished } = task;
 
   // const subAmtTask = () => {
   //   if (amt <= 0) {
@@ -64,12 +64,13 @@ export const Task = ({ innerRef, provided, task, addAmtTask }: Props) => {
   //     {eta.toString()}
   //   </Text>
   // );
-
+  // ONLY SHOW IF TASK IS UNFINISHED
   return (
     <div
       {...provided.draggableProps}
       {...provided.dragHandleProps}
       ref={innerRef}
+      style={{ display: `${isFinished ? 'none' : 'block'}` }}
     >
       <Flex justify="space-between" align="center">
         <Text>{task.title}</Text>
