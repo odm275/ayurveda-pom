@@ -25,5 +25,6 @@ export interface TaskType {
   amt: number | null;
   eta: string | null;
   isNew: boolean | null;
+  isFinished: boolean | null;
   positionId: number;
 }

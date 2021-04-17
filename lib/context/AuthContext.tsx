@@ -46,7 +46,6 @@ export const useAuth = () => {
 
 function useProvideAuth() {
   const [viewer, setViewer] = useState<Viewer>(initialViewer);
-  console.log('viewer', viewer);
 
   const [logIn, { error }] = useMutation<LogInData, LogInVariables>(LOG_IN, {
     onCompleted: (data) => {

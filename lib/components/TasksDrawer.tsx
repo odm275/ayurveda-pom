@@ -118,6 +118,28 @@ export const TasksDrawer = ({
 
       return copyAllTasks;
     };
+
+    const removeAmtTask = (prevTasks) => {
+      const copyAllTasks = Array.from(tasks);
+      const newAmt = task.amt - 1;
+
+      const updatedTaskData = {
+        ...task,
+        amt: task.amt - 1,
+        isFinished: newAmt < 1
+      };
+      copyAllTasks.splice(i, 1, updatedTaskData);
+
+      return copyAllTasks;
+    };
+    const deleteTask = (prevTasks) => {
+      const copyAllTasks = Array.from(tasks);
+
+      copyAllTasks.splice(i, 1);
+
+      return copyAllTasks;
+    };
+
     return (
       <Draggable key={`${i}`} draggableId={`${i}`} index={i}>
         {(provided) => (
@@ -126,6 +148,8 @@ export const TasksDrawer = ({
             innerRef={provided.innerRef}
             provided={provided}
             addAmtTask={() => setTasks(addAmtTask)}
+            subAmtTask={() => setTasks(removeAmtTask)}
+            deleteTask={() => setTasks(deleteTask)}
           />
         )}
       </Draggable>

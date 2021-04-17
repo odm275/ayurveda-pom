@@ -19,17 +19,19 @@ interface Props {
   innerRef: any;
   provided: any;
   addAmtTask: any;
+  subAmtTask: any;
+  deleteTask: any;
 }
 
-export const Task = ({ innerRef, provided, task, addAmtTask }: Props) => {
+export const Task = ({
+  innerRef,
+  provided,
+  task,
+  addAmtTask,
+  subAmtTask,
+  deleteTask
+}: Props) => {
   const { amt, title, isFinished } = task;
-
-  // const subAmtTask = () => {
-  //   if (amt <= 0) {
-  //     return;
-  //   }
-  //   setAmt(amt - 1);
-  // };
 
   // const etaElement = (
   //   <Text color="gray.500" d={['none', 'block']}>
@@ -53,8 +55,9 @@ export const Task = ({ innerRef, provided, task, addAmtTask }: Props) => {
           <Icon as={AiOutlineEllipsis} />
         </MenuButton>
         <MenuList>
-          <MenuItem onClick={addAmtTask}>Add More</MenuItem>
-          <MenuItem onClick={addAmtTask}>Remove</MenuItem>
+          <MenuItem onClick={addAmtTask}>Add</MenuItem>
+          <MenuItem onClick={subAmtTask}>Remove</MenuItem>
+          <MenuItem onClick={deleteTask}>Delete</MenuItem>
         </MenuList>
       </Menu>
     </Flex>

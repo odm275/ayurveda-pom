@@ -73,6 +73,7 @@ export const taskResolvers: IResolvers = {
       const newTasksData = tasksWPosition.filter((task) => task.isNew);
 
       if (newTasksData.length > 0) {
+        console.log('new tasks coming in');
         const oldTasksData = tasksWPosition.filter((task) => !task.isNew);
         const newTasks = newTasksData.map(({ title, amt, positionId }) => ({
           _id: new ObjectId(),
@@ -109,6 +110,7 @@ export const taskResolvers: IResolvers = {
           ...updateNewTasksPositionsData
         ];
 
+        console.log('newTasks', newTasks);
         const insertResult = await db.tasks.insertMany(newTasks);
         const newTasksDataIds = Object.values(insertResult['insertedIds']);
         // Merge new tasks with user's tasks.

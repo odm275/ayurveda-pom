@@ -12,11 +12,12 @@ import { TaskType } from '@/lib/types';
 const Index = () => {
   const { viewer, error } = useAuth();
 
-  const _tasks = viewer?.tasks?.result ? newPayload(viewer.tasks.result) : [];
+  const [tasks, setTasks] = useState<TaskType[] | null>([]);
 
-  const [tasks, setTasks] = useState<TaskType[] | null>(_tasks);
+  console.log('tasks', tasks);
 
   useEffect(() => {
+    const _tasks = viewer?.tasks?.result ? newPayload(viewer.tasks.result) : [];
     setTasks(_tasks);
   }, [viewer.didRequest]);
 

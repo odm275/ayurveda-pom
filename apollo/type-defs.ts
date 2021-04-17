@@ -50,6 +50,7 @@ export const typeDefs = gql`
     longBreakInterval: Int
     pomCycle: PomCycle
     pomCount(date: String!): Int
+    currentTasks: Tasks
     tasks: Tasks!
   }
 

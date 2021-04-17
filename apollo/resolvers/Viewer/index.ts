@@ -198,7 +198,6 @@ export const viewerResolvers: IResolvers = {
       // If optional parameter with today's date is provided
       if (input.date) {
         const updatedViewer = addPomDateCounter(db, viewer, input);
-        console.log('updatedViewerPomCount', updatedViewer);
         return updatedViewer;
       } else {
         const updateRes = await db.users.findOneAndUpdate(
@@ -291,13 +290,13 @@ export const viewerResolvers: IResolvers = {
       { db }: { db: Database }
     ): Promise<ViewerTasksData | null> => {
       console.log('tasks resolver');
-      console.log('viewer', viewer);
       try {
         const data: ViewerTasksData = {
           total: 0,
           result: []
         };
         if (viewer?.tasks) {
+          console.log('we got tasks', viewer?.tasks);
           const cursor = await db.tasks.find({
             _id: { $in: viewer.tasks },
             isFinished: false
@@ -306,6 +305,7 @@ export const viewerResolvers: IResolvers = {
           data.total = await cursor.count();
           data.result = await cursor.sort({ positionId: 1 }).toArray();
         }
+        console.log('data', data);
         return data;
       } catch (error) {
         throw new Error(`Failed to query viewer tasks ${error}`);

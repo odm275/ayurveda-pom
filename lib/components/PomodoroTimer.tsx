@@ -157,7 +157,10 @@ const PomodoroTimer = ({
   useEffectWithoutOnMount(() => {
     const removeAmtCurrentTask = (tasks: TaskType[]) => {
       const copyAllTasks = Array.from(tasks);
-      const [currentTask] = copyAllTasks.slice(0, 1);
+      const unFinishedTasks = copyAllTasks.filter((task) => !task.isFinished);
+      const finishedTasks = copyAllTasks.filter((task) => task.isFinished);
+
+      const [currentTask] = unFinishedTasks.slice(0, 1);
       const newAmt = currentTask.amt - 1;
       const isFinished = newAmt < 1;
 
@@ -169,8 +172,9 @@ const PomodoroTimer = ({
 
       console.log('updatedTaskData', updatedTaskData);
 
-      copyAllTasks.splice(0, 1, updatedTaskData);
-      return copyAllTasks;
+      unFinishedTasks.splice(0, 1, updatedTaskData);
+      const newTasksArray = [...unFinishedTasks, ...finishedTasks];
+      return newTasksArray;
     };
 
     const newTasksData = removeAmtCurrentTask(tasks);
@@ -197,14 +201,18 @@ const PomodoroTimer = ({
       }
     });
   }, state.cycle);
-
+  // This needs to only run when????
   useEffectWithoutOnMount(() => {
-    updateTasks({
-      variables: {
-        input: { tasks: tasks }
-      }
-    });
-  }, tasks);
+    if (tasks.length > 0) {
+      console.log('update tasks');
+
+      updateTasks({
+        variables: {
+          input: { tasks: tasks }
+        }
+      });
+    }
+  }, state.pomCount);
 
   const progressPercentage = (state.timer / selectTimePerCycle(state)) * 100;
 
