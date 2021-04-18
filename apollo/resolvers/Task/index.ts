@@ -66,11 +66,10 @@ export const taskResolvers: IResolvers = {
         };
       });
 
-      console.log('tasksWPosition', tasksWPosition);
-
       // Create ONLY New Tasks
 
       const newTasksData = tasksWPosition.filter((task) => task.isNew);
+      console.log('newTasksData', newTasksData);
 
       if (newTasksData.length > 0) {
         console.log('new tasks coming in');
@@ -81,25 +80,29 @@ export const taskResolvers: IResolvers = {
           amt,
           user: viewer._id,
           isNew: false,
-          isFinished: false, // Gotta make this come from the front end later
+          isFinished: false,
           positionId: positionId
         }));
 
         const updateNewTasksPositionsData = newTasks.map(
-          ({ _id, positionId, amt }) => {
+          ({ _id, positionId, amt, isNew, isFinished }) => {
             return {
               id: _id.toString(),
               amt,
+              isNew,
+              isFinished,
               positionId
             };
           }
         );
 
         const updateOldTasksPositionsData = oldTasksData.map(
-          ({ id, positionId, amt }) => {
+          ({ id, positionId, amt, isNew, isFinished }) => {
             return {
               id,
               amt,
+              isNew,
+              isFinished,
               positionId
             };
           }
@@ -110,7 +113,6 @@ export const taskResolvers: IResolvers = {
           ...updateNewTasksPositionsData
         ];
 
-        console.log('newTasks', newTasks);
         const insertResult = await db.tasks.insertMany(newTasks);
         const newTasksDataIds = Object.values(insertResult['insertedIds']);
         // Merge new tasks with user's tasks.
