@@ -212,7 +212,7 @@ const PomodoroTimer = ({
         }
       });
     }
-  }, state.pomCount);
+  }, tasks);
 
   const progressPercentage = (state.timer / selectTimePerCycle(state)) * 100;
 
@@ -224,7 +224,6 @@ const PomodoroTimer = ({
           value={progressPercentage}
           size="400px"
           thickness="5px"
-          color="black"
         >
           <CircularProgressLabel fontSize="10%">
             {timeConversion(state.timer)}

@@ -97,15 +97,17 @@ export const AppHeader = () => {
       px={[5, 0]}
     >
       <Link href="/">
-        <Box color="#fafafa">
+        <Box>
           <BiTimer size={40} />
         </Box>
       </Link>
-      <Box color="#fafafa" mt={[0, '3rem']}>
-        <BiStats size={40} />
-      </Box>
+      <Link href="/user/stats">
+        <Box mt={[0, '3rem']}>
+          <BiStats size={40} />
+        </Box>
+      </Link>
       <Link href="/user/settings">
-        <Box color="#fafafa" mt={[0, '3rem']}>
+        <Box mt={[0, '3rem']}>
           <VscSettingsGear size={40} />
         </Box>
       </Link>
@@ -118,9 +120,7 @@ export const AppHeader = () => {
       <Flex alignItems="center">
         <Box p="2">
           <Link href="/">
-            <Heading size="md" color="#fafafa">
-              Ayurveda
-            </Heading>
+            <Heading size="md">Ayurveda</Heading>
           </Link>
         </Box>
         <Spacer />

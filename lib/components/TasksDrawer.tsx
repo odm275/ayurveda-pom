@@ -192,7 +192,7 @@ export const TasksDrawer = ({
       placement="right"
       onClose={onClose}
       finalFocusRef={btnRef}
-      size="xl"
+      size="full"
     >
       <DrawerOverlay>
         <DrawerContent>
