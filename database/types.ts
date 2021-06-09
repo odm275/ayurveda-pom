@@ -34,7 +34,7 @@ export interface Viewer {
   pomCycle?: PomCycle;
   pomData?: PomData[];
   pomCount?: number;
-  tasks: ObjectId[];
+  currentTasks: ObjectId[];
 }
 
 export interface PomData {
@@ -53,9 +53,9 @@ export interface User {
   shortBreakDuration?: number;
   longBreakDuration?: number;
   longBreakInterval?: number;
-  tasks: ObjectId[];
   pomCycle: PomCycle;
   pomData?: PomData[];
+  currentTasks: ObjectId[];
 }
 
 export interface Database {

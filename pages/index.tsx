@@ -14,10 +14,12 @@ const Index = () => {
 
   const [tasks, setTasks] = useState<TaskType[] | null>([]);
 
-  console.log('tasks', tasks);
+  console.log('currentTasks', tasks);
 
   useEffect(() => {
-    const _tasks = viewer?.tasks?.result ? newPayload(viewer.tasks.result) : [];
+    const _tasks = viewer?.currentTasks?.result
+      ? newPayload(viewer.currentTasks.result)
+      : [];
     setTasks(_tasks);
   }, [viewer.didRequest]);
 

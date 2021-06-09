@@ -32,7 +32,8 @@
     "**/*.tsx",
     "temp/seed.js",
     "temp/clear.js",
-    "apollo/utils/cookies-helper.js"
+    "apollo/utils/cookies-helper.js",
+    "lib/utils/data_viz.js"
   ],
   "exclude": ["node_modules"]
 }

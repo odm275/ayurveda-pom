@@ -94,7 +94,7 @@ const logInViaGoogle = async (
       name: userName,
       avatar: userAvatar,
       email: userEmail,
-      tasks: [],
+      currentTasks: [],
       pomCycle: PomCycle.Pomodoro
     });
     viewer = insertResult.ops[0];
@@ -181,8 +181,16 @@ export const viewerResolvers: IResolvers = {
       } catch (error) {
         throw new Error(`Failed to query Google Auth Url: ${error}`);
       }
+    },
+    completeTasks: (
+      viewer: Viewer,
+      _args: {},
+      { db }: { db: Database }
+    ): string => {
+      return 'Viewer.completeTasks';
     }
   },
+
   Mutation: {
     updateUserSettings: async (
       __root: undefined,
@@ -244,7 +252,7 @@ export const viewerResolvers: IResolvers = {
           longBreakInterval: viewer.longBreakInterval,
           pomCycle: viewer.pomCycle,
           pomData: viewer.pomData,
-          tasks: viewer.tasks
+          currentTasks: viewer.currentTasks
         };
 
         return resViewer;
@@ -267,6 +275,7 @@ export const viewerResolvers: IResolvers = {
   },
   Viewer: {
     id: (viewer: Viewer): string | undefined => {
+      console.log('gooby pls', viewer);
       return viewer._id;
     },
     hasWallet: (viewer: Viewer): boolean | undefined => {
@@ -284,7 +293,8 @@ export const viewerResolvers: IResolvers = {
 
       return pomCount;
     },
-    tasks: async (
+    // Current(on-going) tasks
+    currentTasks: async (
       viewer: Viewer,
       _args: {},
       { db }: { db: Database }
@@ -295,17 +305,15 @@ export const viewerResolvers: IResolvers = {
           total: 0,
           result: []
         };
-        if (viewer?.tasks) {
-          console.log('we got tasks', viewer?.tasks);
+        if (viewer?.currentTasks) {
           const cursor = await db.tasks.find({
-            _id: { $in: viewer.tasks },
+            _id: { $in: viewer.currentTasks },
             isFinished: false
           });
 
           data.total = await cursor.count();
           data.result = await cursor.sort({ positionId: 1 }).toArray();
         }
-        console.log('data', data);
         return data;
       } catch (error) {
         throw new Error(`Failed to query viewer tasks ${error}`);

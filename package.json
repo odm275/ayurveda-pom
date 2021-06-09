@@ -24,7 +24,7 @@
     "crypto": "^1.0.1",
     "cryptr": "^6.0.2",
     "d3": "^6.5.0",
-    "dayjs": "^1.10.4",
+    "dayjs": "^1.10.5",
     "dotenv": "^8.2.0",
     "framer-motion": "^3.0.0",
     "googleapis": "^63.0.0",

@@ -50,8 +50,7 @@ export const typeDefs = gql`
     longBreakInterval: Int
     pomCycle: PomCycle
     pomCount(date: String!): Int
-    currentTasks: Tasks
-    tasks: Tasks!
+    currentTasks: Tasks!
   }
 
   input LogInInput {
@@ -83,7 +82,7 @@ export const typeDefs = gql`
   type Query {
     viewer: User
     authUrl: String!
-    tasks: Tasks!
+    completeTasks: String!
   }
 
   type Mutation {
