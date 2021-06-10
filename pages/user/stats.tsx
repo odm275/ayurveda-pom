@@ -6,7 +6,7 @@ import { Timeline } from '@/lib/components/Timeline';
 import { useAuth } from '@/lib/context/AuthContext';
 import ErrorBanner from '@/lib/components/ErrorBanner';
 
-const parseDate = d3.timeParse('%m/%d/%Y');
+const parseDate = d3.timeParse('%m-%d-%Y');
 const dateAccessor = (d) => parseDate(d.date);
 const countAccessor = (d) => d.count;
 

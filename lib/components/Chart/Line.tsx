@@ -6,11 +6,11 @@ export const Line = ({
   data,
   xAccessor,
   yAccessor,
-  y0Accessor,
-  interpolation,
+  y0Accessor = '0',
+  interpolation = d3.curveMonotoneX,
   ...props
 }) => {
-  console.log('data', data);
+  console.log('data', d3[type]());
   const lineGenerator = d3[type]()
     .x(xAccessor)
     .y(yAccessor)
