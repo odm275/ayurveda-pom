@@ -14,6 +14,12 @@ export const LOG_IN = gql`
       longBreakInterval
       pomCycle
       pomCount(date: $date)
+      pomData {
+        result {
+          date
+          count
+        }
+      }
       currentTasks {
         total
         result {

@@ -7,7 +7,8 @@ import {
   UpdateUserSettingsArgs,
   LogInArgs,
   UserPomCountArgs,
-  ViewerTasksData
+  ViewerTasksData,
+  PomData
 } from './types';
 import { Viewer, Database, User, PomCycle } from '../../../database/types';
 import { Google } from '../../api/Google';
@@ -255,6 +256,8 @@ export const viewerResolvers: IResolvers = {
           currentTasks: viewer.currentTasks
         };
 
+        console.log('resviewer', resViewer);
+
         return resViewer;
       } catch (error) {
         throw new Error(`Failed to log in: ${error}`);
@@ -275,7 +278,6 @@ export const viewerResolvers: IResolvers = {
   },
   Viewer: {
     id: (viewer: Viewer): string | undefined => {
-      console.log('gooby pls', viewer);
       return viewer._id;
     },
     hasWallet: (viewer: Viewer): boolean | undefined => {
@@ -293,7 +295,17 @@ export const viewerResolvers: IResolvers = {
 
       return pomCount;
     },
-    // Current(on-going) tasks
+    pomData: async (
+      viewer: Viewer,
+      _args: {},
+      { db }: { db: Database }
+    ): Promise<PomData | null> => {
+      console.log('tasks resolver');
+      return {
+        result: viewer.pomData,
+        count: viewer.pomData.length
+      };
+    },
     currentTasks: async (
       viewer: Viewer,
       _args: {},

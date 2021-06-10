@@ -6,9 +6,14 @@ export const typeDefs = gql`
     LONGBREAK
   }
 
-  type PomData {
+  type PomRecord {
     date: String!
     count: Int!
+  }
+
+  type PomData {
+    total: Int!
+    result: [PomRecord]!
   }
 
   type Task {
@@ -34,7 +39,6 @@ export const typeDefs = gql`
     longBreakDuration: Int
     longBreakInterval: Int
     pomCycle: PomCycle!
-    pomData: [PomData]!
     todayTasks: [Task]!
   }
 
@@ -50,6 +54,7 @@ export const typeDefs = gql`
     longBreakInterval: Int
     pomCycle: PomCycle
     pomCount(date: String!): Int
+    pomData: PomData!
     currentTasks: Tasks!
   }
 

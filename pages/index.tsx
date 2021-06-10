@@ -14,8 +14,6 @@ const Index = () => {
 
   const [tasks, setTasks] = useState<TaskType[] | null>([]);
 
-  console.log('currentTasks', tasks);
-
   useEffect(() => {
     const _tasks = viewer?.currentTasks?.result
       ? newPayload(viewer.currentTasks.result)

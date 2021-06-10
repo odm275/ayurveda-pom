@@ -27,8 +27,9 @@ const initialViewer: Viewer = {
   pomCount: null,
   pomCycle: null,
   pomDuration: null,
+  pomData: null,
   shortBreakDuration: null,
-  tasks: null,
+  currentTasks: null,
   token: null
 };
 

@@ -30,3 +30,13 @@ export interface ViewerTasksData {
   total: number;
   result: Task[];
 }
+
+export interface PomEntry {
+  date: string;
+  count: number;
+}
+
+export interface PomData {
+  result: PomEntry[];
+  count: number;
+}

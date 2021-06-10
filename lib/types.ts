@@ -10,7 +10,8 @@ export interface Viewer {
   pomCycle: string | null;
   pomDuration: string | null;
   shortBreakDuration: string | null;
-  tasks: any;
+  currentTasks: any;
+  pomData: any;
 }
 
 export interface Task {
@@ -27,4 +28,14 @@ export interface TaskType {
   isNew: boolean | null;
   isFinished: boolean | null;
   positionId: number;
+}
+
+interface PomEntry {
+  date: string;
+  count: number;
+}
+
+export interface PomData {
+  result: PomEntry[];
+  count?: number;
 }

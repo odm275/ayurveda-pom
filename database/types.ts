@@ -20,6 +20,10 @@ export interface Tasks {
   total: number;
   result: Task[];
 }
+export interface PomEntry {
+  date: string;
+  count: number;
+}
 
 export interface Viewer {
   _id?: string;
@@ -32,14 +36,9 @@ export interface Viewer {
   longBreakDuration?: number;
   longBreakInterval?: number;
   pomCycle?: PomCycle;
-  pomData?: PomData[];
+  pomData?: PomEntry[];
   pomCount?: number;
   currentTasks: ObjectId[];
-}
-
-export interface PomData {
-  date: string;
-  count: number;
 }
 
 export interface User {
@@ -54,7 +53,7 @@ export interface User {
   longBreakDuration?: number;
   longBreakInterval?: number;
   pomCycle: PomCycle;
-  pomData?: PomData[];
+  pomData?: PomEntry[];
   currentTasks: ObjectId[];
 }
 
