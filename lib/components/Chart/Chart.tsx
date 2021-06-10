@@ -3,7 +3,7 @@ import React, { createContext, useContext } from 'react';
 const ChartContext = createContext();
 export const useDimensionsContext = () => useContext(ChartContext);
 
-const Chart = ({ dimensions, children }) => (
+export const Chart = ({ dimensions, children }) => (
   <ChartContext.Provider value={dimensions}>
     <svg className="Chart" width={dimensions.width} height={dimensions.height}>
       <g
@@ -14,5 +14,3 @@ const Chart = ({ dimensions, children }) => (
     </svg>
   </ChartContext.Provider>
 );
-
-export default Chart;

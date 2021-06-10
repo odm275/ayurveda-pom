@@ -1,8 +1,8 @@
 import React from 'react';
 import * as d3 from 'd3';
 
-const Line = ({
-  type,
+export const Line = ({
+  type = 'line',
   data,
   xAccessor,
   yAccessor,
@@ -10,6 +10,7 @@ const Line = ({
   interpolation,
   ...props
 }) => {
+  console.log('data', data);
   const lineGenerator = d3[type]()
     .x(xAccessor)
     .y(yAccessor)
@@ -23,5 +24,3 @@ const Line = ({
 
   return <path {...props} className={`Line Line--type-${type}`} d={line} />;
 };
-
-export default Line;

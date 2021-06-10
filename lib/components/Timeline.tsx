@@ -1,10 +1,11 @@
 import { AnyTxtRecord } from 'dns';
 import React from 'react';
-import d3 from 'd3';
+import * as d3 from 'd3';
 import { useChartDimensions } from '@/lib/hooks/useChartDimensions';
-import { useAuth } from '@/lib/context/AuthContext';
 
 import { PomData } from '../types';
+import { Chart } from '@/lib/components/Chart/Chart';
+import { Line } from '@/lib/components/Chart/Line';
 
 interface Props {
   data: PomData;
@@ -33,7 +34,7 @@ export const Timeline = ({ data, xAccessor, yAccessor }: Props) => {
     <div className="Timeline" ref={ref}>
       <Chart dimensions={dms}>
         <Line
-          data={data.result}
+          data={data}
           xAccessor={xAccessorScaled}
           yAccessor={yAccessorScaled}
         />
