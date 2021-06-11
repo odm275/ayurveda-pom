@@ -5,6 +5,7 @@ import { Layout } from '@/lib/components/Layout';
 import { Timeline } from '@/lib/components/Timeline';
 import { useAuth } from '@/lib/context/AuthContext';
 import ErrorBanner from '@/lib/components/ErrorBanner';
+import { pomDataFormatter } from '@/lib/utils/data_viz';
 
 const parseDate = d3.timeParse('%m-%d-%Y');
 const dateAccessor = (d) => parseDate(d.date);
@@ -31,13 +32,16 @@ const StatsPage = () => {
   const logInErrorBannerElement = error ? (
     <ErrorBanner description="We aren't able to verify if you were logged in. Please try again later!" />
   ) : null;
+
+  console.log('formattedData', viewer.pomData.result);
+  const data = viewer.pomData.result.reduce(pomDataFormatter, []);
   return (
     <Layout>
       {logInErrorBannerElement}
 
       <h1>Productivity Stats</h1>
       <Timeline
-        data={viewer.pomData.result}
+        data={data}
         xAccessor={dateAccessor}
         yAccessor={countAccessor}
       />
