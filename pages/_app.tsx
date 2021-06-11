@@ -6,6 +6,9 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { ProvideAuth } from '../lib/context/AuthContext';
 import { useApollo } from '../apollo/client';
 
+import '../styles/styles.css';
+import '../styles/chart.css';
+
 export default function App({ Component, pageProps }: AppProps) {
   const apolloClient = useApollo(pageProps.initialApolloState);
 
