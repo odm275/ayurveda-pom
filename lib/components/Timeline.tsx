@@ -6,12 +6,15 @@ import { useChartDimensions } from '@/lib/hooks/useChartDimensions';
 import { PomData } from '../types';
 import { Chart } from '@/lib/components/Chart/Chart';
 import { Line } from '@/lib/components/Chart/Line';
+import Axis from '@/lib/components/Chart/Axis';
 
 interface Props {
   data: PomData;
   xAccessor: any;
   yAccessor: any;
 }
+
+const formatDate = d3.timeFormat('%-b %-d');
 
 export const Timeline = ({ data, xAccessor, yAccessor }: Props) => {
   const [ref, dms] = useChartDimensions();
@@ -38,6 +41,8 @@ export const Timeline = ({ data, xAccessor, yAccessor }: Props) => {
           xAccessor={xAccessorScaled}
           yAccessor={yAccessorScaled}
         />
+        <Axis dimension="x" scale={xScale} formatTick={formatDate} />
+        <Axis dimension="y" scale={yScale} label="Temperature" />
       </Chart>
     </div>
   );
