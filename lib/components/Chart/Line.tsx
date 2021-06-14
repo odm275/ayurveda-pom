@@ -1,5 +1,15 @@
-import React from 'react';
+import React, { FunctionComponent, ReactElement } from 'react';
 import * as d3 from 'd3';
+import { PomEntry } from '@/lib/types';
+
+interface Props {
+  type: 'line' | 'area';
+  data: PomEntry[];
+  xAccessor: (any) => number;
+  yAccessor: (any) => number;
+  y0Accessor: any;
+  interpolation: d3.CurveFactory;
+}
 
 export const Line = ({
   type = 'line',
@@ -9,8 +19,7 @@ export const Line = ({
   y0Accessor = '0',
   interpolation = d3.curveMonotoneX,
   ...props
-}) => {
-  console.log('data', d3[type]());
+}: Props): ReactElement => {
   const lineGenerator = d3[type]()
     .x(xAccessor)
     .y(yAccessor)

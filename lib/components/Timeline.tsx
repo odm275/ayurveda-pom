@@ -3,13 +3,13 @@ import React from 'react';
 import * as d3 from 'd3';
 import { useChartDimensions } from '@/lib/hooks/useChartDimensions';
 
-import { PomData } from '../types';
+import { PomEntry } from '@/lib/types';
 import { Chart } from '@/lib/components/Chart/Chart';
 import { Line } from '@/lib/components/Chart/Line';
 import Axis from '@/lib/components/Chart/Axis';
 
 interface Props {
-  data: PomData;
+  data: any;
   xAccessor: any;
   yAccessor: any;
 }

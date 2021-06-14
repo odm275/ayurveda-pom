@@ -39,7 +39,7 @@ export interface TaskType {
   positionId: number;
 }
 
-interface PomEntry {
+export interface PomEntry {
   date: string;
   count: number;
 }
