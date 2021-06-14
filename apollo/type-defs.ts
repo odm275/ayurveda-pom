@@ -13,7 +13,7 @@ export const typeDefs = gql`
 
   type PomData {
     total: Int!
-    result: [PomRecord]!
+    result: [PomRecord!]!
   }
 
   type Task {
@@ -27,7 +27,7 @@ export const typeDefs = gql`
 
   type Tasks {
     total: Int!
-    result: [Task]!
+    result: [Task!]!
   }
 
   type User {
@@ -53,7 +53,7 @@ export const typeDefs = gql`
     longBreakDuration: Int
     longBreakInterval: Int
     pomCycle: PomCycle
-    pomCount(date: String!): Int
+    pomCount(date: String!): Int!
     pomData: PomData!
     currentTasks: Tasks!
   }

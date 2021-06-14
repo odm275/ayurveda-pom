@@ -9,7 +9,18 @@ import { LogInInput, PomCycle } from "./../../../globalTypes";
 // GraphQL mutation operation: LogIn
 // ====================================================
 
-export interface LogIn_logIn_tasks_result {
+export interface LogIn_logIn_pomData_result {
+  __typename: "PomRecord";
+  date: string;
+  count: number;
+}
+
+export interface LogIn_logIn_pomData {
+  __typename: "PomData";
+  result: LogIn_logIn_pomData_result[];
+}
+
+export interface LogIn_logIn_currentTasks_result {
   __typename: "Task";
   id: string;
   title: string;
@@ -18,10 +29,10 @@ export interface LogIn_logIn_tasks_result {
   isFinished: boolean;
 }
 
-export interface LogIn_logIn_tasks {
+export interface LogIn_logIn_currentTasks {
   __typename: "Tasks";
   total: number;
-  result: (LogIn_logIn_tasks_result | null)[];
+  result: LogIn_logIn_currentTasks_result[];
 }
 
 export interface LogIn_logIn {
@@ -36,8 +47,9 @@ export interface LogIn_logIn {
   longBreakDuration: number | null;
   longBreakInterval: number | null;
   pomCycle: PomCycle | null;
-  pomCount: number | null;
-  tasks: LogIn_logIn_tasks;
+  pomCount: number;
+  pomData: LogIn_logIn_pomData;
+  currentTasks: LogIn_logIn_currentTasks;
 }
 
 export interface LogIn {

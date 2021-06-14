@@ -17,7 +17,7 @@ export interface UpdateTasks_updateTasks_result {
 export interface UpdateTasks_updateTasks {
   __typename: "Tasks";
   total: number;
-  result: (UpdateTasks_updateTasks_result | null)[];
+  result: UpdateTasks_updateTasks_result[];
 }
 
 export interface UpdateTasks {

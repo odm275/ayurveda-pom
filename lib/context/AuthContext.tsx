@@ -4,10 +4,13 @@ import {
   useEffect,
   useRef,
   useContext,
-  FunctionComponent
+  FunctionComponent,
+  ReactNode,
+  SetStateAction,
+  Dispatch
 } from 'react';
 
-import { useMutation } from '@apollo/client';
+import { ApolloError, useMutation } from '@apollo/client';
 import dayjs from 'dayjs';
 import { LOG_IN } from '../graphql/mutations';
 import {
@@ -33,10 +36,21 @@ const initialViewer: Viewer = {
   token: null
 };
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-export const authContext = createContext(null);
+export type ContextValue =
+  | undefined
+  | {
+      viewer: Viewer;
+      setViewer: Dispatch<SetStateAction<Viewer>>;
+      error: ApolloError;
+    };
 
-export const ProvideAuth: FunctionComponent = ({ children }) => {
+export const authContext = createContext<ContextValue>(undefined);
+
+interface Props {
+  children: ReactNode;
+}
+
+export const ProvideAuth: FunctionComponent = ({ children }: Props) => {
   const auth = useProvideAuth();
   return <authContext.Provider value={auth}>{children}</authContext.Provider>;
 };
