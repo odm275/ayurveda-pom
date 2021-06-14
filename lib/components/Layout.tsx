@@ -5,7 +5,7 @@ import { AppHeader } from '@/lib/components/AppHeader';
 export const Layout: FunctionComponent = ({ children }) => {
   return (
     <Box w="100vw" h="100vh">
-      <Flex minHeight="100%" flexDir="column" overflowX="hidden">
+      <Flex minHeight="100%" flexDir="column">
         <AppHeader />
         <Box
           flexGrow={1}
@@ -14,6 +14,9 @@ export const Layout: FunctionComponent = ({ children }) => {
           borderTopLeftRadius={['10px', '35px']}
           borderTopRightRadius={['10px', '0']}
           p={5}
+          sx={{
+            width: 'calc(100% - 100px - 1.25rem)'
+          }}
         >
           {children}
         </Box>
