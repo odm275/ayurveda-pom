@@ -13,7 +13,7 @@ const dateAccessor = (d: PomEntry) => parseDate(d.date);
 const countAccessor = (d: PomEntry) => d.count;
 
 const StatsPage = () => {
-  const { viewer, error } = useAuth();
+  const { viewer, setViewer, error } = useAuth();
   if (!viewer.didRequest && !error) {
     return (
       <Flex flexDir="column" p={3}>
@@ -36,11 +36,29 @@ const StatsPage = () => {
 
   const data = viewer.pomData.result.reduce(pomDataFormatter, []) as PomEntry[];
 
+  const handleOnClick = (e) => {
+    const oneMonthData = viewer.pomData.result.filter((entry) => {
+      //date range
+    });
+  };
+
+  const buttonsSection = (
+    <Flex justifyContent="space-between">
+      <Button flexGrow={1} onClick={handleOnClick}>
+        1 month
+      </Button>
+      <Button flexGrow={1}>2 month</Button>
+      <Button flexGrow={1}>3 month</Button>
+    </Flex>
+  );
+
   return (
     <Layout>
       {logInErrorBannerElement}
 
       <h1>Productivity Stats</h1>
+      {buttonsSection}
+
       <Timeline
         data={data}
         xAccessor={dateAccessor}

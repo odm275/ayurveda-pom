@@ -6,7 +6,7 @@
 .Timeline {
   height: 300px;
   min-width: 500px;
-  width: calc(100% + 1em);
+  width: 100%;
   margin-bottom: 2em;
 }
 
@@ -35,5 +35,4 @@
 .Histogram {
   background: white;
   padding: 0.6em 1em;
-  margin: 0.5em;
 }
