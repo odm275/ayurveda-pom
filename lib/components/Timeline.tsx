@@ -49,10 +49,23 @@ export const Timeline = ({ data, xAccessor, yAccessor }: Props) => {
     'Dec'
   ];
 
-  const dateRange = d3.timeDays(
-    new Date(data[0].date),
-    new Date(data[data.length - 1].date)
-  );
+  function generateDaysInRange({ lowBoundStr, upperBoundStr }) {
+    if (!lowBoundStr || upperBoundStr) {
+      return d3.timeDays(new Date(), new Date());
+    }
+    const dateRange = d3.timeDays(
+      new Date(lowBoundStr),
+      new Date(upperBoundStr)
+    );
+    return dateRange;
+  }
+
+  // data is sorted. Hence, it is enough to get 1st and last elements for range.
+
+  const dateRange = generateDaysInRange({
+    lowBoundStr: data[0]?.date,
+    upperBoundStr: data[data.length - 1]?.date
+  });
 
   const firstDayOfMonths = dateRange.filter((date) => date.getDate() === 1);
 

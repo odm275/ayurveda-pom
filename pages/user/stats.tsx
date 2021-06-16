@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import * as d3 from 'd3';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
@@ -9,6 +10,7 @@ import { useAuth } from '@/lib/context/AuthContext';
 import ErrorBanner from '@/lib/components/ErrorBanner';
 import { pomDataFormatter } from '@/lib/utils/data_viz';
 import { PomEntry } from '@/lib/types';
+import { useEffectWithoutOnMount } from '@/lib/hooks/useEffectWithoutOnMount';
 
 dayjs.extend(isBetween);
 
@@ -18,6 +20,14 @@ const countAccessor = (d: PomEntry) => d.count;
 
 const StatsPage = () => {
   const { viewer, setViewer, error } = useAuth();
+  const [pomData, setPomData] = useState([]);
+
+  useEffect(() => {
+    if (viewer.didRequest) {
+      setPomData(viewer.pomData.result);
+    }
+  }, [viewer.didRequest]);
+
   if (!viewer.didRequest && !error) {
     return (
       <Flex flexDir="column" p={3}>
@@ -38,20 +48,20 @@ const StatsPage = () => {
     <ErrorBanner description="We aren't able to verify if you were logged in. Please try again later!" />
   ) : null;
 
-  const data = viewer.pomData.result.reduce(pomDataFormatter, []) as PomEntry[];
+  const data = pomData.reduce(pomDataFormatter, []) as PomEntry[];
 
   const handleOnClick = ({ numOfMonths }) => (e) => {
     e.preventDefault();
 
     const customRangeData = viewer.pomData.result.filter((entry) => {
-      // count from today to a month back
       const entryDate = dayjs(entry.date).startOf('day');
       const today = dayjs().startOf('day');
       const monthsAgo = today.subtract(numOfMonths, 'month');
-      // We wanna filter dates that fall in the range between (today, monthsAgo)
       const isInDateRange = entryDate.isBetween(monthsAgo, today);
       return isInDateRange;
     });
+
+    setPomData(customRangeData);
   };
 
   const buttonsSection = (

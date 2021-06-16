@@ -35,7 +35,6 @@ const AddTaskModal = ({ isOpen, onClose, setTasks, tasks }: Props) => {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = (data) => {
-    console.log('submitData', data);
     const { title, amt } = data;
     const newTasks = [
       ...tasks,
