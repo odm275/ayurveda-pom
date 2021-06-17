@@ -34,7 +34,7 @@ export const Timeline = ({ data, xAccessor, yAccessor }: Props) => {
   const xAccessorScaled = (d) => xScale(xAccessor(d));
   const yAccessorScaled = (d) => yScale(yAccessor(d));
 
-  const months = [
+  const MONTHS = [
     'Jan',
     'Feb',
     'Mar',
@@ -71,7 +71,7 @@ export const Timeline = ({ data, xAccessor, yAccessor }: Props) => {
   // console.log(firstDayOfMonths);
   const markers = firstDayOfMonths.map((day, i) => {
     const xAccessorScaled = xScale(day);
-    const text = months[day.getMonth()];
+    const text = MONTHS[day.getMonth()];
     return (
       <LineMarker
         key={i}
