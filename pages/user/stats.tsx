@@ -10,7 +10,6 @@ import { useAuth } from '@/lib/context/AuthContext';
 import ErrorBanner from '@/lib/components/ErrorBanner';
 import { pomDataFormatter } from '@/lib/utils/data_viz';
 import { PomEntry } from '@/lib/types';
-import { useEffectWithoutOnMount } from '@/lib/hooks/useEffectWithoutOnMount';
 
 dayjs.extend(isBetween);
 
@@ -48,7 +47,19 @@ const StatsPage = () => {
     <ErrorBanner description="We aren't able to verify if you were logged in. Please try again later!" />
   ) : null;
 
-  const data = pomData.reduce(pomDataFormatter, []) as PomEntry[];
+  const entryForToday = pomData.some((entry) => {
+    return dayjs().isSame(entry.date, 'day');
+  });
+
+  // We add a dummy entry so the range up to today is generated
+  // In case there's no entry for the current day(today)
+  const dataDummyEntry = [
+    ...pomData,
+    { date: dayjs().format('MM-DD-YYYY'), count: 0 }
+  ];
+  const dataWToday = entryForToday ? pomData : dataDummyEntry;
+
+  const data = dataWToday.reduce(pomDataFormatter, []) as PomEntry[];
 
   const handleOnClick = ({ numOfMonths }) => (e) => {
     e.preventDefault();

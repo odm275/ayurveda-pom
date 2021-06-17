@@ -50,7 +50,7 @@ export const Timeline = ({ data, xAccessor, yAccessor }: Props) => {
   ];
 
   function generateDaysInRange({ lowBoundStr, upperBoundStr }) {
-    if (!lowBoundStr || upperBoundStr) {
+    if (!lowBoundStr || !upperBoundStr) {
       return d3.timeDays(new Date(), new Date());
     }
     const dateRange = d3.timeDays(
@@ -61,7 +61,6 @@ export const Timeline = ({ data, xAccessor, yAccessor }: Props) => {
   }
 
   // data is sorted. Hence, it is enough to get 1st and last elements for range.
-
   const dateRange = generateDaysInRange({
     lowBoundStr: data[0]?.date,
     upperBoundStr: data[data.length - 1]?.date
@@ -69,6 +68,7 @@ export const Timeline = ({ data, xAccessor, yAccessor }: Props) => {
 
   const firstDayOfMonths = dateRange.filter((date) => date.getDate() === 1);
 
+  // console.log(firstDayOfMonths);
   const markers = firstDayOfMonths.map((day, i) => {
     const xAccessorScaled = xScale(day);
     const text = months[day.getMonth()];
