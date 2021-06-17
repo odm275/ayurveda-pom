@@ -15,7 +15,7 @@ interface Props {
   yAccessor: any;
 }
 
-const formatDate = d3.timeFormat('%-b %-d');
+const formatDate = d3.timeFormat('%-d');
 
 export const Timeline = ({ data, xAccessor, yAccessor }: Props) => {
   const [ref, dms] = useChartDimensions();
