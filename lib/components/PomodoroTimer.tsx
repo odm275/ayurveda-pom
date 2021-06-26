@@ -63,6 +63,28 @@ function successfulCycleAlert(message: string) {
   audioTune.play();
 }
 
+const removeAmtCurrentTask = (tasks: TaskType[]) => {
+  const copyAllTasks = Array.from(tasks);
+  const unFinishedTasks = copyAllTasks.filter((task) => !task.isFinished);
+  const finishedTasks = copyAllTasks.filter((task) => task.isFinished);
+
+  const [currentTask] = unFinishedTasks.slice(0, 1);
+  const newAmt = currentTask.amt - 1;
+  const isFinished = newAmt < 1;
+
+  const updatedTaskData = {
+    ...currentTask,
+    amt: newAmt,
+    isFinished: isFinished
+  };
+
+  unFinishedTasks.splice(0, 1, updatedTaskData);
+  const newTasksArray = [...unFinishedTasks, ...finishedTasks];
+  return newTasksArray;
+};
+
+const SECOND = 1000;
+
 const PomodoroTimer = ({
   pomCycle,
   pomDuration,
@@ -101,6 +123,12 @@ const PomodoroTimer = ({
     longBreakInterval
   };
 
+  const timeForPomodoro =
+    state.cycle === PomCycle.ShortBreak || state.cycle === PomCycle.LongBreak;
+  const timeForShortBreak = state.pomCount % longBreakInterval !== 0;
+  const timeForLongBreak = state.pomCount % longBreakInterval === 0;
+  const timeEnded = state.timer === 0;
+
   const [updateUserSettings] = useMutation<
     UpdateUserSettings,
     UpdateUserSettingsVariables
@@ -113,38 +141,16 @@ const PomodoroTimer = ({
     }
   });
 
-  const pauseOrPlayButton = !state.isRunning ? (
-    <BiPlay onClick={() => dispatch({ type: RUN_TIMER })} size={45} />
-  ) : (
-    <BiPause onClick={() => dispatch({ type: PAUSE_TIMER })} size={45} />
-  );
-
-  const resetButton = (
-    <BiReset size={45} onClick={() => dispatch({ type: RESET_TIMER })} />
-  );
-
-  const succesCycleBannerElement =
-    state.timer === 0 ? (
-      <SuccessBanner description="You've succesfully completed a cycle!" />
-    ) : null;
-
-  const second = 1000;
   useInterval(
     () => {
-      const newTime = state.timer - second;
+      const newTime = state.timer - SECOND;
       dispatch({ type: NEW_TIME, payload: newTime });
     },
     state.isRunning ? 10 : null
   );
 
-  const timeForPomodoro =
-    state.cycle === PomCycle.ShortBreak || state.cycle === PomCycle.LongBreak;
-  const timeForShortBreak = state.pomCount % longBreakInterval !== 0;
-  const timeForLongBreak = state.pomCount % longBreakInterval === 0;
-  const timeEnded = state.timer === 0;
-
   useEffectWithoutOnMount(() => {
-    if (state.timer === 0) {
+    if (timeEnded) {
       if (timeForPomodoro) {
         dispatch({ type: POMODORO, payload: durationValues });
         successfulCycleAlert('Time to work!');
@@ -152,31 +158,9 @@ const PomodoroTimer = ({
         dispatch({ type: ADD_POM_COUNT });
       }
     }
-  }, timeEnded);
+  }, state.timer);
 
   useEffectWithoutOnMount(() => {
-    const removeAmtCurrentTask = (tasks: TaskType[]) => {
-      const copyAllTasks = Array.from(tasks);
-      const unFinishedTasks = copyAllTasks.filter((task) => !task.isFinished);
-      const finishedTasks = copyAllTasks.filter((task) => task.isFinished);
-
-      const [currentTask] = unFinishedTasks.slice(0, 1);
-      const newAmt = currentTask.amt - 1;
-      const isFinished = newAmt < 1;
-
-      const updatedTaskData = {
-        ...currentTask,
-        amt: newAmt,
-        isFinished: isFinished
-      };
-
-      console.log('updatedTaskData', updatedTaskData);
-
-      unFinishedTasks.splice(0, 1, updatedTaskData);
-      const newTasksArray = [...unFinishedTasks, ...finishedTasks];
-      return newTasksArray;
-    };
-
     const newTasksData = removeAmtCurrentTask(tasks);
     setTasks(newTasksData);
 
@@ -204,8 +188,6 @@ const PomodoroTimer = ({
   // This needs to only run when????
   useEffectWithoutOnMount(() => {
     if (tasks.length > 0) {
-      console.log('update tasks');
-
       updateTasks({
         variables: {
           input: { tasks: tasks }
@@ -215,6 +197,21 @@ const PomodoroTimer = ({
   }, tasks);
 
   const progressPercentage = (state.timer / selectTimePerCycle(state)) * 100;
+
+  const pauseOrPlayButton = !state.isRunning ? (
+    <BiPlay onClick={() => dispatch({ type: RUN_TIMER })} size={45} />
+  ) : (
+    <BiPause onClick={() => dispatch({ type: PAUSE_TIMER })} size={45} />
+  );
+
+  const resetButton = (
+    <BiReset size={45} onClick={() => dispatch({ type: RESET_TIMER })} />
+  );
+
+  const succesCycleBannerElement =
+    state.timer === 0 ? (
+      <SuccessBanner description="You've succesfully completed a cycle!" />
+    ) : null;
 
   return (
     <Box>
