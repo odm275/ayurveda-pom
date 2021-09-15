@@ -73,6 +73,9 @@ function useProvideAuth() {
           sessionStorage.removeItem('token');
         }
       }
+    },
+    onError: (err) => {
+      console.log(err);
     }
   });
   const logInRef = useRef(logIn);

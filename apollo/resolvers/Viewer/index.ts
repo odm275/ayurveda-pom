@@ -231,11 +231,12 @@ export const viewerResolvers: IResolvers = {
       try {
         const code = input ? input.code : null; // Comes from google after clicking sign in and being re-directed back to the app
         const token = crypto.randomBytes(16).toString('hex');
-
         const viewer: User | undefined = code
           ? await logInViaGoogle(code, token, db, res)
           : await logInViaCookie(token, db, req, res); // req object will have the cookie
+
         if (!viewer) {
+          console.log('no viewer was found');
           return {
             didRequest: true
           };
@@ -288,6 +289,9 @@ export const viewerResolvers: IResolvers = {
       { date }: UserPomCountArgs,
       { db }: { db: Database }
     ): number | undefined => {
+      if (!viewer.pomData) {
+        return 0;
+      }
       const todayViewerEntry = viewer.pomData.find(
         (entry) => entry.date === date
       );
@@ -300,7 +304,12 @@ export const viewerResolvers: IResolvers = {
       _args: {},
       { db }: { db: Database }
     ): Promise<PomData | null> => {
-      console.log('tasks resolver');
+      if (!viewer.pomData) {
+        return {
+          result: [],
+          count: 0
+        };
+      }
       return {
         result: viewer.pomData,
         count: viewer.pomData.length

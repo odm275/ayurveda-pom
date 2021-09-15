@@ -38,7 +38,7 @@ export interface Viewer {
   pomCycle?: PomCycle;
   pomData?: PomEntry[];
   pomCount?: number;
-  currentTasks: ObjectId[];
+  currentTasks?: ObjectId[];
 }
 
 export interface User {
