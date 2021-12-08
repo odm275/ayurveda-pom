@@ -19,4 +19,5 @@ export const config = {
 
 const handler = apolloServer.createHandler({ path: '/api/graphql' });
 
-export default cookies(handler);
+// export default cookies(handler);
+export default handler;

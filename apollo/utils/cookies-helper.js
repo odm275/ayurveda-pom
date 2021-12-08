@@ -5,7 +5,7 @@ import { serialize } from 'cookie';
  * value -> "userId"
  * options -> age, httpOnly, etc...
  */
-const cookie = (res, name, value, options = {}) => {
+export const setCookie = (res, name, value, options = {}) => {
   const stringValue =
     typeof value === 'object' ? 'j:' + JSON.stringify(value) : String(value);
 
@@ -17,22 +17,6 @@ const cookie = (res, name, value, options = {}) => {
   res.setHeader('Set-Cookie', serialize(name, String(stringValue), options));
 };
 
-const clearCookie = (res, name) => {
+export const clearCookie = (res, name) => {
   res.setHeader('Set-Cookie', `${name}=; max-age=0`);
 };
-
-/**
- * Adds `cookie` fn on the response object.
- */
-const cookies = (handler) => (req, res) => {
-  /*
-    We wrap in a closure(partial application) so that we can merge the res with the name,value, options args
-    that are passed when cookie(name,value,options) is called.
-  */
-  res.cookie = (name, value, options) => cookie(res, name, value, options);
-  res.clearCookie = (name) => clearCookie(name);
-
-  return handler(req, res);
-};
-
-export default cookies;

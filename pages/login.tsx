@@ -18,6 +18,7 @@ import {
 import { AuthUrl as AuthUrlData } from '@/lib/graphql/queries/AuthUrl/__generated__/AuthUrl';
 
 import { useRouter } from 'next/router';
+import dayjs from 'dayjs';
 
 // Google token is going come back in the url. We can get our viewers info with that <-> LOG_IN mutation
 
@@ -63,6 +64,7 @@ const Login = () => {
     if (code) {
       logInRef.current({
         variables: {
+          date: dayjs().format('MM-DD-YYYY'),
           input: { code }
         }
       });

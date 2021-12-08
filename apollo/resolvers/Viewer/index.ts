@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { IResolvers } from 'graphql-tools';
 import crypto from 'crypto';
 import Cryptr from 'cryptr';
-import dayjs from 'dayjs';
+import { setCookie, clearCookie } from '../../utils/cookies-helper';
 import {
   UpdateUserSettingsArgs,
   LogInArgs,
@@ -21,22 +21,11 @@ const cookieOptions = {
   secure: process.env.NODE_ENV === 'development' ? false : true
 };
 
-interface Response extends NextApiResponse {
-  cookie: (
-    name: string,
-    value: string,
-    options?: {},
-    res?: NextApiResponse
-  ) => void;
-
-  clearCookie: (res: NextApiResponse, name: string) => void;
-}
-
 const logInViaGoogle = async (
   code: string,
   token: string,
   db: Database,
-  res: Response
+  res: NextApiResponse
 ): Promise<User | undefined> => {
   const { user } = await Google.logIn(code);
 
@@ -104,8 +93,7 @@ const logInViaGoogle = async (
   const cryptr = new Cryptr(process.env.SECRET);
   const encryptedUserId = cryptr.encrypt(userId);
 
-  // Typescript tries to type
-  res.cookie('viewer', encryptedUserId, {
+  setCookie(res,'viewer', encryptedUserId, {
     ...cookieOptions,
     maxAge: 365 * 24 * 60 * 60 * 1000
   });
@@ -117,7 +105,7 @@ const logInViaCookie = async (
   token: string,
   db: Database,
   req: NextApiRequest,
-  res: Response
+  res: NextApiResponse
 ): Promise<User | undefined> => {
   // grab viewer cookie
   // Decrypt it to its userID
@@ -134,7 +122,7 @@ const logInViaCookie = async (
 
   const viewer = updateRes.value;
   if (!viewer) {
-    res.clearCookie(res, 'viewer');
+    clearCookie(res, 'viewer');
   }
   return viewer;
 };
@@ -196,7 +184,7 @@ export const viewerResolvers: IResolvers = {
     updateUserSettings: async (
       __root: undefined,
       { input }: UpdateUserSettingsArgs,
-      { db, req, res }: { db: Database; req: NextApiRequest; res: Response }
+      { db, req, res }: { db: Database; req: NextApiRequest; res: NextApiResponse }
     ): Promise<User | undefined> => {
       console.log('updateUserSettings');
       const viewer = await authorize(db, req);
@@ -226,7 +214,7 @@ export const viewerResolvers: IResolvers = {
     logIn: async (
       __root: undefined,
       { input, date }: LogInArgs,
-      { db, req, res }: { db: Database; req: NextApiRequest; res: Response }
+      { db, req, res }: { db: Database; req: NextApiRequest; res: NextApiResponse }
     ): Promise<Viewer> => {
       try {
         const code = input ? input.code : null; // Comes from google after clicking sign in and being re-directed back to the app
@@ -267,10 +255,10 @@ export const viewerResolvers: IResolvers = {
     logOut: (
       _root: undefined,
       _args: {},
-      { res }: { res: Response }
+      { res }: { res: NextApiResponse }
     ): Viewer => {
       try {
-        res.clearCookie(res, 'viewer');
+        clearCookie(res, 'viewer');
         return { didRequest: true };
       } catch (error) {
         throw new Error(`Failed to log out: ${error}`);
