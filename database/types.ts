@@ -54,7 +54,7 @@ export interface User {
   longBreakInterval?: number;
   pomCycle: PomCycle;
   pomData?: PomEntry[];
-  currentTasks: ObjectId[];
+  tasks: ObjectId[];
 }
 
 export interface Database {

@@ -1,13 +1,17 @@
 import { gql } from '@apollo/client';
 export const typeDefs = gql`
+  "Different states the pomodoro can be in"
   enum PomCycle {
     POMODORO
     SHORTBREAK
     LONGBREAK
   }
 
+
   type PomRecord {
+    "date when the a successful pomodoro cycle finished"
     date: String!
+    
     count: Int!
   }
 
@@ -34,27 +38,41 @@ export const typeDefs = gql`
     id: ID!
     name: String!
     status: String!
+    "Generic duration for pomodoro"
     pomDuration: Int
+    "Short break after pomodoro"
     shortBreakDuration: Int
+    "Long break after a certain amt of pomodoro cycles are met"
     longBreakDuration: Int
+    "The amt of pomodoro cycles(pom,shortBreak) that have to happen before a long break"
     longBreakInterval: Int
+    "enum for reference pomodoro cycles by a string name"
     pomCycle: PomCycle!
-    todayTasks: [Task]!
+    "Tasks for today's date"
+    tasks: [Task]!
   }
+
 
   type Viewer {
     id: ID
     token: String
     avatar: String
-    hasWallet: Boolean # Resolve this as a boolean since we don't want the actual walletId to make it to the client
+    "Resolve this as a boolean since we don't want the actual walletId to make it to the client"
+    hasWallet: Boolean
+    "Confirmation that the user's request came back to the client"
     didRequest: Boolean!
+    "User properties that the Viewer also has"
     pomDuration: Int
+    "User properties that the Viewer also has"
     shortBreakDuration: Int
+    "User properties that the Viewer also has"
     longBreakDuration: Int
+    "User properties that the Viewer also has"
     longBreakInterval: Int
+    "User properties that the Viewer also has"
     pomCycle: PomCycle
-    pomCount(date: String!): Int!
     pomData: PomData!
+    pomCount(date: String!): Int!
     currentTasks: Tasks!
   }
 
@@ -93,6 +111,7 @@ export const typeDefs = gql`
   type Mutation {
     logIn(input: LogInInput, date: String): Viewer!
     logOut: Viewer!
+    "updates user in database when a pomodoro counter goes up, and when settings change"
     updateUserSettings(input: UpdateUserSettingsInput): Viewer!
     updateTasks(input: UpdateTaskUserInput): Tasks!
     test: String!

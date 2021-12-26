@@ -11,6 +11,7 @@ import { TaskType } from '@/lib/types';
 
 const Index = () => {
   const { viewer, error } = useAuth();
+  // console.log('viewer', viewer)
 
   const [tasks, setTasks] = useState<TaskType[] | null>([]);
 

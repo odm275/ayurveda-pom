@@ -230,6 +230,10 @@ export const viewerResolvers: IResolvers = {
           };
         }
 
+        console.log(viewer)
+
+
+
         const resViewer: Viewer = {
           _id: viewer._id,
           token: viewer.token,
@@ -242,10 +246,8 @@ export const viewerResolvers: IResolvers = {
           longBreakInterval: viewer.longBreakInterval,
           pomCycle: viewer.pomCycle,
           pomData: viewer.pomData,
-          currentTasks: viewer.currentTasks
+          currentTasks: viewer.tasks
         };
-
-        console.log('resviewer', resViewer);
 
         return resViewer;
       } catch (error) {
