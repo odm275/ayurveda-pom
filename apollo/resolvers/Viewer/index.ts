@@ -84,7 +84,7 @@ const logInViaGoogle = async (
       name: userName,
       avatar: userAvatar,
       email: userEmail,
-      currentTasks: [],
+      tasks: [],
       pomCycle: PomCycle.Pomodoro
     });
     viewer = insertResult.ops[0];
