@@ -51,6 +51,7 @@ interface Props {
   pomCount: number;
   tasks: TaskType[];
   setTasks: any;
+  updateTasks: any;
 }
 
 function successfulCycleAlert(message: string) {
@@ -93,12 +94,10 @@ const PomodoroTimer = ({
   longBreakInterval,
   pomCount,
   tasks,
-  setTasks
+  setTasks,
+  updateTasks
 }: Props) => {
-  const [updateTasks, { loading, error }] = useMutation<
-    UpdatedTasksData,
-    UpdateTasksVariables
-  >(UPDATE_TASKS);
+
   const initialState = {
     cycle: pomCycle,
     timer: selectTimePerCycle({

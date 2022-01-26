@@ -62,7 +62,7 @@ export const useAuth = () => {
 function useProvideAuth() {
   const [viewer, setViewer] = useState<Viewer>(initialViewer);
 
-  const [logIn, { error }] = useMutation<LogInData, LogInVariables>(LOG_IN, {
+  const [logIn, { data, error }] = useMutation<LogInData, LogInVariables>(LOG_IN, {
     onCompleted: (data) => {
       if (data && data.logIn) {
         setViewer(data.logIn);
@@ -81,12 +81,11 @@ function useProvideAuth() {
   const logInRef = useRef(logIn);
 
   useEffect(() => {
-    // logInRef.current();
-    logInRef.current({
-      variables: {
-        date: dayjs().format('MM-DD-YYYY')
-      }
-    });
+      logInRef.current({
+        variables: {
+          date: dayjs().format('MM-DD-YYYY')
+        }
+      });
   }, []);
 
   return {

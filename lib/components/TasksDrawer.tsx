@@ -47,6 +47,7 @@ interface Props {
   btnRef: any;
   tasks: TaskType[];
   setTasks: (any) => void;
+  loadingUpdateTasks: boolean;
 }
 const AddTaskButton = ({ onClick }: AddTaskButtonProps) => (
   <Flex justify="center">
@@ -71,12 +72,13 @@ export const TasksDrawer = ({
   onClose,
   btnRef,
   tasks,
-  setTasks
+  setTasks,
+  loadingUpdateTasks
 }: Props) => {
-  const [updateTasks, { loading, error }] = useMutation<
-    UpdatedTasksData,
-    UpdateTasksVariables
-  >(UPDATE_TASKS);
+  // const [updateTasks, { loading, error }] = useMutation<
+  //   UpdatedTasksData,
+  //   UpdateTasksVariables
+  // >(UPDATE_TASKS);
   const {
     isOpen: openAddTask,
     onOpen: openNewTaskForm,
@@ -93,11 +95,12 @@ export const TasksDrawer = ({
   };
 
   const onSave = () => {
-    updateTasks({
-      variables: {
-        input: { tasks: tasks }
-      }
-    });
+    console.log('wtf')
+    // updateTasks({
+    //   variables: {
+    //     input: { tasks: tasks }
+    //   }
+    // });
     onClose();
   };
 
@@ -132,6 +135,8 @@ export const TasksDrawer = ({
 
       return copyAllTasks;
     };
+
+    
     const deleteTask = (prevTasks) => {
       const copyAllTasks = Array.from(tasks);
 

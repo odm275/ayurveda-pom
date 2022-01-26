@@ -14,6 +14,7 @@ export interface Task {
   isNew: boolean;
   isFinished: boolean;
   positionId: number;
+  category: boolean;
 }
 
 export interface Tasks {
