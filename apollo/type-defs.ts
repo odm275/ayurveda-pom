@@ -1,24 +1,22 @@
-import { gql } from '@apollo/client';
-import { makeSchema } from 'nexus';
-import { join } from 'path';
-import * as types from './schema';
-import {User} from './schema/User'
+import { gql } from "@apollo/client";
+import { makeSchema } from "nexus";
+import { join } from "path";
+import * as types from "./schema";
+import { User } from "./schema/User";
 
 export const nexusSchema = makeSchema({
   types: [User],
   outputs: {
     typegen: join(
       process.cwd(),
-      'node_modules',
-      '@types',
-      'nexus-typegen',
-      'index.d.ts'
+      "node_modules",
+      "@types",
+      "nexus-typegen",
+      "index.d.ts"
     ),
-    schema: join(process.cwd(), 'apollo', 'schema.graphql')
-  },
+    schema: join(process.cwd(), "apollo", "schema.graphql")
+  }
 });
-
-
 
 export const typeDefs = gql`
   "Different states the pomodoro can be in"
@@ -86,7 +84,6 @@ export const typeDefs = gql`
     "Tasks for today's date"
     tasks: [Task]!
   }
-
 
   type Viewer {
     "ID for a Viewer"

@@ -1,6 +1,6 @@
 import { enumType } from 'nexus';
 
-export const pomCycle = enumType({
+export const PomCycle = enumType({
   name: 'pomCycle',
   members: ['POMODORO', 'SHORTBREAK', 'LONGBREAK']
 });
