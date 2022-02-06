@@ -2,8 +2,45 @@
 ### Do not make changes to this file directly
 
 
+<<<<<<< HEAD
 type Query {
   ok: Boolean!
+=======
+input LogInInput {
+  code: String!
+}
+
+type Mutation {
+  logIn(date: String, input: LogInInput): Viewer!
+  logOut: Viewer!
+  updateTasks(input: UpdateTaskUserInput): Tasks!
+
+  """
+  updates user in database when a pomodoro counter goes up, and when settings change
+  """
+  updateUserSettings(input: UpdateUserSettingsInput): Viewer!
+}
+
+type PomData {
+  """All the pomRecords for a User. Note: [PomRecord!]! might be incorrect"""
+  result: [PomRecord!]!
+
+  """Total number of pomRecords"""
+  total: Int!
+}
+
+"""How many Pomodoros got done for a day"""
+type PomRecord {
+  """How many pomodoros happened that day"""
+  count: Int!
+
+  """date for record"""
+  date: String!
+}
+
+type Query {
+  authUrl: String!
+>>>>>>> nexus-refactor
 }
 
 type Task {
@@ -16,6 +53,39 @@ type Task {
   user: String
 }
 
+<<<<<<< HEAD
+=======
+input TaskInput {
+  amt: Int
+  eta: String
+  id: String
+  isFinished: Boolean
+  isNew: Boolean
+  title: String
+}
+
+type Tasks {
+  """The total amt of tasks for a User"""
+  result: [Task!]!
+
+  """The total number of tasks for a User"""
+  total: Int!
+}
+
+input UpdateTaskUserInput {
+  tasks: [TaskInput]!
+}
+
+input UpdateUserSettingsInput {
+  date: String
+  longBreakDuration: Int
+  longBreakInterval: Int
+  pomCycle: pomCycle
+  pomDuration: Int
+  shortBreakDuration: Int
+}
+
+>>>>>>> nexus-refactor
 type User {
   """Unique ID for the User"""
   id: ID!
@@ -45,6 +115,50 @@ type User {
   tasks: [Task]!
 }
 
+<<<<<<< HEAD
+=======
+type Viewer {
+  """User avatar(picture)"""
+  avatar: String
+
+  """Tasks that aren't finished aka ongoing for the User"""
+  currentTasks: Tasks!
+
+  """Confirmation that the user's request came back to the client"""
+  didRequest: Boolean!
+
+  """
+  Resolve this as a boolean since we don't want the actual walletId to make it to the client
+  """
+  hasWallet: Boolean
+
+  """ID for a Viewer"""
+  id: ID
+
+  """User properties that the Viewer also has"""
+  longBreakDuration: Int
+
+  """User properties that the Viewer also has"""
+  longBreakInterval: Int
+
+  """pomodoro Count for the current day"""
+  pomCount(date: String!): Int!
+
+  """User properties that the Viewer also has"""
+  pomCycle: pomCycle
+
+  """Amount of pomodoros completed per day for a Viewer"""
+  pomData: PomData!
+
+  """User properties that the Viewer also has"""
+  pomDuration: Int
+
+  """User properties that the Viewer also has"""
+  shortBreakDuration: Int
+  token: String
+}
+
+>>>>>>> nexus-refactor
 enum pomCycle {
   LONGBREAK
   POMODORO

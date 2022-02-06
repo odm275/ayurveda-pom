@@ -1,11 +1,19 @@
 import { gql } from "@apollo/client";
 import { makeSchema } from "nexus";
 import { join } from "path";
+<<<<<<< HEAD
 import * as types from "./schema";
 import { User } from "./schema/User";
 
 export const nexusSchema = makeSchema({
   types: [User],
+=======
+import path from "path";
+import * as types from "./schema/index";
+
+export const nexusSchema = makeSchema({
+  types: [types],
+>>>>>>> nexus-refactor
   outputs: {
     typegen: join(
       process.cwd(),
@@ -15,6 +23,21 @@ export const nexusSchema = makeSchema({
       "index.d.ts"
     ),
     schema: join(process.cwd(), "apollo", "schema.graphql")
+<<<<<<< HEAD
+=======
+  },
+  contextType: {
+    export: "Context",
+    module: join(process.cwd(), "apollo", "createContext.ts")
+  },
+  sourceTypes: {
+    modules: [
+      {
+        module: path.join(process.cwd(), "/database/types.ts"),
+        alias: "db"
+      }
+    ]
+>>>>>>> nexus-refactor
   }
 });
 
