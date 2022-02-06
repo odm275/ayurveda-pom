@@ -1,0 +1,64 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@/lib/components/*": [
+        "lib/components/*"
+      ],
+      "@/lib/context/*": [
+        "lib/context/*"
+      ],
+      "@/lib/hooks/*": [
+        "lib/hooks/*"
+      ],
+      "@/lib/graphql/*": [
+        "lib/graphql/*"
+      ],
+      "@/lib/utils/*": [
+        "lib/utils/*"
+      ],
+      "@/lib/assets/*": [
+        "lib/assets/*"
+      ],
+      "@/apollo/utils/*": [
+        "apollo/utils/*"
+      ],
+      "@/database/*": [
+        "database/*"
+      ],
+      "@/lib/*": [
+        "lib/*"
+      ]
+    },
+    "incremental": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "temp/seed.js",
+    "temp/clear.js",
+    "apollo/utils/cookies-helper.js",
+    "lib/utils/data_viz.js"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
