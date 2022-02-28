@@ -1,32 +1,16 @@
-<<<<<<< HEAD
-import "reflect-metadata";
-
-=======
->>>>>>> nexus-refactor
 import { ApolloServer } from "apollo-server-micro";
 import { PageConfig } from "next";
 // import { schema } from '../../apollo/schema';
 import { nexusSchema } from "../../apollo/type-defs";
-<<<<<<< HEAD
-import { connectDatabase } from "../../database";
-
-const apolloServer = new ApolloServer({
-  context: async ({ req, res }) => {
-    const db = await connectDatabase();
-    return { db, req, res };
-  },
-=======
 // import { connectDatabase } from "../../database";
 import { createContext } from "../../apollo/createContext";
 
 const apolloServer = new ApolloServer({
   context: createContext,
->>>>>>> nexus-refactor
   schema: nexusSchema
 });
 
 const startServer = apolloServer.start();
-
 export default async (req, res) => {
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader(

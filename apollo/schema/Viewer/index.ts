@@ -7,7 +7,7 @@ import {
   arg
 } from "nexus";
 import crypto from "crypto";
-import { Tasks } from "../Task";
+import { Tasks } from "../Task/index";
 import { PomCycle } from "../enums/PomCycle";
 import { logInViaGoogle, logInViaCookie } from "./helpers";
 import { Viewer as SourceTypeViewer } from "@/database/types";
@@ -99,16 +99,16 @@ export const Viewer = objectType({
     t.nonNull.field("pomData", {
       type: PomData,
       description: "Amount of pomodoros completed per day for a Viewer",
-      resolve(viewer, _args: {}) {
+      resolve(viewer) {
         if (!viewer.pomData) {
           return {
             result: [],
-            count: 0
+            total: 0
           };
         }
         return {
           result: viewer.pomData,
-          count: viewer.pomData.length
+          total: viewer.pomData.length
         };
       }
     });
@@ -116,6 +116,7 @@ export const Viewer = objectType({
       type: Tasks,
       description: "Tasks that aren't finished aka ongoing for the User",
       async resolve(viewer, _args, { db }) {
+        console.log("hi");
         try {
           const data = {
             total: 0,
@@ -183,6 +184,7 @@ export const ViewerMutation = extendType({
         date: stringArg()
       },
       async resolve(_root, { input }, { db, req, res }) {
+        console.log("log in mutation");
         try {
           const code = input ? input.code : null; // Comes from google after clicking sign in and being re-directed back to the app
           const token = crypto.randomBytes(16).toString("hex");

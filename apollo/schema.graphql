@@ -2,10 +2,6 @@
 ### Do not make changes to this file directly
 
 
-<<<<<<< HEAD
-type Query {
-  ok: Boolean!
-=======
 input LogInInput {
   code: String!
 }
@@ -40,7 +36,6 @@ type PomRecord {
 
 type Query {
   authUrl: String!
->>>>>>> nexus-refactor
 }
 
 type Task {
@@ -53,8 +48,6 @@ type Task {
   user: String
 }
 
-<<<<<<< HEAD
-=======
 input TaskInput {
   amt: Int
   eta: String
@@ -85,7 +78,6 @@ input UpdateUserSettingsInput {
   shortBreakDuration: Int
 }
 
->>>>>>> nexus-refactor
 type User {
   """Unique ID for the User"""
   id: ID!
@@ -115,8 +107,6 @@ type User {
   tasks: [Task]!
 }
 
-<<<<<<< HEAD
-=======
 type Viewer {
   """User avatar(picture)"""
   avatar: String
@@ -158,7 +148,6 @@ type Viewer {
   token: String
 }
 
->>>>>>> nexus-refactor
 enum pomCycle {
   LONGBREAK
   POMODORO
