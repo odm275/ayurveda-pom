@@ -1,20 +1,20 @@
-import React, { useReducer } from 'react';
-import { useMutation } from '@apollo/client';
+import React, { useReducer } from "react";
+import { useMutation } from "@apollo/client";
 import {
   Box,
   Flex,
   CircularProgress,
   CircularProgressLabel
-} from '@chakra-ui/react';
-import dayjs from 'dayjs';
-import { BiPlay, BiPause, BiReset } from 'react-icons/bi';
-import { useInterval } from '@/lib/hooks/useInterval';
-import { useEffectWithoutOnMount } from '@/lib/hooks/useEffectWithoutOnMount';
-import { UPDATE_USER_SETTINGS } from '@/lib/graphql/mutations';
+} from "@chakra-ui/react";
+import dayjs from "dayjs";
+import { BiPlay, BiPause, BiReset } from "react-icons/bi";
+import { useInterval } from "@/lib/hooks/useInterval";
+import { useEffectWithoutOnMount } from "@/lib/hooks/useEffectWithoutOnMount";
+import { UPDATE_USER_SETTINGS } from "@/lib/graphql/mutations";
 import {
   UpdateUserSettings,
   UpdateUserSettingsVariables
-} from '@/lib/graphql/mutations/UpdateUserSettings/__generated__/UpdateUserSettings';
+} from "@/lib/graphql/mutations/UpdateUserSettings/__generated__/UpdateUserSettings";
 import {
   pomReducer,
   selectTimePerCycle,
@@ -28,19 +28,19 @@ import {
   RESET_TIMER,
   NEW_TIME,
   ADD_POM_COUNT
-} from '@/lib/utils/pomodoro';
+} from "@/lib/utils/pomodoro";
 import {
   displayErrorNotification,
   displaySuccessNotification
-} from '@/lib/utils/index';
-import SuccessBanner from '@/lib/components/SuccessBanner';
-import { TaskType } from '@/lib/types';
+} from "@/lib/utils/index";
+import SuccessBanner from "@/lib/components/SuccessBanner";
+import { TaskType } from "@/lib/types";
 
 import {
   UpdateTasks as UpdatedTasksData,
   UpdateTasksVariables
-} from '@/lib/graphql/mutations/UpdateTasks/__generated__/UpdateTasks';
-import { UPDATE_TASKS } from '@/lib/graphql/mutations';
+} from "@/lib/graphql/mutations/UpdateTasks/__generated__/UpdateTasks";
+import { UPDATE_TASKS } from "@/lib/graphql/mutations";
 
 interface Props {
   pomCycle: PomCycle;
@@ -58,7 +58,7 @@ function successfulCycleAlert(message: string) {
   new Notification(message);
 
   const audioTune = new Audio(
-    'https://ayurveda-pomodoro.s3.amazonaws.com/Store_Door_Chime-Mike_Koenig-570742973.mp3'
+    "https://ayurveda-pomodoro.s3.amazonaws.com/Store_Door_Chime-Mike_Koenig-570742973.mp3"
   );
   audioTune.load();
   audioTune.play();
@@ -97,7 +97,6 @@ const PomodoroTimer = ({
   setTasks,
   updateTasks
 }: Props) => {
-
   const initialState = {
     cycle: pomCycle,
     timer: selectTimePerCycle({
@@ -127,13 +126,14 @@ const PomodoroTimer = ({
   const timeForShortBreak = state.pomCount % longBreakInterval !== 0;
   const timeForLongBreak = state.pomCount % longBreakInterval === 0;
   const timeEnded = state.timer === 0;
+  console.log("timeEnded", timeEnded);
 
   const [updateUserSettings] = useMutation<
     UpdateUserSettings,
     UpdateUserSettingsVariables
   >(UPDATE_USER_SETTINGS, {
     onCompleted: () => {
-      displaySuccessNotification('Updated User Settings');
+      displaySuccessNotification("Updated User Settings");
     },
     onError: () => {
       displayErrorNotification("Sorry! Could't update your user settings");
@@ -152,7 +152,7 @@ const PomodoroTimer = ({
     if (timeEnded) {
       if (timeForPomodoro) {
         dispatch({ type: POMODORO, payload: durationValues });
-        successfulCycleAlert('Time to work!');
+        successfulCycleAlert("Time to work!");
       } else {
         dispatch({ type: ADD_POM_COUNT });
       }
@@ -166,11 +166,11 @@ const PomodoroTimer = ({
     if (timeForShortBreak) {
       dispatch({ type: SHORT_BREAK, payload: durationValues });
       successfulCycleAlert(
-        'Take a short Break -- go to the bathroom or medidate'
+        "Take a short Break -- go to the bathroom or medidate"
       );
     } else if (timeForLongBreak) {
       dispatch({ type: LONG_BREAK, payload: durationValues });
-      successfulCycleAlert('Take a long break! Take a nap or go outside :)');
+      successfulCycleAlert("Take a long break! Take a nap or go outside :)");
     }
   }, state.pomCount);
 
@@ -179,14 +179,14 @@ const PomodoroTimer = ({
       variables: {
         input: {
           pomCycle: state.cycle,
-          date: dayjs().format('MM-DD-YYYY')
+          date: dayjs().format("MM-DD-YYYY")
         }
       }
     });
   }, state.cycle);
   // This needs to only run when????
   useEffectWithoutOnMount(() => {
-    if (tasks.length > 0) {
+    if (tasks.length > 0 && timeEnded) {
       updateTasks({
         variables: {
           input: { tasks: tasks }

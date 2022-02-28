@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useMutation } from '@apollo/client';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import React, { useState } from "react";
+import { useMutation } from "@apollo/client";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
   Button,
   Box,
@@ -16,18 +16,18 @@ import {
   Text,
   Icon,
   useDisclosure
-} from '@chakra-ui/react';
-import { AiOutlinePlusCircle } from 'react-icons/ai';
-import { UPDATE_TASKS } from '@/lib/graphql/mutations';
+} from "@chakra-ui/react";
+import { AiOutlinePlusCircle } from "react-icons/ai";
+import { UPDATE_TASKS } from "@/lib/graphql/mutations";
 
-import { Task } from '@/lib/components/Task';
-import AddTaskModal from '@/lib/components/AddTaskModal';
+import { Task } from "@/lib/components/Task";
+import AddTaskModal from "@/lib/components/AddTaskModal";
 import {
   UpdateTasks as UpdatedTasksData,
   UpdateTasksVariables
-} from '@/lib/graphql/mutations/UpdateTasks/__generated__/UpdateTasks';
-import { useAuth } from '@/lib/context/AuthContext';
-import { newPayload } from '@/lib/utils/omitTypename';
+} from "@/lib/graphql/mutations/UpdateTasks/__generated__/UpdateTasks";
+import { useAuth } from "@/lib/context/AuthContext";
+import { newPayload } from "@/lib/utils/omitTypename";
 
 export interface TaskType {
   title: string | null;
@@ -75,10 +75,10 @@ export const TasksDrawer = ({
   setTasks,
   loadingUpdateTasks
 }: Props) => {
-  // const [updateTasks, { loading, error }] = useMutation<
-  //   UpdatedTasksData,
-  //   UpdateTasksVariables
-  // >(UPDATE_TASKS);
+  const [updateTasks, { loading, error }] = useMutation<
+    UpdatedTasksData,
+    UpdateTasksVariables
+  >(UPDATE_TASKS);
   const {
     isOpen: openAddTask,
     onOpen: openNewTaskForm,
@@ -95,12 +95,12 @@ export const TasksDrawer = ({
   };
 
   const onSave = () => {
-    console.log('wtf')
-    // updateTasks({
-    //   variables: {
-    //     input: { tasks: tasks }
-    //   }
-    // });
+    console.log("wtf");
+    updateTasks({
+      variables: {
+        input: { tasks: tasks }
+      }
+    });
     onClose();
   };
 
@@ -136,7 +136,6 @@ export const TasksDrawer = ({
       return copyAllTasks;
     };
 
-    
     const deleteTask = (prevTasks) => {
       const copyAllTasks = Array.from(tasks);
 
