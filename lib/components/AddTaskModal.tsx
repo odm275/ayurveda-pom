@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Button,
   Input,
@@ -11,10 +11,9 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton
-} from '@chakra-ui/react';
-import NumberInput from '@/lib/components/NumberInput';
-import { useForm } from 'react-hook-form';
-import { useAuth } from '@/lib/context/AuthContext';
+} from "@chakra-ui/react";
+import NumberInput from "@/lib/components/NumberInput";
+import { useForm } from "react-hook-form";
 
 interface Task {
   title: string;
@@ -27,7 +26,7 @@ interface Task {
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  setTasks: any;
+  setTasks: (tasks) => void;
   tasks: [Task];
 }
 
@@ -41,7 +40,7 @@ const AddTaskModal = ({ isOpen, onClose, setTasks, tasks }: Props) => {
       {
         title,
         amt: parseInt(amt),
-        eta: '01-01-01',
+        eta: "01-01-01",
         isNew: true
       }
     ];
