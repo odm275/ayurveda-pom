@@ -30,7 +30,7 @@ interface Props {
   tasks: [Task];
 }
 
-const AddTaskModal = ({ isOpen, onClose, setTasks, tasks }: Props) => {
+export const AddTaskModal = ({ isOpen, onClose, setTasks, tasks }: Props) => {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = (data) => {
@@ -84,5 +84,3 @@ const AddTaskModal = ({ isOpen, onClose, setTasks, tasks }: Props) => {
     </Modal>
   );
 };
-
-export default AddTaskModal;

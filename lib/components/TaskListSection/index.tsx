@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useMutation } from "@apollo/client";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import {
@@ -21,14 +21,13 @@ import { AiOutlinePlusCircle } from "react-icons/ai";
 import { UPDATE_TASKS } from "@/lib/graphql/mutations";
 
 import { Task } from "@/lib/components/TaskListSection/components/Task";
-import AddTaskModal from "@/lib/components/AddTaskModal";
 import {
   UpdateTasks as UpdatedTasksData,
   UpdateTasksVariables
 } from "@/lib/graphql/mutations/UpdateTasks/__generated__/UpdateTasks";
-import { useAuth } from "@/lib/context/AuthContext";
-import { newPayload } from "@/lib/utils/omitTypename";
 import { useTaskHandlers } from "@/lib/components/TaskListSection/hooks";
+import { AddTaskModal } from "./components/TaskListBody/components";
+import { DraggableTaskCards, TaskListBody } from "./components";
 
 export interface TaskType {
   title: string | null;
@@ -178,7 +177,12 @@ export const TaskListSection = ({
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader>My Tasks</DrawerHeader>
-          {drawerBody}
+          <TaskListBody tasks={tasks} setTasks={setTasks}>
+            <DraggableTaskCards tasks={tasks} setTasks={setTasks}>
+              {taskCards}
+            </DraggableTaskCards>
+          </TaskListBody>
+          {/* {drawerBody} */}
           <DrawerFooter>
             <Button variant="outline" mr={3} onClick={handleOnClose}>
               Cancel

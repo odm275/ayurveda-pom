@@ -21,7 +21,6 @@ import { AiOutlinePlusCircle } from "react-icons/ai";
 import { UPDATE_TASKS } from "@/lib/graphql/mutations";
 
 import { Task } from "@/lib/components/TaskListSection/components/Task";
-import AddTaskModal from "@/lib/components/AddTaskModal";
 import {
   UpdateTasks as UpdatedTasksData,
   UpdateTasksVariables
