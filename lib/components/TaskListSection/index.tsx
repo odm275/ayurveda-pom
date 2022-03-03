@@ -1,32 +1,22 @@
 import React from "react";
 import { useMutation } from "@apollo/client";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { Draggable } from "react-beautiful-dnd";
 import {
   Button,
-  Box,
-  Stack,
   Drawer,
   DrawerOverlay,
   DrawerCloseButton,
   DrawerHeader,
-  DrawerBody,
   DrawerContent,
-  DrawerFooter,
-  Flex,
-  Text,
-  Icon,
-  useDisclosure
+  DrawerFooter
 } from "@chakra-ui/react";
-import { AiOutlinePlusCircle } from "react-icons/ai";
 import { UPDATE_TASKS } from "@/lib/graphql/mutations";
-
 import { Task } from "@/lib/components/TaskListSection/components/Task";
 import {
   UpdateTasks as UpdatedTasksData,
   UpdateTasksVariables
 } from "@/lib/graphql/mutations/UpdateTasks/__generated__/UpdateTasks";
-import { useTaskHandlers } from "@/lib/components/TaskListSection/hooks";
-import { AddTaskModal } from "./components/TaskListBody/components";
+import { useTaskHandlers } from "./hooks";
 import { DraggableTaskCards, TaskListBody } from "./components";
 
 export interface TaskType {
@@ -36,11 +26,6 @@ export interface TaskType {
   isNew: boolean | null;
   positionId: number;
 }
-
-interface AddTaskButtonProps {
-  onClick: () => void;
-}
-
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -49,23 +34,6 @@ interface Props {
   setTasks: (any) => void;
   loadingUpdateTasks: boolean;
 }
-const AddTaskButton = ({ onClick }: AddTaskButtonProps) => (
-  <Flex justify="center">
-    <Button
-      width="100%"
-      size="md"
-      height="58px"
-      border="2px"
-      borderColor="green.500"
-      onClick={onClick}
-    >
-      <Text fontSize={20}>
-        <Icon as={AiOutlinePlusCircle} mr={1} />
-        <span>Add Task</span>
-      </Text>
-    </Button>
-  </Flex>
-);
 
 export const TaskListSection = ({
   isOpen,
@@ -79,20 +47,6 @@ export const TaskListSection = ({
     UpdatedTasksData,
     UpdateTasksVariables
   >(UPDATE_TASKS);
-  const {
-    isOpen: openAddTask,
-    onOpen: openNewTaskForm,
-    onClose: closeAddTaskForm
-  } = useDisclosure();
-
-  const handleOnDragEnd = (result) => {
-    if (!result.destination) return;
-    const items = Array.from(tasks);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    setTasks(items);
-  };
 
   const onSave = () => {
     // ToDo?: after update Tasks is successful -> update Tasks with response from server.
@@ -135,36 +89,6 @@ export const TaskListSection = ({
     );
   });
 
-  const draggableTaskCards = (
-    <DragDropContext onDragEnd={handleOnDragEnd}>
-      <Droppable droppableId="TASKS">
-        {(provided) => (
-          <div {...provided.droppableProps} ref={provided.innerRef}>
-            <Stack spacing={4}>
-              {taskCards}
-              {provided.placeholder}
-            </Stack>
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
-  );
-
-  const drawerBody = (
-    <DrawerBody>
-      <AddTaskButton onClick={openNewTaskForm} />
-      <Box mt={10}>
-        <AddTaskModal
-          isOpen={openAddTask}
-          onClose={closeAddTaskForm}
-          tasks={tasks}
-          setTasks={setTasks}
-        />
-      </Box>
-      <Box mt={10}>{draggableTaskCards}</Box>
-    </DrawerBody>
-  );
-
   return (
     <Drawer
       isOpen={isOpen}
@@ -182,7 +106,6 @@ export const TaskListSection = ({
               {taskCards}
             </DraggableTaskCards>
           </TaskListBody>
-          {/* {drawerBody} */}
           <DrawerFooter>
             <Button variant="outline" mr={3} onClick={handleOnClose}>
               Cancel
