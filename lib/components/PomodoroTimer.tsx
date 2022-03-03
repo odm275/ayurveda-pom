@@ -126,7 +126,6 @@ const PomodoroTimer = ({
   const timeForShortBreak = state.pomCount % longBreakInterval !== 0;
   const timeForLongBreak = state.pomCount % longBreakInterval === 0;
   const timeEnded = state.timer === 0;
-  console.log("timeEnded", timeEnded);
 
   const [updateUserSettings] = useMutation<
     UpdateUserSettings,

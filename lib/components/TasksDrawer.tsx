@@ -95,7 +95,7 @@ export const TasksDrawer = ({
   };
 
   const onSave = () => {
-    console.log("wtf");
+    // ToDo: after update Tasks is successful -> update Tasks with response from server.
     updateTasks({
       variables: {
         input: { tasks: tasks }
