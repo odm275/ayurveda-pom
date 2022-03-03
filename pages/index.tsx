@@ -1,34 +1,33 @@
-import { useState, useRef, useEffect, useContext } from 'react';
-import { useMutation } from '@apollo/client';
-import { Flex, Button, Spinner, useDisclosure } from '@chakra-ui/react';
-import PomodoroTimer from '@/lib/components/PomodoroTimer';
-import AppHeaderSkeleton from '@/lib/components/AppHeaderSkeleton';
-import ErrorBanner from '@/lib/components/ErrorBanner';
-import { Layout } from '@/lib/components/Layout';
-import { useAuth } from '@/lib/context/AuthContext';
-import { TasksDrawer } from '@/lib/components/TasksDrawer';
-import { newPayload } from '@/lib/utils/omitTypename';
-import { TaskType } from '@/lib/types';
+import { useState, useRef, useEffect, useContext } from "react";
+import { useMutation } from "@apollo/client";
+import { Flex, Button, Spinner, useDisclosure } from "@chakra-ui/react";
+import PomodoroTimer from "@/lib/components/PomodoroTimer";
+import AppHeaderSkeleton from "@/lib/components/AppHeaderSkeleton";
+import ErrorBanner from "@/lib/components/ErrorBanner";
+import { Layout } from "@/lib/components/Layout";
+import { useAuth } from "@/lib/context/AuthContext";
+import { newPayload } from "@/lib/utils/omitTypename";
+import { TaskType } from "@/lib/types";
 import {
   UpdateTasks as UpdatedTasksData,
   UpdateTasksVariables
-} from '@/lib/graphql/mutations/UpdateTasks/__generated__/UpdateTasks';
-import { UPDATE_TASKS } from '@/lib/graphql/mutations';
+} from "@/lib/graphql/mutations/UpdateTasks/__generated__/UpdateTasks";
+import { UPDATE_TASKS } from "@/lib/graphql/mutations";
 
 /* Login in mutation stuff */
-import { LOG_IN } from '../lib/graphql/mutations';
+import { LOG_IN } from "../lib/graphql/mutations";
 import {
   LogIn as LogInData,
   LogInVariables
-} from '../lib/graphql/mutations/LogIn/__generated__/LogIn';
-import { Viewer } from '../lib/types';
-import dayjs from 'dayjs';
-import { authContext } from '@/lib/context/AuthContext';
-
+} from "../lib/graphql/mutations/LogIn/__generated__/LogIn";
+import { Viewer } from "../lib/types";
+import dayjs from "dayjs";
+import { authContext } from "@/lib/context/AuthContext";
+import { TaskListSection } from "@/lib/components/TaskListSection";
 
 const initialViewer: Viewer = {
   avatar:
-    'https://lh3.googleusercontent.com/a-/AOh14GgON61oEh2hXDeGJ_uTAyUrzbfA_3iE_aDJH15SKQ=s100',
+    "https://lh3.googleusercontent.com/a-/AOh14GgON61oEh2hXDeGJ_uTAyUrzbfA_3iE_aDJH15SKQ=s100",
   didRequest: false,
   hasWallet: null,
   id: null,
@@ -45,7 +44,7 @@ const initialViewer: Viewer = {
 
 const Index = () => {
   const { viewer, error } = useAuth();
-  
+
   // const [viewer, setViewer] = useState<Viewer>(initialViewer);
 
   // const [logIn, { error }] = useMutation<LogInData, LogInVariables>(LOG_IN, {
@@ -80,10 +79,10 @@ const Index = () => {
   // Update tasks whenever a new pomodoro cycle is completed
   const [tasks, setTasks] = useState<TaskType[] | null>([]);
 
-  const [updateTasks, { loading: loadingUpdateTasks, error: updateTasksError }] = useMutation<
-  UpdatedTasksData,
-  UpdateTasksVariables
->(UPDATE_TASKS);
+  const [
+    updateTasks,
+    { loading: loadingUpdateTasks, error: updateTasksError }
+  ] = useMutation<UpdatedTasksData, UpdateTasksVariables>(UPDATE_TASKS);
 
   useEffect(() => {
     const _tasks = viewer?.currentTasks?.result
@@ -119,14 +118,13 @@ const Index = () => {
   return (
     <Layout>
       {logInErrorBannerElement}
-      <TasksDrawer
+      <TaskListSection
         tasks={tasks}
         setTasks={setTasks}
         isOpen={isOpen}
         onClose={onClose}
         btnRef={btnRef}
         loadingUpdateTasks={loadingUpdateTasks}
-
       />
       <Flex justifyContent="center">
         <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>

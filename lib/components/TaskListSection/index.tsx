@@ -68,7 +68,7 @@ const AddTaskButton = ({ onClick }: AddTaskButtonProps) => (
   </Flex>
 );
 
-export const TasksDrawer = ({
+export const TaskListSection = ({
   isOpen,
   onClose,
   btnRef,
