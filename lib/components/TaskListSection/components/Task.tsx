@@ -67,23 +67,31 @@ export const Task = ({
   // );
   // ONLY SHOW IF TASK IS UNFINISHED
   return (
-    <div
-      ref={provided.innerRef}
-      {...provided.draggableProps}
-      {...provided.dragHandleProps}
-      // style={{
-      //   display: `${isFinished ? "none" : "block"}`,
-      //   background: "tomato"
-      // }}
-    >
-      <Flex justify="space-between" align="center">
-        <Text>{task.title}</Text>
-        <Spacer />
-        {taskMenu}
-      </Flex>
-      {/* <Text color="gray.500" d={['block', 'none']}>
+    <>
+      <style jsx>{`
+        .isFinished {
+          display: none;
+        }
+      `}</style>
+      <div
+        ref={provided.innerRef}
+        {...provided.draggableProps}
+        {...provided.dragHandleProps}
+        className={`${isFinished ? "isFinished" : ""}`}
+        // style={{
+        //   display: `${isFinished ? "none" : "block"}`,
+        //   background: "tomato"
+        // }}
+      >
+        <Flex justify="space-between" align="center">
+          <Text>{task.title}</Text>
+          <Spacer />
+          {taskMenu}
+        </Flex>
+        {/* <Text color="gray.500" d={['block', 'none']}>
         {mobileEta}
       </Text> */}
-    </div>
+      </div>
+    </>
   );
 };
