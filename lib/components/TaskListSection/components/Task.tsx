@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 import {
   Box,
@@ -10,13 +10,12 @@ import {
   MenuList,
   MenuItem,
   Menu
-} from '@chakra-ui/react';
-import { AiOutlineEllipsis } from 'react-icons/ai';
-import { Icon } from '@chakra-ui/react';
+} from "@chakra-ui/react";
+import { AiOutlineEllipsis } from "react-icons/ai";
+import { Icon } from "@chakra-ui/react";
 
 interface Props {
   task: any;
-  innerRef: any;
   provided: any;
   addAmtTask: any;
   subAmtTask: any;
@@ -24,7 +23,6 @@ interface Props {
 }
 
 export const Task = ({
-  innerRef,
   provided,
   task,
   addAmtTask,
@@ -70,10 +68,13 @@ export const Task = ({
   // ONLY SHOW IF TASK IS UNFINISHED
   return (
     <div
+      ref={provided.innerRef}
       {...provided.draggableProps}
       {...provided.dragHandleProps}
-      ref={innerRef}
-      style={{ display: `${isFinished ? 'none' : 'block'}` }}
+      // style={{
+      //   display: `${isFinished ? "none" : "block"}`,
+      //   background: "tomato"
+      // }}
     >
       <Flex justify="space-between" align="center">
         <Text>{task.title}</Text>

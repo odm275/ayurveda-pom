@@ -4,6 +4,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 export const DraggableTaskCards = ({ children, tasks, setTasks }) => {
   const handleOnDragEnd = (result) => {
+    console.log("dragEnd");
     if (!result.destination) return;
     const items = Array.from(tasks);
     const [reorderedItem] = items.splice(result.source.index, 1);
@@ -14,9 +15,13 @@ export const DraggableTaskCards = ({ children, tasks, setTasks }) => {
 
   return (
     <DragDropContext onDragEnd={handleOnDragEnd}>
-      <Droppable droppableId="TASKS">
+      <Droppable droppableId="tasks">
         {(provided) => (
-          <div {...provided.droppableProps} ref={provided.innerRef}>
+          <div
+            className="TASKS"
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+          >
             <Stack spacing={4}>
               {children}
               {provided.placeholder}

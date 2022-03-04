@@ -20,6 +20,7 @@ import { useTaskHandlers } from "./hooks";
 import { DraggableTaskCards, TaskListBody } from "./components";
 
 export interface TaskType {
+  id: string;
   title: string | null;
   amt: number | null;
   eta: string | null;
@@ -74,11 +75,10 @@ export const TaskListSection = ({
       index: i
     });
     return (
-      <Draggable key={`${i}`} draggableId={`${i}`} index={i}>
+      <Draggable key={task.id} draggableId={task.id} index={i}>
         {(provided) => (
           <Task
             task={task}
-            innerRef={provided.innerRef}
             provided={provided}
             addAmtTask={() => setTasks(addAmtTask)}
             subAmtTask={() => setTasks(removeAmtTask)}
