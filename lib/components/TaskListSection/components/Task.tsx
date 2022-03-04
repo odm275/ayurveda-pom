@@ -78,10 +78,6 @@ export const Task = ({
         {...provided.draggableProps}
         {...provided.dragHandleProps}
         className={`${isFinished ? "isFinished" : ""}`}
-        // style={{
-        //   display: `${isFinished ? "none" : "block"}`,
-        //   background: "tomato"
-        // }}
       >
         <Flex justify="space-between" align="center">
           <Text>{task.title}</Text>
