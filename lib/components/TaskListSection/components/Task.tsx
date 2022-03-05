@@ -23,6 +23,7 @@ interface Props {
   deleteTask: any;
   index: number;
   snapshot: any;
+  lastDraggedIndex: number;
 }
 
 export const Task = ({
@@ -32,7 +33,8 @@ export const Task = ({
   subAmtTask,
   deleteTask,
   index,
-  snapshot
+  snapshot,
+  lastDraggedIndex
 }: Props) => {
   const { amt, title, isFinished } = task;
 
@@ -72,9 +74,37 @@ export const Task = ({
   // );
   // ONLY SHOW IF TASK IS UNFINISHED
 
-  function getItemStyle(isDragging) {
-    return isDragging ? "0.5" : "1.0";
+  function getItemStyles(isDragging, lastDraggedIndex, index) {
+    if (isDragging) {
+      return {
+        opacity: 0.5
+      };
+    }
+    if (lastDraggedIndex === index) {
+      return {
+        opacity: 0.5,
+        background: "cyan.900"
+      };
+    }
   }
+
+  // function getItemStyle(isDragging) {
+  //   // return isDragging ? "0.5" : "1.0";
+  //   if (isDragging) {
+  //     return {
+  //       opacity: 0.5
+  //     };
+  //   }
+  // }
+  // function getLastDraggedStyle(lastDraggedIndex, index) {
+  //   // return lastDraggedIndex === index ? 'cyan.200' : '';
+  //   if (lastDraggedIndex === index) {
+  //     return {
+  //       opacity: 0.5,
+  //       background: "cyan.900"
+  //     };
+  //   }
+  // }
   return (
     <>
       <style jsx>{`
@@ -87,7 +117,8 @@ export const Task = ({
         {...provided.draggableProps}
         {...provided.dragHandleProps}
         className={`${isFinished ? "isFinished" : ""}`}
-        opacity={getItemStyle(snapshot.isDragging)}
+        {...getItemStyles(snapshot.isDragging, lastDraggedIndex, index)}
+        // opacity={getItemStyle(snapshot.isDragging)}
       >
         <Flex
           justify="space-between"

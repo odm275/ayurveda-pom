@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { Draggable } from "react-beautiful-dnd";
 import {
@@ -49,6 +49,8 @@ export const TaskListSection = ({
     UpdateTasksVariables
   >(UPDATE_TASKS);
 
+  const [lastDraggedIndex, setLastDraggedIndex] = useState(null);
+
   const onSave = () => {
     // ToDo?: after update Tasks is successful -> update Tasks with response from server.
     updateTasks({
@@ -85,13 +87,12 @@ export const TaskListSection = ({
             deleteTask={() => setTasks(deleteTask)}
             index={i}
             snapshot={snapshot}
+            lastDraggedIndex={lastDraggedIndex}
           />
         )}
       </Draggable>
     );
   });
-
-  console.log("taskCards", taskCards);
 
   return (
     <Drawer
@@ -106,7 +107,11 @@ export const TaskListSection = ({
           <DrawerCloseButton />
           <DrawerHeader>My Tasks</DrawerHeader>
           <TaskListBody tasks={tasks} setTasks={setTasks}>
-            <DraggableTaskCards tasks={tasks} setTasks={setTasks}>
+            <DraggableTaskCards
+              tasks={tasks}
+              setTasks={setTasks}
+              setLastDraggedIndex={setLastDraggedIndex}
+            >
               {taskCards}
             </DraggableTaskCards>
           </TaskListBody>
