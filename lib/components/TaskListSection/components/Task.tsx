@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import {
-  Box,
+  VisuallyHidden,
   Flex,
   Text,
   Spacer,
@@ -12,6 +12,7 @@ import {
   Menu
 } from "@chakra-ui/react";
 import { AiOutlineEllipsis } from "react-icons/ai";
+import { RiStarSmileLine } from "react-icons/ri";
 import { Icon } from "@chakra-ui/react";
 
 interface Props {
@@ -20,6 +21,7 @@ interface Props {
   addAmtTask: any;
   subAmtTask: any;
   deleteTask: any;
+  index: number;
 }
 
 export const Task = ({
@@ -27,7 +29,8 @@ export const Task = ({
   task,
   addAmtTask,
   subAmtTask,
-  deleteTask
+  deleteTask,
+  index
 }: Props) => {
   const { amt, title, isFinished } = task;
 
@@ -79,10 +82,25 @@ export const Task = ({
         {...provided.dragHandleProps}
         className={`${isFinished ? "isFinished" : ""}`}
       >
-        <Flex justify="space-between" align="center">
+        <Flex
+          justify="space-between"
+          align="center"
+          // bg={index === 0 ? "yellow.600" : ""}
+        >
           <Text>{task.title}</Text>
           <Spacer />
           {taskMenu}
+          {index === 0 ? (
+            <Icon as={RiStarSmileLine} ml={3} w={6} h={6} />
+          ) : (
+            <Icon
+              as={RiStarSmileLine}
+              ml={3}
+              w={6}
+              h={6}
+              style={{ visibility: "hidden" }}
+            />
+          )}
         </Flex>
         {/* <Text color="gray.500" d={['block', 'none']}>
         {mobileEta}

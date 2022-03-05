@@ -83,6 +83,7 @@ export const TaskListSection = ({
             addAmtTask={() => setTasks(addAmtTask)}
             subAmtTask={() => setTasks(removeAmtTask)}
             deleteTask={() => setTasks(deleteTask)}
+            index={i}
           />
         )}
       </Draggable>
