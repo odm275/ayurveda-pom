@@ -25,7 +25,7 @@ export const DraggableTaskCards = ({ children, tasks, setTasks }) => {
             className="TASKS"
             {...provided.droppableProps}
             ref={provided.innerRef}
-            backgroundColor={getListStyle(snapshot.isDraggingOver)}
+            // backgroundColor={getListStyle(snapshot.isDraggingOver)}
           >
             <Stack spacing={4}>
               {children}

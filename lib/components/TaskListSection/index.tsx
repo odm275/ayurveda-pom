@@ -76,7 +76,7 @@ export const TaskListSection = ({
     });
     return (
       <Draggable key={i} draggableId={`id-${i}`} index={i}>
-        {(provided) => (
+        {(provided, snapshot) => (
           <Task
             task={task}
             provided={provided}
@@ -84,6 +84,7 @@ export const TaskListSection = ({
             subAmtTask={() => setTasks(removeAmtTask)}
             deleteTask={() => setTasks(deleteTask)}
             index={i}
+            snapshot={snapshot}
           />
         )}
       </Draggable>

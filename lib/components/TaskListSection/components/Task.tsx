@@ -22,6 +22,7 @@ interface Props {
   subAmtTask: any;
   deleteTask: any;
   index: number;
+  snapshot: any;
 }
 
 export const Task = ({
@@ -30,7 +31,8 @@ export const Task = ({
   addAmtTask,
   subAmtTask,
   deleteTask,
-  index
+  index,
+  snapshot
 }: Props) => {
   const { amt, title, isFinished } = task;
 
@@ -69,6 +71,11 @@ export const Task = ({
   //   </Text>
   // );
   // ONLY SHOW IF TASK IS UNFINISHED
+
+  function getItemStyle(isDragging) {
+    console.log("isDraggingOver", isDragging);
+    return isDragging ? "red" : "gray.80";
+  }
   return (
     <>
       <style jsx>{`
@@ -81,6 +88,7 @@ export const Task = ({
         {...provided.draggableProps}
         {...provided.dragHandleProps}
         className={`${isFinished ? "isFinished" : ""}`}
+        backgroundColor={getItemStyle(snapshot.isDragging)}
       >
         <Flex
           justify="space-between"
