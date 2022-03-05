@@ -8,7 +8,8 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  Menu
+  Menu,
+  Box
 } from "@chakra-ui/react";
 import { AiOutlineEllipsis } from "react-icons/ai";
 import { RiStarSmileLine } from "react-icons/ri";
@@ -75,7 +76,7 @@ export const Task = ({
           display: none;
         }
       `}</style>
-      <div
+      <Box
         ref={provided.innerRef}
         {...provided.draggableProps}
         {...provided.dragHandleProps}
@@ -98,7 +99,7 @@ export const Task = ({
         {/* <Text color="gray.500" d={['block', 'none']}>
         {mobileEta}
       </Text> */}
-      </div>
+      </Box>
     </>
   );
 };

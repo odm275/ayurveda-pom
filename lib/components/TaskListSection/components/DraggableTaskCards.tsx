@@ -1,6 +1,6 @@
 import React from "react";
-import { Stack } from "@chakra-ui/react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { Stack, Box } from "@chakra-ui/react";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 export const DraggableTaskCards = ({ children, tasks, setTasks }) => {
   const handleOnDragEnd = (result) => {
@@ -13,20 +13,25 @@ export const DraggableTaskCards = ({ children, tasks, setTasks }) => {
     setTasks(items);
   };
 
+  function getListStyle(isDraggingOver) {
+    return isDraggingOver ? "background" : "gray.80";
+  }
+
   return (
     <DragDropContext onDragEnd={handleOnDragEnd}>
       <Droppable droppableId="tasks">
-        {(provided) => (
-          <div
+        {(provided, snapshot) => (
+          <Box
             className="TASKS"
             {...provided.droppableProps}
             ref={provided.innerRef}
+            backgroundColor={getListStyle(snapshot.isDraggingOver)}
           >
             <Stack spacing={4}>
               {children}
               {provided.placeholder}
             </Stack>
-          </div>
+          </Box>
         )}
       </Droppable>
     </DragDropContext>
