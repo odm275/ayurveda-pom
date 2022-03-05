@@ -75,7 +75,7 @@ export const TaskListSection = ({
       index: i
     });
     return (
-      <Draggable key={task.id} draggableId={task.id} index={i}>
+      <Draggable key={i} draggableId={`id-${i}`} index={i}>
         {(provided) => (
           <Task
             task={task}
@@ -89,6 +89,8 @@ export const TaskListSection = ({
       </Draggable>
     );
   });
+
+  console.log("taskCards", taskCards);
 
   return (
     <Drawer
