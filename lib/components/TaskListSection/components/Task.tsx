@@ -93,13 +93,7 @@ export const Task = ({
           {index === 0 ? (
             <Icon as={RiStarSmileLine} ml={3} w={6} h={6} />
           ) : (
-            <Icon
-              as={RiStarSmileLine}
-              ml={3}
-              w={6}
-              h={6}
-              style={{ visibility: "hidden" }}
-            />
+            <Icon as={RiStarSmileLine} ml={3} w={6} h={6} visibility="hidden" />
           )}
         </Flex>
         {/* <Text color="gray.500" d={['block', 'none']}>
