@@ -73,8 +73,7 @@ export const Task = ({
   // ONLY SHOW IF TASK IS UNFINISHED
 
   function getItemStyle(isDragging) {
-    console.log("isDraggingOver", isDragging);
-    return isDragging ? "red" : "gray.80";
+    return isDragging ? "0.5" : "1.0";
   }
   return (
     <>
@@ -88,7 +87,7 @@ export const Task = ({
         {...provided.draggableProps}
         {...provided.dragHandleProps}
         className={`${isFinished ? "isFinished" : ""}`}
-        backgroundColor={getItemStyle(snapshot.isDragging)}
+        opacity={getItemStyle(snapshot.isDragging)}
       >
         <Flex
           justify="space-between"
