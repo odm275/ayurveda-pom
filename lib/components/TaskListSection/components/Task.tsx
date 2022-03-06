@@ -88,37 +88,15 @@ export const Task = ({
     }
   }
 
-  // function getItemStyle(isDragging) {
-  //   // return isDragging ? "0.5" : "1.0";
-  //   if (isDragging) {
-  //     return {
-  //       opacity: 0.5
-  //     };
-  //   }
-  // }
-  // function getLastDraggedStyle(lastDraggedIndex, index) {
-  //   // return lastDraggedIndex === index ? 'cyan.200' : '';
-  //   if (lastDraggedIndex === index) {
-  //     return {
-  //       opacity: 0.5,
-  //       background: "cyan.900"
-  //     };
-  //   }
-  // }
   return (
     <>
-      <style jsx>{`
-        .isFinished {
-          display: none;
-        }
-      `}</style>
       <Box
         ref={provided.innerRef}
         {...provided.draggableProps}
         {...provided.dragHandleProps}
         className={`${isFinished ? "isFinished" : ""}`}
+        display={isFinished ? "none" : ""}
         {...getItemStyles(snapshot.isDragging, lastDraggedIndex, index)}
-        // opacity={getItemStyle(snapshot.isDragging)}
       >
         <Flex
           justify="space-between"
