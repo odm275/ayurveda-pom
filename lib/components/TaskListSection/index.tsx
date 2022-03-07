@@ -17,7 +17,7 @@ import {
   UpdateTasksVariables
 } from "@/lib/graphql/mutations/UpdateTasks/__generated__/UpdateTasks";
 import { useTaskHandlers } from "./hooks";
-import { DraggableTaskCards, TaskListBody } from "./components";
+import { DraggableTaskCards, TaskListBody, OutsideClick } from "./components";
 
 export interface TaskType {
   id: string;
@@ -107,13 +107,15 @@ export const TaskListSection = ({
           <DrawerCloseButton />
           <DrawerHeader>My Tasks</DrawerHeader>
           <TaskListBody tasks={tasks} setTasks={setTasks}>
-            <DraggableTaskCards
-              tasks={tasks}
-              setTasks={setTasks}
-              setLastDraggedIndex={setLastDraggedIndex}
-            >
-              {taskCards}
-            </DraggableTaskCards>
+            <OutsideClick setLastDraggedIndex={setLastDraggedIndex}>
+              <DraggableTaskCards
+                tasks={tasks}
+                setTasks={setTasks}
+                setLastDraggedIndex={setLastDraggedIndex}
+              >
+                {taskCards}
+              </DraggableTaskCards>
+            </OutsideClick>
           </TaskListBody>
           <DrawerFooter>
             <Button variant="outline" mr={3} onClick={handleOnClose}>
