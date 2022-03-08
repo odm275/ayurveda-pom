@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const LOG_IN = gql`
   mutation LogIn($input: LogInInput, $date: String!) {
@@ -28,6 +28,7 @@ export const LOG_IN = gql`
           amt
           isNew
           isFinished
+          createdAt
         }
       }
     }

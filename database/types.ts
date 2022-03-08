@@ -1,9 +1,9 @@
-import { Collection, ObjectId } from 'mongodb';
+import { Collection, ObjectId } from "mongodb";
 
 export enum PomCycle {
-  Pomodoro = 'POMODORO',
-  ShortBreak = 'SHORTBREAK',
-  LongBreak = 'LONGBREAK'
+  Pomodoro = "POMODORO",
+  ShortBreak = "SHORTBREAK",
+  LongBreak = "LONGBREAK"
 }
 
 export interface Task {
@@ -15,6 +15,7 @@ export interface Task {
   isFinished: boolean;
   positionId: number;
   category: boolean;
+  createdAt: Date;
 }
 
 export interface Tasks {

@@ -17,6 +17,11 @@ export const Task = objectType({
     t.boolean("isNew");
     t.boolean("isFinished");
     t.string("category");
+    t.string("createdAt", {
+      resolve: (task) => {
+        return task.createdAt.toString();
+      }
+    });
   }
 });
 
@@ -61,9 +66,6 @@ export const TaskMutation = extendType({
         input: arg({ type: UpdateTaskUserInput })
       },
       async resolve(__root: undefined, { input }, { db, req }) {
-        console.log("updateTasks");
-        console.log(input.tasks);
-
         const viewer = await authorize(db, req);
 
         if (!viewer) {
@@ -81,15 +83,15 @@ export const TaskMutation = extendType({
         });
 
         // Create ONLY New Tasks
-
         const newTasksData = tasksWPosition.filter((task) => task.isNew);
-        console.log("newTasksData", newTasksData);
 
+        // New Task(s) creation
         if (newTasksData.length > 0) {
           console.log("new tasks coming in");
           const oldTasksData = tasksWPosition.filter((task) => !task.isNew);
           const newTasks = newTasksData.map(({ title, amt, positionId }) => ({
             _id: new ObjectId(),
+            createdAt: new Date(),
             title,
             amt,
             user: viewer._id,

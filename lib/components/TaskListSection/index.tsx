@@ -70,6 +70,10 @@ export const TaskListSection = ({
     onClose();
   };
 
+  // function getBorderRadius(tasks){
+
+  // }
+
   const taskCards = tasks.map((task, i) => {
     const { addAmtTask, removeAmtTask, deleteTask } = useTaskHandlers({
       task,
@@ -93,6 +97,8 @@ export const TaskListSection = ({
       </Draggable>
     );
   });
+
+  console.log(tasks);
 
   return (
     <Drawer

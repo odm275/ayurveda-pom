@@ -41,6 +41,7 @@ type Query {
 type Task {
   amt: Int
   category: String
+  createdAt: String
   id: ID
   isFinished: Boolean
   isNew: Boolean
