@@ -97,9 +97,9 @@ const Index = () => {
   // User is loading
   if (!viewer.didRequest && !error) {
     return (
-      <Flex flexDir="column" p={3}>
+      <Flex flexDir="column" p={3} w="100%" h="100vh">
         <AppHeaderSkeleton />
-        <Flex justifyContent="center">
+        <Flex justifyContent="center" w="100%" h="100%" alignItems="center">
           <Spinner
             speed="0.65s"
             emptyColor="gray.200"
