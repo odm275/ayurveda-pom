@@ -7,9 +7,6 @@
     "start": "next start",
     "seed": "node temp/seed.js",
     "clear": "node temp/clear.js",
-    "codegen:schema": "npx apollo client:download-schema --endpoint=http://localhost:3000/api/graphql",
-    "rover:schema": "rover graph introspect http://localhost:3000/api/graphql",
-    "codegen:generate": "npx apollo@2.33.1 client:codegen --localSchemaFile=schema.graphql --includes=lib/graphql/**/*.ts --globalTypesFile=./lib/graphql/globalTypes.ts --target=typescript",
     "generate": "graphql-codegen"
   },
   "dependencies": {
@@ -49,7 +46,6 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@apollo/rover": "^0.4.3",
     "@fullhuman/postcss-purgecss": "^3.0.0",
     "@graphql-codegen/cli": "^2.6.2",
     "@graphql-codegen/typed-document-node": "^2.2.5",
@@ -62,7 +58,6 @@
     "@types/react": "^16.9.56",
     "@typescript-eslint/eslint-plugin": "^4.8.2",
     "@typescript-eslint/parser": "^4.8.2",
-    "apollo": "^2.33.9",
     "babel-plugin-inline-react-svg": "^1.1.2",
     "eslint": "^7.14.0",
     "eslint-config-prettier": "^6.15.0",

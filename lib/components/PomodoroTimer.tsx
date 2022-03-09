@@ -114,7 +114,7 @@ const PomodoroTimer = ({
   };
 
   const timeForPomodoro =
-    state.cycle === PomCycle.ShortBreak || state.cycle === PomCycle.LongBreak;
+    state.cycle === PomCycle.Shortbreak || state.cycle === PomCycle.Longbreak;
   const timeForShortBreak = state.pomCount % longBreakInterval !== 0;
   const timeForLongBreak = state.pomCount % longBreakInterval === 0;
   const timeEnded = state.timer === 0;

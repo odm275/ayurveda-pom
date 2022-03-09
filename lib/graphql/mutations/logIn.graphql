@@ -25,7 +25,6 @@ mutation LogIn($input: LogInInput, $date: String!) {
         amt
         isNew
         isFinished
-        createdAt
       }
     }
   }

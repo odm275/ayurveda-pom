@@ -1,5 +1,4 @@
-import { useState, useRef, useEffect, useContext } from "react";
-import { useMutation } from "@apollo/client";
+import { useState, useRef, useEffect } from "react";
 import { Flex, Button, Spinner, useDisclosure } from "@chakra-ui/react";
 import PomodoroTimer from "@/lib/components/PomodoroTimer";
 import AppHeaderSkeleton from "@/lib/components/AppHeaderSkeleton";
