@@ -9,7 +9,8 @@
     "clear": "node temp/clear.js",
     "codegen:schema": "npx apollo client:download-schema --endpoint=http://localhost:3000/api/graphql",
     "rover:schema": "rover graph introspect http://localhost:3000/api/graphql",
-    "codegen:generate": "npx apollo client:codegen --localSchemaFile=schema.json --includes=lib/graphql/**/*.ts --globalTypesFile=./lib/graphql/globalTypes.ts --target=typescript"
+    "codegen:generate": "npx apollo@2.33.1 client:codegen --localSchemaFile=schema.graphql --includes=lib/graphql/**/*.ts --globalTypesFile=./lib/graphql/globalTypes.ts --target=typescript",
+    "generate": "graphql-codegen"
   },
   "dependencies": {
     "@apollo/client": "^3.5.6",
@@ -30,7 +31,7 @@
     "dotenv": "^8.2.0",
     "framer-motion": "^3.0.0",
     "googleapis": "^63.0.0",
-    "graphql": "^15.5.1",
+    "graphql": "^15.8.0",
     "graphql-tools": "^8.2.0",
     "lodash.merge": "^4.6.2",
     "mongodb": "^3.6.2",
@@ -50,6 +51,10 @@
   "devDependencies": {
     "@apollo/rover": "^0.4.3",
     "@fullhuman/postcss-purgecss": "^3.0.0",
+    "@graphql-codegen/cli": "^2.6.2",
+    "@graphql-codegen/typed-document-node": "^2.2.5",
+    "@graphql-codegen/typescript-operations": "^2.3.2",
+    "@graphql-codegen/typescript-react-apollo": "^3.2.8",
     "@types/cookie-parser": "^1.4.2",
     "@types/lodash.merge": "^4.6.6",
     "@types/mongodb": "^3.5.33",

@@ -8,20 +8,16 @@ import {
   ReactNode,
   SetStateAction,
   Dispatch
-} from 'react';
+} from "react";
 
-import { ApolloError, useMutation } from '@apollo/client';
-import dayjs from 'dayjs';
-import { LOG_IN } from '../graphql/mutations';
-import {
-  LogIn as LogInData,
-  LogInVariables
-} from '../graphql/mutations/LogIn/__generated__/LogIn';
-import { Viewer } from '../types';
+import { ApolloError, useMutation } from "@apollo/client";
+import dayjs from "dayjs";
+
+import { useLogInMutation, Viewer } from "../generated";
 
 const initialViewer: Viewer = {
   avatar:
-    'https://lh3.googleusercontent.com/a-/AOh14GgON61oEh2hXDeGJ_uTAyUrzbfA_3iE_aDJH15SKQ=s100',
+    "https://lh3.googleusercontent.com/a-/AOh14GgON61oEh2hXDeGJ_uTAyUrzbfA_3iE_aDJH15SKQ=s100",
   didRequest: false,
   hasWallet: null,
   id: null,
@@ -62,15 +58,15 @@ export const useAuth = () => {
 function useProvideAuth() {
   const [viewer, setViewer] = useState<Viewer>(initialViewer);
 
-  const [logIn, { data, error }] = useMutation<LogInData, LogInVariables>(LOG_IN, {
+  const [logIn, { data, error }] = useLogInMutation({
     onCompleted: (data) => {
       if (data && data.logIn) {
         setViewer(data.logIn);
 
         if (data.logIn.token) {
-          sessionStorage.setItem('token', data.logIn.token);
+          sessionStorage.setItem("token", data.logIn.token);
         } else {
-          sessionStorage.removeItem('token');
+          sessionStorage.removeItem("token");
         }
       }
     },
@@ -78,14 +74,15 @@ function useProvideAuth() {
       console.log(err);
     }
   });
+
   const logInRef = useRef(logIn);
 
   useEffect(() => {
-      logInRef.current({
-        variables: {
-          date: dayjs().format('MM-DD-YYYY')
-        }
-      });
+    logInRef.current({
+      variables: {
+        date: dayjs().format("MM-DD-YYYY")
+      }
+    });
   }, []);
 
   return {

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useMutation } from "@apollo/client";
 import { Draggable } from "react-beautiful-dnd";
 import {
   Button,
@@ -10,23 +9,15 @@ import {
   DrawerContent,
   DrawerFooter
 } from "@chakra-ui/react";
-import { UPDATE_TASKS } from "@/lib/graphql/mutations";
-import { Task } from "@/lib/components/TaskListSection/components/Task";
-import {
-  UpdateTasks as UpdatedTasksData,
-  UpdateTasksVariables
-} from "@/lib/graphql/mutations/UpdateTasks/__generated__/UpdateTasks";
 import { useTaskHandlers } from "./hooks";
-import { DraggableTaskCards, TaskListBody, OutsideClick } from "./components";
+import {
+  DraggableTaskCards,
+  TaskListBody,
+  OutsideClick,
+  Task
+} from "./components";
+import { useUpdateTasksMutation, Task as TaskType } from "@/lib/generated";
 
-export interface TaskType {
-  id: string;
-  title: string | null;
-  amt: number | null;
-  eta: string | null;
-  isNew: boolean | null;
-  positionId: number;
-}
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -44,10 +35,7 @@ export const TaskListSection = ({
   setTasks,
   loadingUpdateTasks
 }: Props) => {
-  const [updateTasks, { loading, error }] = useMutation<
-    UpdatedTasksData,
-    UpdateTasksVariables
-  >(UPDATE_TASKS);
+  const [updateTasks, { loading, error }] = useUpdateTasksMutation();
 
   const [lastDraggedIndex, setLastDraggedIndex] = useState(null);
 

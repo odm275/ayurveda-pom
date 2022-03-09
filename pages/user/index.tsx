@@ -7,82 +7,19 @@ import ErrorBanner from "@/lib/components/ErrorBanner";
 import { Layout } from "@/lib/components/Layout";
 import { useAuth } from "@/lib/context/AuthContext";
 import { newPayload } from "@/lib/utils/omitTypename";
-import { TaskType } from "@/lib/types";
-import {
-  UpdateTasks as UpdatedTasksData,
-  UpdateTasksVariables
-} from "@/lib/graphql/mutations/UpdateTasks/__generated__/UpdateTasks";
-import { UPDATE_TASKS } from "@/lib/graphql/mutations";
-
-/* Login in mutation stuff */
-import { LOG_IN } from "../../lib/graphql/mutations";
-import {
-  LogIn as LogInData,
-  LogInVariables
-} from "../../lib/graphql/mutations/LogIn/__generated__/LogIn";
-import { Viewer } from "../../lib/types";
-import dayjs from "dayjs";
-import { authContext } from "@/lib/context/AuthContext";
 import { TaskListSection } from "@/lib/components/TaskListSection";
-
-const initialViewer: Viewer = {
-  avatar:
-    "https://lh3.googleusercontent.com/a-/AOh14GgON61oEh2hXDeGJ_uTAyUrzbfA_3iE_aDJH15SKQ=s100",
-  didRequest: false,
-  hasWallet: null,
-  id: null,
-  longBreakDuration: null,
-  longBreakInterval: null,
-  pomCount: null,
-  pomCycle: null,
-  pomDuration: null,
-  pomData: null,
-  shortBreakDuration: null,
-  currentTasks: null,
-  token: null
-};
+import { useUpdateTasksMutation, Task } from "@/lib/generated";
 
 const Index = () => {
   const { viewer, error } = useAuth();
 
-  // const [viewer, setViewer] = useState<Viewer>(initialViewer);
-
-  // const [logIn, { error }] = useMutation<LogInData, LogInVariables>(LOG_IN, {
-  //   onCompleted: (data) => {
-  //     console.log('onCompleted data', data)
-  //     if (data && data.logIn) {
-  //       setViewer(data.logIn);
-
-  //       if (data.logIn.token) {
-  //         sessionStorage.setItem('token', data.logIn.token);
-  //       } else {
-  //         sessionStorage.removeItem('token');
-  //       }
-  //     }
-  //   },
-  //   onError: (err) => {
-  //     console.log(err);
-  //   }
-  // });
-  // const logInRef = useRef(logIn);
-
-  // useEffect(() => {
-  //   // logInRef.current();
-  //   console.log("use effect")
-  //   logInRef.current({
-  //     variables: {
-  //       date: dayjs().format('MM-DD-YYYY')
-  //     }
-  //   });
-  // }, []);
-
   // Update tasks whenever a new pomodoro cycle is completed
-  const [tasks, setTasks] = useState<TaskType[] | null>([]);
+  const [tasks, setTasks] = useState<Task[] | null>([]);
 
   const [
     updateTasks,
     { loading: loadingUpdateTasks, error: updateTasksError }
-  ] = useMutation<UpdatedTasksData, UpdateTasksVariables>(UPDATE_TASKS);
+  ] = useUpdateTasksMutation();
 
   useEffect(() => {
     const _tasks = viewer?.currentTasks?.result

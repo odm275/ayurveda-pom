@@ -1,5 +1,4 @@
 import React, { useReducer } from "react";
-import { useMutation } from "@apollo/client";
 import {
   Box,
   Flex,
@@ -10,16 +9,11 @@ import dayjs from "dayjs";
 import { BiPlay, BiPause, BiReset } from "react-icons/bi";
 import { useInterval } from "@/lib/hooks/useInterval";
 import { useEffectWithoutOnMount } from "@/lib/hooks/useEffectWithoutOnMount";
-import { UPDATE_USER_SETTINGS } from "@/lib/graphql/mutations";
-import {
-  UpdateUserSettings,
-  UpdateUserSettingsVariables
-} from "@/lib/graphql/mutations/UpdateUserSettings/__generated__/UpdateUserSettings";
+
 import {
   pomReducer,
   selectTimePerCycle,
   timeConversion,
-  PomCycle,
   POMODORO,
   SHORT_BREAK,
   LONG_BREAK,
@@ -34,13 +28,11 @@ import {
   displaySuccessNotification
 } from "@/lib/utils/index";
 import SuccessBanner from "@/lib/components/SuccessBanner";
-import { TaskType } from "@/lib/types";
-
 import {
-  UpdateTasks as UpdatedTasksData,
-  UpdateTasksVariables
-} from "@/lib/graphql/mutations/UpdateTasks/__generated__/UpdateTasks";
-import { UPDATE_TASKS } from "@/lib/graphql/mutations";
+  Task as TaskType,
+  useUpdateUserSettingsMutation,
+  PomCycle
+} from "@/lib/generated";
 
 interface Props {
   pomCycle: PomCycle;
@@ -127,10 +119,7 @@ const PomodoroTimer = ({
   const timeForLongBreak = state.pomCount % longBreakInterval === 0;
   const timeEnded = state.timer === 0;
 
-  const [updateUserSettings] = useMutation<
-    UpdateUserSettings,
-    UpdateUserSettingsVariables
-  >(UPDATE_USER_SETTINGS, {
+  const [updateUserSettings] = useUpdateUserSettingsMutation({
     onCompleted: () => {
       displaySuccessNotification("Updated User Settings");
     },

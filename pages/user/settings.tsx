@@ -1,5 +1,5 @@
-import { useMutation } from '@apollo/client';
-import { useForm, Controller } from 'react-hook-form';
+import { useMutation } from "@apollo/client";
+import { useForm, Controller } from "react-hook-form";
 
 import {
   FormControl,
@@ -11,15 +11,16 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   Button
-} from '@chakra-ui/react';
+} from "@chakra-ui/react";
 
-import { Layout } from '@/lib/components/Layout';
-import { UPDATE_USER_SETTINGS } from '@/lib/graphql/mutations/';
+import { Layout } from "@/lib/components/Layout";
+import { UPDATE_USER_SETTINGS } from "@/lib/graphql/mutations/";
 import {
   UpdateUserSettings,
   UpdateUserSettingsVariables
-} from '@/lib/graphql/mutations/UpdateUserSettings/__generated__/UpdateUserSettings';
-import { displaySuccessNotification } from '@/lib/utils/index';
+} from "@/lib/graphql/mutations/UpdateUserSettings/__generated__/UpdateUserSettings";
+import { displaySuccessNotification } from "@/lib/utils/index";
+import { useUpdateUserSettingsMutation } from "@/lib/generated";
 
 const defaultValues = {
   pomDuration: 25,
@@ -31,14 +32,11 @@ const defaultValues = {
 const Settings = () => {
   const { control, handleSubmit } = useForm({ defaultValues });
 
-  const [updateUserSettings] = useMutation<
-    UpdateUserSettings,
-    UpdateUserSettingsVariables
-  >(UPDATE_USER_SETTINGS, {
+  const [updateUserSettings] = useUpdateUserSettingsMutation({
     onCompleted: () => {
       displaySuccessNotification(
-        'Your settings have been succesfully updated',
-        'Thank you!'
+        "Your settings have been succesfully updated",
+        "Thank you!"
       );
     }
   });

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import Link from 'next/link';
+import React, { useState } from "react";
+import Link from "next/link";
 import {
   Flex,
   Box,
@@ -10,34 +10,30 @@ import {
   Menu,
   MenuButton,
   MenuList,
-  MenuItem,
-  Image
-} from '@chakra-ui/react';
-import { useMutation } from '@apollo/client';
-import { SettingsIcon } from '@chakra-ui/icons';
-import { BiStats, BiTimer } from 'react-icons/bi';
-import { VscSettingsGear } from 'react-icons/vsc';
-import { LOG_OUT } from '@/lib/graphql/mutations';
-import { LogOut as LogOutData } from '@/lib/graphql/mutations/LogOut/__generated__/LogOut';
-import { useAuth } from '@/lib/context/AuthContext';
+  MenuItem
+} from "@chakra-ui/react";
+import { SettingsIcon } from "@chakra-ui/icons";
+import { BiStats, BiTimer } from "react-icons/bi";
+import { VscSettingsGear } from "react-icons/vsc";
+import { useAuth } from "@/lib/context/AuthContext";
 import {
   displaySuccessNotification,
   displayErrorNotification
-} from '@/lib/utils/index';
-import { earthSettings, fireSettings, airSettings } from '@/lib/utils/settings';
+} from "@/lib/utils/index";
+import { useLogOutMutation } from "../generated";
 
 export const AppHeader = () => {
   const { viewer, setViewer } = useAuth();
   const [isOpen, setOpen] = useState(false);
 
-  const [logOut] = useMutation<LogOutData>(LOG_OUT, {
+  const [logOut] = useLogOutMutation({
     onCompleted: (data) => {
       if (data && data.logOut) {
         setViewer(data.logOut);
-        sessionStorage.removeItem('token');
+        sessionStorage.removeItem("token");
         displaySuccessNotification(
           "You've succesfully logged out!",
-          'Thank you'
+          "Thank you"
         );
       }
     },
@@ -87,11 +83,11 @@ export const AppHeader = () => {
 
   const mobileMenu = (
     <Flex
-      flexDir={['row', 'column']}
-      justifyContent={['space-between', 'flex-start']}
+      flexDir={["row", "column"]}
+      justifyContent={["space-between", "flex-start"]}
       alignItems="center"
-      width={['100%', '100px']}
-      position={['static', 'absolute']}
+      width={["100%", "100px"]}
+      position={["static", "absolute"]}
       top="100px"
       my={[10, 0]}
       px={[5, 0]}
@@ -102,12 +98,12 @@ export const AppHeader = () => {
         </Box>
       </Link>
       <Link href="/user/stats">
-        <Box mt={[0, '3rem']}>
+        <Box mt={[0, "3rem"]}>
           <BiStats size={40} />
         </Box>
       </Link>
       <Link href="/user/settings">
-        <Box mt={[0, '3rem']}>
+        <Box mt={[0, "3rem"]}>
           <VscSettingsGear size={40} />
         </Box>
       </Link>
