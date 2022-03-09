@@ -1,8 +1,6 @@
 import { ApolloServer } from "apollo-server-micro";
 import { PageConfig } from "next";
-// import { schema } from '../../apollo/schema';
-import { nexusSchema } from "../../apollo/type-defs";
-// import { connectDatabase } from "../../database";
+import { nexusSchema } from "../../apollo/schema";
 import { createContext } from "../../apollo/createContext";
 
 const apolloServer = new ApolloServer({
