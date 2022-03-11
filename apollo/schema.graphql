@@ -51,6 +51,7 @@ type Task {
 
 input TaskInput {
   amt: Int
+  createdAt: String
   eta: String
   id: String
   isFinished: Boolean

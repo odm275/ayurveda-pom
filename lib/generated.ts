@@ -175,7 +175,7 @@ export type LogInMutationVariables = Exact<{
 }>;
 
 
-export type LogInMutation = { __typename?: 'Mutation', logIn: { __typename?: 'Viewer', id?: string | null, token?: string | null, avatar?: string | null, hasWallet?: boolean | null, didRequest: boolean, pomDuration?: number | null, shortBreakDuration?: number | null, longBreakDuration?: number | null, longBreakInterval?: number | null, pomCycle?: PomCycle | null, pomCount: number, pomData: { __typename?: 'PomData', result: Array<{ __typename?: 'PomRecord', date: string, count: number }> }, currentTasks: { __typename?: 'Tasks', total: number, result: Array<{ __typename?: 'Task', id?: string | null, title?: string | null, amt?: number | null, isNew?: boolean | null, isFinished?: boolean | null }> } } };
+export type LogInMutation = { __typename?: 'Mutation', logIn: { __typename?: 'Viewer', id?: string | null, token?: string | null, avatar?: string | null, hasWallet?: boolean | null, didRequest: boolean, pomDuration?: number | null, shortBreakDuration?: number | null, longBreakDuration?: number | null, longBreakInterval?: number | null, pomCycle?: PomCycle | null, pomCount: number, pomData: { __typename?: 'PomData', result: Array<{ __typename?: 'PomRecord', date: string, count: number }> }, currentTasks: { __typename?: 'Tasks', total: number, result: Array<{ __typename?: 'Task', id?: string | null, title?: string | null, amt?: number | null, isNew?: boolean | null, isFinished?: boolean | null, createdAt?: string | null }> } } };
 
 export type LogOutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -230,6 +230,7 @@ export const LogInDocument = gql`
         amt
         isNew
         isFinished
+        createdAt
       }
     }
   }

@@ -41,7 +41,8 @@ export const AddTaskModal = ({ isOpen, onClose, setTasks, tasks }: Props) => {
         title,
         amt: parseInt(amt),
         eta: "01-01-01",
-        isNew: true
+        isNew: true,
+        createdAt: new Date()
       }
     ];
     setTasks(newTasks);

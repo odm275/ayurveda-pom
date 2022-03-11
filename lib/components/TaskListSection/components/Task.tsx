@@ -44,10 +44,6 @@ export const Task = ({
   //   </Text>
   // );
 
-  // function getBorderRadius(){
-
-  // }
-
   const taskMenu = (
     <Flex align="center">
       <Box

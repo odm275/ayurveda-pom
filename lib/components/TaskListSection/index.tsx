@@ -58,9 +58,36 @@ export const TaskListSection = ({
     onClose();
   };
 
-  // function getBorderRadius(tasks){
+  function getBorderRadius(tasks) {
+    // get task's created transformed to javascript dates.
+    const taskDates = tasks.map((task) => new Date(task.createdAt).getTime());
+    // get the oldest task
 
-  // }
+    const oldestTaskTime = taskDates.reduce((acc, val, i) => {
+      if (i === 0) {
+        acc = val;
+      }
+
+      if (acc < val) {
+        acc = val;
+      }
+      return acc;
+    }, {});
+
+    // divide each task by the oldest tag
+
+    const hueVals = taskDates.map((tDate) => tDate / oldestTaskTime);
+
+    console.log(
+      "taskDates",
+      tasks.map((task) => new Date(task.createdAt))
+    );
+    console.log("oldestTaskTime", new Date(oldestTaskTime));
+
+    return hueVals;
+
+    // use result to hue task ui
+  }
 
   const taskCards = tasks.map((task, i) => {
     const { addAmtTask, removeAmtTask, deleteTask } = useTaskHandlers({
@@ -86,7 +113,7 @@ export const TaskListSection = ({
     );
   });
 
-  console.log(tasks);
+  console.log(getBorderRadius(tasks));
 
   return (
     <Drawer

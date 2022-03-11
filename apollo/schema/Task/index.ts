@@ -54,6 +54,7 @@ const TaskInput = inputObjectType({
     t.string("eta");
     t.boolean("isNew");
     t.boolean("isFinished");
+    t.string("createdAt");
   }
 });
 
@@ -89,16 +90,18 @@ export const TaskMutation = extendType({
         if (newTasksData.length > 0) {
           console.log("new tasks coming in");
           const oldTasksData = tasksWPosition.filter((task) => !task.isNew);
-          const newTasks = newTasksData.map(({ title, amt, positionId }) => ({
-            _id: new ObjectId(),
-            createdAt: new Date(),
-            title,
-            amt,
-            user: viewer._id,
-            isNew: false,
-            isFinished: false,
-            positionId: positionId
-          }));
+          const newTasks = newTasksData.map(
+            ({ title, amt, positionId, createdAt }) => ({
+              _id: new ObjectId(),
+              createdAt: new Date(createdAt),
+              title,
+              amt,
+              user: viewer._id,
+              isNew: false,
+              isFinished: false,
+              positionId: positionId
+            })
+          );
 
           const updateNewTasksPositionsData = newTasks.map(
             ({ _id, positionId, amt, isNew, isFinished }) => {
