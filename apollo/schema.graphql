@@ -42,6 +42,7 @@ type Task {
   amt: Int
   category: String
   createdAt: String
+  eta: String
   id: ID
   isFinished: Boolean
   isNew: Boolean

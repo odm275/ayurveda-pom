@@ -16,6 +16,7 @@ export interface Task {
   positionId: number;
   category: boolean;
   createdAt: Date;
+  eta: Date;
 }
 
 export interface Tasks {

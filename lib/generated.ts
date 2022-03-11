@@ -71,6 +71,7 @@ export type Task = {
   amt?: Maybe<Scalars['Int']>;
   category?: Maybe<Scalars['String']>;
   createdAt?: Maybe<Scalars['String']>;
+  eta?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
   isFinished?: Maybe<Scalars['Boolean']>;
   isNew?: Maybe<Scalars['Boolean']>;
@@ -80,6 +81,7 @@ export type Task = {
 
 export type TaskInput = {
   amt?: InputMaybe<Scalars['Int']>;
+  createdAt?: InputMaybe<Scalars['String']>;
   eta?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
   isFinished?: InputMaybe<Scalars['Boolean']>;

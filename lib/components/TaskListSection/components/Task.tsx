@@ -24,6 +24,8 @@ interface Props {
   index: number;
   snapshot: any;
   lastDraggedIndex: number;
+  createdAt: string;
+  eta: string;
 }
 
 export const Task = ({
@@ -34,7 +36,9 @@ export const Task = ({
   deleteTask,
   index,
   snapshot,
-  lastDraggedIndex
+  lastDraggedIndex,
+  createdAt,
+  eta
 }: Props) => {
   const { amt, title, isFinished } = task;
 
@@ -44,12 +48,33 @@ export const Task = ({
   //   </Text>
   // );
 
+  function getUrgencyValue(createdAt: string, eta: string) {
+    const createdAtTime = new Date(createdAt).getTime();
+    const etaTime = new Date(eta).getTime();
+
+    return (createdAtTime / etaTime) * 100;
+  }
+
+  
+
+  function getUrgencyColor(num: number){
+    if(num < 100 * num >=90) return "linear(to-r, green.400, green.400, green.400, green.400, green.400, red.400)"
+    if(num < 90 * num >=80)
+    if(num < 80 * num >=70)
+    if(num < 70 * num >=60)
+    if(num < 60 * num >=50)
+    if(num < 50 * num >=40)
+    if(num < 40 * num >=30)
+    if(num < 30 * num >=20)
+    if(num < 20 * num >=10)
+  }
+
   const taskMenu = (
     <Flex align="center">
       <Box
         w="30px"
         h="30px"
-        bgGradient="linear(to-r, red.200, green.200)"
+        bgGradient="linear(to-r, green.400, green.400, green.400, green.400, green.400, red.400)"
         borderRadius="full"
       />
       <Button
