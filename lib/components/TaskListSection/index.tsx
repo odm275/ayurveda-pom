@@ -78,11 +78,11 @@ export const TaskListSection = ({
 
     const hueVals = taskDates.map((tDate) => tDate / oldestTaskTime);
 
-    console.log(
-      "taskDates",
-      tasks.map((task) => new Date(task.createdAt))
-    );
-    console.log("oldestTaskTime", new Date(oldestTaskTime));
+    // console.log(
+    //   "taskDates",
+    //   tasks.map((task) => new Date(task.createdAt))
+    // );
+    // console.log("oldestTaskTime", new Date(oldestTaskTime));
 
     return hueVals;
 
@@ -113,7 +113,7 @@ export const TaskListSection = ({
     );
   });
 
-  console.log(getBorderRadius(tasks));
+  // console.log(getBorderRadius(tasks));
 
   return (
     <Drawer

@@ -13,8 +13,11 @@ import {
   ModalCloseButton
 } from "@chakra-ui/react";
 import NumberInput from "@/lib/components/NumberInput";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
 interface Task {
   title: string;
   amt: number;
@@ -31,9 +34,10 @@ interface Props {
 }
 
 export const AddTaskModal = ({ isOpen, onClose, setTasks, tasks }: Props) => {
-  const { register, handleSubmit } = useForm();
+  const { control, register, handleSubmit } = useForm();
 
   const onSubmit = (data) => {
+    console.log("data", data);
     const { title, amt } = data;
     const newTasks = [
       ...tasks,
@@ -56,12 +60,23 @@ export const AddTaskModal = ({ isOpen, onClose, setTasks, tasks }: Props) => {
           type="text"
           placeholder="What task are you working on?"
           name="title"
-          ref={register}
+          {...register("title")}
         />
       </InputGroup>
       <InputGroup>
         <NumberInput register={register} />
       </InputGroup>
+      <Controller
+        control={control}
+        name="dateEta"
+        render={({ field }) => (
+          <DatePicker
+            placeholderText="Select date"
+            onChange={(date) => field.onChange(date)}
+            selected={field.value}
+          />
+        )}
+      />
     </Stack>
   );
   return (

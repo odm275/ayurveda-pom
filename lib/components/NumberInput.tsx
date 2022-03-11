@@ -1,13 +1,9 @@
-import React, { useState } from 'react';
-import { Input, Button, HStack } from '@chakra-ui/react';
+import React, { useState } from "react";
+import { Input, Button, HStack } from "@chakra-ui/react";
 
 const DEFAULT_AMT = 1;
 
-interface Props {
-  register: any;
-}
-
-const NumberInput = ({ register }: Props) => {
+const NumberInput = ({ register }) => {
   const [amt, setAmt] = useState(DEFAULT_AMT);
 
   const addAmt = () => setAmt(amt + 1);
@@ -23,10 +19,10 @@ const NumberInput = ({ register }: Props) => {
       <Button onClick={subAmt}>-</Button>
       <input
         type="number"
-        name="amt"
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         value={amt}
-        ref={register}
+        name="amt"
+        {...register("amt")}
       />
     </HStack>
   );
