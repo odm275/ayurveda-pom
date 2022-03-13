@@ -37,13 +37,13 @@ export const AddTaskModal = ({ isOpen, onClose, setTasks, tasks }: Props) => {
   const { control, register, handleSubmit } = useForm();
 
   const onSubmit = (data) => {
-    const { title, amt } = data;
+    const { title, amt, eta } = data;
     const newTasks = [
       ...tasks,
       {
         title,
         amt: parseInt(amt),
-        eta: "01-01-01",
+        eta: new Date(eta),
         isNew: true,
         createdAt: new Date()
       }
@@ -67,7 +67,7 @@ export const AddTaskModal = ({ isOpen, onClose, setTasks, tasks }: Props) => {
       </InputGroup>
       <Controller
         control={control}
-        name="dateEta"
+        name="eta"
         render={({ field }) => (
           <DatePicker
             placeholderText="Select date"
