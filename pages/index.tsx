@@ -1,11 +1,11 @@
-import { Box } from "@chakra-ui/react";
+import { HomeSection, Footer, Navbar } from "@/lib/components";
 
-const Index = () => {
+export default function Homepage() {
   return (
-    <Box>
-      <Box>Hello</Box>
-    </Box>
+    <>
+      <Navbar />
+      <HomeSection />
+      <Footer />
+    </>
   );
-};
-
-export default Index;
+}
