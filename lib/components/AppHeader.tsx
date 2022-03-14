@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import Link from "next/link";
+import { default as NextLink } from "next/link";
 import {
   Flex,
   Box,
+  Link,
   Heading,
   Spacer,
   Button,
@@ -49,9 +50,23 @@ export const AppHeader = () => {
   };
 
   const loginButton = (
-    <Button colorScheme="teal">
-      <Link href="/login">Login</Link>
-    </Button>
+    <NextLink href="/login">
+      <Link>
+        <Button
+          display={{ base: "none", md: "inline-flex" }}
+          fontSize={"sm"}
+          fontWeight={600}
+          color={"white"}
+          bg={"pink.400"}
+          href={"#"}
+          _hover={{
+            bg: "pink.300"
+          }}
+        >
+          Sign In
+        </Button>
+      </Link>
+    </NextLink>
   );
 
   const viewerMenu = (

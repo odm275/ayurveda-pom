@@ -1,24 +1,22 @@
-import { useEffect, useRef, useContext } from 'react';
-import { useApolloClient, useMutation } from '@apollo/client';
-import { Heading, Text, Box, Flex, Button } from '@chakra-ui/react';
-import { Layout } from '@/lib/components/Layout';
-import { AppHeader } from '@/lib/components/AppHeader';
-import { AUTH_URL } from '@/lib/graphql/queries';
-import { LOG_IN } from '@/lib/graphql/mutations';
-import { useAuth } from '@/lib/context/AuthContext';
+import { useEffect, useRef } from "react";
+import { useApolloClient } from "@apollo/client";
+import { Heading, Text, Box, Flex, Button } from "@chakra-ui/react";
+import { Layout } from "@/lib/components/Layout";
+import { useAuth } from "@/lib/context/AuthContext";
 import {
   displaySuccessNotification,
   displayErrorNotification
-} from '@/lib/utils/index';
+} from "@/lib/utils/index";
 
 import {
-  LogIn as LogInData,
-  LogInVariables
-} from '@/lib/graphql/mutations/LogIn/__generated__/LogIn';
-import { AuthUrl as AuthUrlData } from '@/lib/graphql/queries/AuthUrl/__generated__/AuthUrl';
+  useLogInMutation,
+  AuthUrlDocument,
+  AuthUrlQuery
+} from "@/lib/generated";
 
-import { useRouter } from 'next/router';
-import dayjs from 'dayjs';
+import { useRouter } from "next/router";
+import dayjs from "dayjs";
+import { Navbar } from "@/lib/components/Navbar";
 
 // Google token is going come back in the url. We can get our viewers info with that <-> LOG_IN mutation
 
@@ -28,29 +26,25 @@ const Login = () => {
   const router = useRouter();
 
   const handleAuthorize = async () => {
-    const { data } = await client.query<AuthUrlData>({
-      query: AUTH_URL
+    const { data } = await client.query<AuthUrlQuery>({
+      query: AuthUrlDocument
     });
     window.location.href = data.authUrl;
   };
 
-  const [
-    logIn,
-    { data: logInData, loading: logInLoading, error: logInError }
-  ] = useMutation<LogInData, LogInVariables>(LOG_IN, {
+  const [logIn] = useLogInMutation({
     onCompleted: (data) => {
       if (data?.logIn?.token) {
         setViewer(data.logIn);
-        sessionStorage.setItem('token', data.logIn.token);
+        sessionStorage.setItem("token", data.logIn.token);
       } else {
-        sessionStorage.removeItem('token');
+        sessionStorage.removeItem("token");
       }
       if (data && data.logIn) {
-        const { id: viewerId } = data.logIn;
-        router.replace(`user/${viewerId}`);
+        router.replace(`user`);
         displaySuccessNotification(
           "You've succesfully logged in!",
-          'Thank you'
+          "Thank you"
         );
       }
     }
@@ -60,11 +54,11 @@ const Login = () => {
 
   useEffect(() => {
     // If code from google is in the url -> try log in
-    const code = new URL(window.location.href).searchParams.get('code');
+    const code = new URL(window.location.href).searchParams.get("code");
     if (code) {
       logInRef.current({
         variables: {
-          date: dayjs().format('MM-DD-YYYY'),
+          date: dayjs().format("MM-DD-YYYY"),
           input: { code }
         }
       });
@@ -75,7 +69,7 @@ const Login = () => {
     <Layout>
       <Flex justify="center" align="center" flexGrow={1} flexDirection="column">
         <Box
-          css={{ textAlign: 'center', width: '500px' }}
+          css={{ textAlign: "center", width: "500px" }}
           border="1px"
           borderColor="gray.200"
           p="20"
