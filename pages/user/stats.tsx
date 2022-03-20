@@ -1,19 +1,20 @@
-import { useState, useEffect } from 'react';
-import * as d3 from 'd3';
-import dayjs from 'dayjs';
-import isBetween from 'dayjs/plugin/isBetween';
-import { Flex, Button, Spinner } from '@chakra-ui/react';
-import AppHeaderSkeleton from '@/lib/components/AppHeaderSkeleton';
-import { Layout } from '@/lib/components/Layout';
-import { Timeline } from '@/lib/components/Timeline';
-import { useAuth } from '@/lib/context/AuthContext';
-import ErrorBanner from '@/lib/components/ErrorBanner';
-import { pomDataFormatter } from '@/lib/utils/data_viz';
-import { PomEntry } from '@/lib/types';
+import { useState, useEffect } from "react";
+import * as d3 from "d3";
+import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
+import { Flex, Button, Spinner } from "@chakra-ui/react";
+import AppHeaderSkeleton from "@/lib/components/AppHeaderSkeleton";
+import { Layout } from "@/lib/components/Layout";
+import { Timeline } from "@/lib/components/Timeline";
+import { useAuth } from "@/lib/context/AuthContext";
+import ErrorBanner from "@/lib/components/ErrorBanner";
+import { pomDataFormatter } from "@/lib/utils/data_viz";
+import { PomEntry } from "@/lib/types";
+import { withProtectedRoute } from "@/lib/utils/withProtectedRoute";
 
 dayjs.extend(isBetween);
 
-const parseDate = d3.timeParse('%m-%d-%Y');
+const parseDate = d3.timeParse("%m-%d-%Y");
 const dateAccessor = (d: PomEntry) => parseDate(d.date);
 const countAccessor = (d: PomEntry) => d.count;
 
@@ -48,32 +49,34 @@ const StatsPage = () => {
   ) : null;
 
   const entryForToday = pomData.some((entry) => {
-    return dayjs().isSame(entry.date, 'day');
+    return dayjs().isSame(entry.date, "day");
   });
 
   // We add a dummy entry so the range up to today is generated
   // In case there's no entry for the current day(today)
   const dataDummyEntry = [
     ...pomData,
-    { date: dayjs().format('MM-DD-YYYY'), count: 0 }
+    { date: dayjs().format("MM-DD-YYYY"), count: 0 }
   ];
   const dataWToday = entryForToday ? pomData : dataDummyEntry;
 
   const data = dataWToday.reduce(pomDataFormatter, []) as PomEntry[];
 
-  const handleOnClick = ({ numOfMonths }) => (e) => {
-    e.preventDefault();
+  const handleOnClick =
+    ({ numOfMonths }) =>
+    (e) => {
+      e.preventDefault();
 
-    const customRangeData = viewer.pomData.result.filter((entry) => {
-      const entryDate = dayjs(entry.date).startOf('day');
-      const today = dayjs().startOf('day');
-      const monthsAgo = today.subtract(numOfMonths, 'month');
-      const isInDateRange = entryDate.isBetween(monthsAgo, today);
-      return isInDateRange;
-    });
+      const customRangeData = viewer.pomData.result.filter((entry) => {
+        const entryDate = dayjs(entry.date).startOf("day");
+        const today = dayjs().startOf("day");
+        const monthsAgo = today.subtract(numOfMonths, "month");
+        const isInDateRange = entryDate.isBetween(monthsAgo, today);
+        return isInDateRange;
+      });
 
-    setPomData(customRangeData);
-  };
+      setPomData(customRangeData);
+    };
 
   const buttonsSection = (
     <Flex justifyContent="space-between">
@@ -105,4 +108,4 @@ const StatsPage = () => {
   );
 };
 
-export default StatsPage;
+export default withProtectedRoute(StatsPage);

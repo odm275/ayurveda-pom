@@ -12,3 +12,4 @@ export * from "./SuccessBanner";
 export * from "./TaskInput";
 export * from "./Timeline";
 export * from "./Navbar";
+export * from "./GenericLoadingScreen";

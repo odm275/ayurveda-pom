@@ -88,7 +88,7 @@ function useProvideAuth() {
   }, []);
 
   return {
-    isAuthenticated: !!viewer.id,
+    isAuthenticated: !!viewer.didRequest,
     viewer,
     setViewer,
     error,

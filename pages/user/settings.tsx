@@ -21,6 +21,7 @@ import {
 } from "@/lib/graphql/mutations/UpdateUserSettings/__generated__/UpdateUserSettings";
 import { displaySuccessNotification } from "@/lib/utils/toast";
 import { useUpdateUserSettingsMutation } from "@/lib/generated";
+import { withProtectedRoute } from "@/lib/utils/withProtectedRoute";
 
 const defaultValues = {
   pomDuration: 25,
@@ -140,4 +141,4 @@ const Settings = () => {
   );
 };
 
-export default Settings;
+export default withProtectedRoute(Settings);
