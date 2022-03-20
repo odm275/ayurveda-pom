@@ -26,7 +26,7 @@ import {
 import {
   displayErrorNotification,
   displaySuccessNotification
-} from "@/lib/utils/index";
+} from "@/lib/utils/toast";
 import SuccessBanner from "@/lib/components/SuccessBanner";
 import {
   Task as TaskType,

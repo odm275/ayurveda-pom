@@ -20,7 +20,7 @@ import { useAuth } from "@/lib/context/AuthContext";
 import {
   displaySuccessNotification,
   displayErrorNotification
-} from "@/lib/utils/index";
+} from "@/lib/utils/toast";
 import { useLogOutMutation } from "../generated";
 
 export const AppHeader = () => {

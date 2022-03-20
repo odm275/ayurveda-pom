@@ -19,7 +19,7 @@ import {
   UpdateUserSettings,
   UpdateUserSettingsVariables
 } from "@/lib/graphql/mutations/UpdateUserSettings/__generated__/UpdateUserSettings";
-import { displaySuccessNotification } from "@/lib/utils/index";
+import { displaySuccessNotification } from "@/lib/utils/toast";
 import { useUpdateUserSettingsMutation } from "@/lib/generated";
 
 const defaultValues = {

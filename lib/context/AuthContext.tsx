@@ -10,7 +10,7 @@ import {
   Dispatch
 } from "react";
 
-import { ApolloError, useMutation } from "@apollo/client";
+import { ApolloError } from "@apollo/client";
 import dayjs from "dayjs";
 
 import { useLogInMutation, Viewer } from "../generated";
@@ -38,6 +38,8 @@ export type ContextValue =
       viewer: Viewer;
       setViewer: Dispatch<SetStateAction<Viewer>>;
       error: ApolloError;
+      loading: boolean;
+      isAuthenticated: boolean;
     };
 
 export const authContext = createContext<ContextValue>(undefined);
@@ -58,7 +60,7 @@ export const useAuth = () => {
 function useProvideAuth() {
   const [viewer, setViewer] = useState<Viewer>(initialViewer);
 
-  const [logIn, { data, error }] = useLogInMutation({
+  const [logIn, { data, error, loading }] = useLogInMutation({
     onCompleted: (data) => {
       if (data && data.logIn) {
         setViewer(data.logIn);
@@ -86,8 +88,10 @@ function useProvideAuth() {
   }, []);
 
   return {
+    isAuthenticated: !!viewer.id,
     viewer,
     setViewer,
-    error
+    error,
+    loading
   };
 }

@@ -8,6 +8,7 @@ import { useAuth } from "@/lib/context/AuthContext";
 import { newPayload } from "@/lib/utils/omitTypename";
 import { TaskListSection } from "@/lib/components/TaskListSection";
 import { useUpdateTasksMutation, Task } from "@/lib/generated";
+import { withProtectedRoute } from "@/lib/utils/withProtectedRoute";
 
 const Index = () => {
   const { viewer, error } = useAuth();
@@ -82,4 +83,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withProtectedRoute(Index);

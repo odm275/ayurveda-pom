@@ -1,21 +1,21 @@
-import { Layout } from '@/lib/components/Layout';
-import { useMutation } from '@apollo/client';
-import { UPDATE_USER_SETTINGS } from '@/lib/graphql/mutations/';
+import { Layout } from "@/lib/components/Layout";
+import { useMutation } from "@apollo/client";
+import { UPDATE_USER_SETTINGS } from "@/lib/graphql/mutations/";
 import {
   UpdateUserSettings,
   UpdateUserSettingsVariables
-} from '@/lib/graphql/mutations/UpdateUserSettings/__generated__/UpdateUserSettings';
+} from "@/lib/graphql/mutations/UpdateUserSettings/__generated__/UpdateUserSettings";
 
-import { Heading, Text, Box, Flex, Button, Spacer } from '@chakra-ui/react';
-import SelectionCard from '@/lib/components/SelectionCard';
+import { Heading, Text, Box, Flex, Button, Spacer } from "@chakra-ui/react";
+import SelectionCard from "@/lib/components/SelectionCard";
 import {
   displaySuccessNotification,
   displayErrorNotification
-} from '@/lib/utils/index';
-import { earthSettings, fireSettings, airSettings } from '@/lib/utils/settings';
-import Earth from '../../public/earth.svg';
-import Fire from '../../public/fire.svg';
-import Air from '../../public/air.svg';
+} from "@/lib/utils/toast";
+import { earthSettings, fireSettings, airSettings } from "@/lib/utils/settings";
+import Earth from "../../public/earth.svg";
+import Fire from "../../public/fire.svg";
+import Air from "../../public/air.svg";
 
 const SelectMode = () => {
   const [updateUserSettings] = useMutation<
@@ -23,7 +23,7 @@ const SelectMode = () => {
     UpdateUserSettingsVariables
   >(UPDATE_USER_SETTINGS, {
     onCompleted: () => {
-      displaySuccessNotification('Updated User Settings');
+      displaySuccessNotification("Updated User Settings");
     },
     onError: () => {
       displayErrorNotification("Sorry! Could't update your user settings");

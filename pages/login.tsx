@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/context/AuthContext";
 import {
   displaySuccessNotification,
   displayErrorNotification
-} from "@/lib/utils/index";
+} from "@/lib/utils/toast";
 
 import {
   useLogInMutation,
