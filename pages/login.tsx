@@ -17,21 +17,14 @@ import {
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import { Navbar } from "@/lib/components/Navbar";
+import { GenericLoadingScreen } from "../lib/components";
 
 // Google token is going come back in the url. We can get our viewers info with that <-> LOG_IN mutation
 
 const Login = () => {
   const client = useApolloClient();
-  const { setViewer } = useAuth();
+  const { loading, setViewer, isAuthenticated } = useAuth();
   const router = useRouter();
-
-  const handleAuthorize = async () => {
-    const { data } = await client.query<AuthUrlQuery>({
-      query: AuthUrlDocument
-    });
-    window.location.href = data.authUrl;
-  };
-
   const [logIn] = useLogInMutation({
     onCompleted: (data) => {
       if (data?.logIn?.token) {
@@ -64,6 +57,23 @@ const Login = () => {
       });
     }
   }, []);
+
+  const handleAuthorize = async () => {
+    const { data } = await client.query<AuthUrlQuery>({
+      query: AuthUrlDocument
+    });
+    window.location.href = data.authUrl;
+  };
+
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      router.push("/user");
+    }
+  }, [isAuthenticated, loading]);
+
+  if (loading || isAuthenticated) {
+    return <GenericLoadingScreen />;
+  }
 
   return (
     <Layout>

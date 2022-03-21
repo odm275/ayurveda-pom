@@ -17,7 +17,7 @@ import { useLogInMutation, Viewer } from "../generated";
 
 const initialViewer: Viewer = {
   avatar:
-    "https://lh3.googleusercontent.com/a-/AOh14GgON61oEh2hXDeGJ_uTAyUrzbfA_3iE_aDJH15SKQ=s100",
+    "https://www.vectorstock.com/royalty-free-vector/avatar-icon-with-question-mark-symbol-with-male-vector-28785263",
   didRequest: false,
   hasWallet: null,
   id: null,
@@ -63,7 +63,13 @@ function useProvideAuth() {
   const [logIn, { data, error, loading }] = useLogInMutation({
     onCompleted: (data) => {
       if (data && data.logIn) {
-        setViewer(data.logIn);
+        const newViewerObj = {
+          ...viewer,
+          ...data.logIn
+        };
+
+        console.log("newViewerObj", newViewerObj);
+        setViewer(newViewerObj);
 
         if (data.logIn.token) {
           sessionStorage.setItem("token", data.logIn.token);
@@ -88,7 +94,7 @@ function useProvideAuth() {
   }, []);
 
   return {
-    isAuthenticated: !!viewer.didRequest,
+    isAuthenticated: !!viewer.id,
     viewer,
     setViewer,
     error,

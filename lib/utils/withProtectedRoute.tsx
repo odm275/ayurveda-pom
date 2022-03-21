@@ -6,7 +6,7 @@ import { GenericLoadingScreen } from "@/lib/components";
 export const withProtectedRoute = (WrappedComponent) => {
   const AuthenticatedComponent = () => {
     const Router = useRouter();
-    const { isAuthenticated, loading } = useAuth();
+    const { viewer, isAuthenticated, loading } = useAuth();
 
     if (loading) return <GenericLoadingScreen />;
 

@@ -184,7 +184,6 @@ export const ViewerMutation = extendType({
         date: stringArg()
       },
       async resolve(_root, { input }, { db, req, res }) {
-        console.log("log in mutation");
         try {
           const code = input ? input.code : null; // Comes from google after clicking sign in and being re-directed back to the app
           const token = crypto.randomBytes(16).toString("hex");
@@ -198,8 +197,6 @@ export const ViewerMutation = extendType({
               didRequest: true
             };
           }
-
-          console.log(viewer);
 
           const resViewer: SourceTypeViewer = {
             _id: viewer._id,
