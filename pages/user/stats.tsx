@@ -93,7 +93,7 @@ const StatsPage = () => {
   );
 
   return (
-    <Layout>
+    <AppLayout>
       {logInErrorBannerElement}
 
       <h1>Productivity Stats</h1>
@@ -104,7 +104,7 @@ const StatsPage = () => {
         xAccessor={dateAccessor}
         yAccessor={countAccessor}
       />
-    </Layout>
+    </AppLayout>
   );
 };
 

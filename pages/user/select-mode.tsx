@@ -39,7 +39,7 @@ const SelectMode = () => {
   };
 
   return (
-    <Layout>
+    <AppLayout>
       <Flex flexDir="column">
         <Heading>Select Learning Mode</Heading>
         <Flex flexDir="row">
@@ -66,7 +66,7 @@ const SelectMode = () => {
           />
         </Flex>
       </Flex>
-    </Layout>
+    </AppLayout>
   );
 };
 

@@ -53,7 +53,7 @@ const Index = () => {
   ) : null;
 
   return (
-    <Layout>
+    <AppLayout>
       {logInErrorBannerElement}
       <TaskListSection
         tasks={tasks}
@@ -79,7 +79,7 @@ const Index = () => {
         setTasks={setTasks}
         updateTasks={updateTasks}
       />
-    </Layout>
+    </AppLayout>
   );
 };
 

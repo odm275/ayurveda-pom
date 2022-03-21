@@ -61,7 +61,7 @@ const Settings = () => {
   };
 
   return (
-    <Layout>
+    <AppLayout>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2}>
           <FormControl id="pomDuration">
@@ -137,7 +137,7 @@ const Settings = () => {
           </Button>
         </Stack>
       </form>
-    </Layout>
+    </AppLayout>
   );
 };
 
