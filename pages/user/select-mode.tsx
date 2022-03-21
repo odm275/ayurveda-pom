@@ -1,4 +1,4 @@
-import { Layout } from "@/lib/components/Layout";
+import { AppLayout } from "@/lib/components/AppLayout";
 import { useMutation } from "@apollo/client";
 import { UPDATE_USER_SETTINGS } from "@/lib/graphql/mutations/";
 import {

@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import { Flex, Button, Spinner } from "@chakra-ui/react";
 import AppHeaderSkeleton from "@/lib/components/AppHeaderSkeleton";
-import { Layout } from "@/lib/components/Layout";
+import { AppLayout } from "@/lib/components/AppLayout";
 import { Timeline } from "@/lib/components/Timeline";
 import { useAuth } from "@/lib/context/AuthContext";
 import ErrorBanner from "@/lib/components/ErrorBanner";

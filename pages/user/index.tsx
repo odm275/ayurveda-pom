@@ -3,7 +3,7 @@ import { Flex, Button, Spinner, useDisclosure } from "@chakra-ui/react";
 import PomodoroTimer from "@/lib/components/PomodoroTimer";
 import AppHeaderSkeleton from "@/lib/components/AppHeaderSkeleton";
 import ErrorBanner from "@/lib/components/ErrorBanner";
-import { Layout } from "@/lib/components/Layout";
+import { AppLayout } from "@/lib/components/AppLayout";
 import { useAuth } from "@/lib/context/AuthContext";
 import { newPayload } from "@/lib/utils/omitTypename";
 import { TaskListSection } from "@/lib/components/TaskListSection";

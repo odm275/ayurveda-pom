@@ -4,7 +4,7 @@ export * from "./TaskListSection";
 export * from "./AppHeader";
 export * from "./AppHeaderSkeleton";
 export * from "./ErrorBanner";
-export * from "./Layout";
+export * from "./AppLayout";
 export * from "./NumberInput";
 export * from "./PomodoroTimer";
 export * from "./SelectionCard";

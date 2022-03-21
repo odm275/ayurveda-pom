@@ -13,7 +13,7 @@ import {
   Button
 } from "@chakra-ui/react";
 
-import { Layout } from "@/lib/components/Layout";
+import { AppLayout } from "@/lib/components/AppLayout";
 import { UPDATE_USER_SETTINGS } from "@/lib/graphql/mutations/";
 import {
   UpdateUserSettings,
