@@ -25,7 +25,7 @@ const Login = () => {
   const client = useApolloClient();
   const { loading, setViewer, isAuthenticated } = useAuth();
   const router = useRouter();
-  const [logIn] = useLogInMutation({
+  const [logIn, { loading: manualLoginLoading }] = useLogInMutation({
     onCompleted: (data) => {
       if (data?.logIn?.token) {
         setViewer(data.logIn);
@@ -71,7 +71,7 @@ const Login = () => {
     }
   }, [isAuthenticated, loading]);
 
-  if (loading || isAuthenticated) {
+  if (loading || isAuthenticated || manualLoginLoading) {
     return <GenericLoadingScreen />;
   }
 
