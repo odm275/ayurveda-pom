@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Link from "next/link";
 import {
   Box,
   Heading,
@@ -35,7 +36,7 @@ export const Hero = () => {
           >
             Focus for <br />
             <Text as={"span"} color={"green.400"}>
-              scattered brain people
+              Creative People
             </Text>
           </Heading>
           <Text color={"gray.500"}>
@@ -51,20 +52,19 @@ export const Hero = () => {
             alignSelf={"center"}
             position={"relative"}
           >
-            <Button
-              colorScheme={"green"}
-              bg={"green.400"}
-              rounded={"full"}
-              px={6}
-              _hover={{
-                bg: "green.500"
-              }}
-            >
-              Get Started
-            </Button>
-            <Button variant={"link"} colorScheme={"blue"} size={"sm"}>
-              Learn more
-            </Button>
+            <Link href="/login">
+              <Button
+                colorScheme={"green"}
+                bg={"green.400"}
+                rounded={"full"}
+                px={6}
+                _hover={{
+                  bg: "green.500"
+                }}
+              >
+                Get Started
+              </Button>
+            </Link>
             <Box>
               <Icon
                 as={Arrow}
@@ -82,7 +82,7 @@ export const Hero = () => {
                 top={"-15px"}
                 transform={"rotate(10deg)"}
               >
-                Starting at $15/mo
+                It is Free :)!
               </Text>
             </Box>
           </Stack>

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useApolloClient } from "@apollo/client";
 import { Heading, Text, Box, Flex, Button } from "@chakra-ui/react";
-import { AppLayout } from "@/lib/components/AppLayout";
+import { PageLayout } from "@/lib/components/PageLayout";
 import { useAuth } from "@/lib/context/AuthContext";
 import {
   displaySuccessNotification,
@@ -76,34 +76,36 @@ const Login = () => {
   }
 
   return (
-    <Flex justify="center" align="center" flexGrow={1} flexDirection="column">
-      <Box
-        css={{ textAlign: "center", width: "500px" }}
-        border="1px"
-        borderColor="gray.200"
-        p="20"
-      >
-        <Text fontSize="4xl" mb="3">
-          👋
-        </Text>
-        <Heading as="h3" size="xl" isTruncated mb="2">
-          Log in to Ayurveda
-        </Heading>
-        <Text>Sign in with Google to start booking available rentals</Text>
-        <Button my="10">
-          <img
-            src="/google_logo.jpg"
-            alt="Google Logo"
-            style={{ height: 43 }}
-          />
-          <Text onClick={handleAuthorize}>Sign in with Google</Text>
-        </Button>
-        <Text>
-          Note: By singing in, you'll be redirected to the Google consent form
-          to sign in with your Google account.
-        </Text>
-      </Box>
-    </Flex>
+    <PageLayout>
+      <Flex justify="center" align="center" flexGrow={1} flexDirection="column">
+        <Box
+          css={{ textAlign: "center", width: "500px" }}
+          border="1px"
+          borderColor="gray.200"
+          p="20"
+        >
+          <Text fontSize="4xl" mb="3">
+            👋
+          </Text>
+          <Heading as="h3" size="xl" isTruncated mb="2">
+            Log in to Ayurveda
+          </Heading>
+          <Text>Sign in with Google to start booking available rentals</Text>
+          <Button my="10">
+            <img
+              src="/google_logo.jpg"
+              alt="Google Logo"
+              style={{ height: 43 }}
+            />
+            <Text onClick={handleAuthorize}>Sign in with Google</Text>
+          </Button>
+          <Text>
+            Note: By singing in, you'll be redirected to the Google consent form
+            to sign in with your Google account.
+          </Text>
+        </Box>
+      </Flex>
+    </PageLayout>
   );
 };
 

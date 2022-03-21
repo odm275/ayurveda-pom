@@ -41,6 +41,8 @@ const SocialButton = ({
     </chakra.button>
   );
 };
+
+const currentYear = new Date().getFullYear();
 export const Footer = () => {
   return (
     <Box
@@ -56,16 +58,13 @@ export const Footer = () => {
         justify={{ base: "center", md: "space-between" }}
         align={{ base: "center", md: "center" }}
       >
-        <Text>© 2020 Chakra Templates. All rights reserved</Text>
+        <Text>© {currentYear} Oscar Bautista. All rights reserved</Text>
         <Stack direction={"row"} spacing={6}>
-          <SocialButton label={"Twitter"} href={"#"}>
+          <SocialButton
+            label={"Twitter"}
+            href={"https://twitter.com/spaceicediver"}
+          >
             <FaTwitter />
-          </SocialButton>
-          <SocialButton label={"YouTube"} href={"#"}>
-            <FaYoutube />
-          </SocialButton>
-          <SocialButton label={"Instagram"} href={"#"}>
-            <FaInstagram />
           </SocialButton>
         </Stack>
       </Container>

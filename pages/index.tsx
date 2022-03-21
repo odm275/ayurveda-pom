@@ -1,11 +1,11 @@
-import { HomeSection, Footer, Navbar } from "@/lib/components";
+import { HomeSection, PageLayout } from "@/lib/components";
 
 export default function Homepage() {
   return (
     <>
-      <Navbar />
-      <HomeSection />
-      <Footer />
+      <PageLayout>
+        <HomeSection />
+      </PageLayout>
     </>
   );
 }
