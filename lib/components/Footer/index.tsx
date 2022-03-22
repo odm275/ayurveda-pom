@@ -7,7 +7,8 @@ import {
   useColorModeValue,
   VisuallyHidden
 } from "@chakra-ui/react";
-import { FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
+import { FaTwitter } from "react-icons/fa";
+import { SiBuymeacoffee } from "react-icons/si";
 import { ReactNode } from "react";
 
 const SocialButton = ({
@@ -65,6 +66,12 @@ export const Footer = () => {
             href={"https://twitter.com/spaceicediver"}
           >
             <FaTwitter />
+          </SocialButton>
+          <SocialButton
+            label={"Buy Me Coffee"}
+            href={"https://www.buymeacoffee.com/odm275"}
+          >
+            <SiBuymeacoffee></SiBuymeacoffee>
           </SocialButton>
         </Stack>
       </Container>
