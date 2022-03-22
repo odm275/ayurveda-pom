@@ -11,7 +11,7 @@ import {
   useColorModeValue,
   createIcon
 } from "@chakra-ui/react";
-
+import { BuyMeCoffeeButton } from "@/lib/components";
 export const Hero = () => {
   return (
     <>
@@ -84,6 +84,9 @@ export const Hero = () => {
               >
                 It is Free :)!
               </Text>
+            </Box>
+            <Box display={{ base: "block", md: "none" }}>
+              <BuyMeCoffeeButton />
             </Box>
           </Stack>
         </Stack>

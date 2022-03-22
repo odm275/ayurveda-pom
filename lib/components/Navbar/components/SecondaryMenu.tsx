@@ -4,7 +4,7 @@ import { Stack, Link, Button } from "@chakra-ui/react";
 
 export const SecondaryMenu = () => (
   <Stack
-    flex={{ base: 1, md: 0 }}
+    flex={{ base: 1, md: 1 }}
     justify={"flex-end"}
     direction={"row"}
     spacing={6}
@@ -14,7 +14,7 @@ export const SecondaryMenu = () => (
         <Image
           src="/bmc-button.png"
           alt="Buy me Coffee Button"
-          width="102px"
+          width="110px"
           height="40px"
         />
       </Link>
@@ -22,7 +22,6 @@ export const SecondaryMenu = () => (
     <NextLink href="/login">
       <Link>
         <Button
-          display={{ base: "none", md: "inline-flex" }}
           fontSize={"sm"}
           fontWeight={600}
           color={"white"}
