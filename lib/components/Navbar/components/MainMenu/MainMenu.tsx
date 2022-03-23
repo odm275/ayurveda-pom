@@ -1,13 +1,5 @@
 import NextLink from "next/link";
-import {
-  Flex,
-  Icon,
-  Box,
-  useBreakpointValue,
-  useColorModeValue,
-  Link,
-  Text
-} from "@chakra-ui/react";
+import { Flex, Icon, useBreakpointValue, Link } from "@chakra-ui/react";
 import { DesktopNav } from "./components";
 import WindLogo from "../../../../../public/wind.svg";
 export const MainMenu = () => (
