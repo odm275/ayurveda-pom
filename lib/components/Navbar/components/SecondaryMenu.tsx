@@ -14,7 +14,7 @@ export const SecondaryMenu = () => (
         <Image
           src="/bmc-button.png"
           alt="Buy me Coffee Button"
-          width="110px"
+          width="140px"
           height="40px"
         />
       </Link>

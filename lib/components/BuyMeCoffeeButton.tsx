@@ -8,7 +8,7 @@ export const BuyMeCoffeeButton = () => (
       <Image
         src="/bmc-button.png"
         alt="Buy me Coffee Button"
-        width="102px"
+        width="140px"
         height="40px"
       />
     </Link>
