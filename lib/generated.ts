@@ -49,7 +49,7 @@ export type PomData = {
   /** All the pomRecords for a User. Note: [PomRecord!]! might be incorrect */
   result: Array<PomRecord>;
   /** Total number of pomRecords */
-  total: Scalars['Int'];
+  total?: Maybe<Scalars['Int']>;
 };
 
 /** How many Pomodoros got done for a day */

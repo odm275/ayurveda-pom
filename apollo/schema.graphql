@@ -22,7 +22,7 @@ type PomData {
   result: [PomRecord!]!
 
   """Total number of pomRecords"""
-  total: Int!
+  total: Int
 }
 
 """How many Pomodoros got done for a day"""

@@ -31,7 +31,7 @@ export const PomRecord = objectType({
 export const PomData = objectType({
   name: "PomData",
   definition(t) {
-    t.nonNull.int("total", { description: "Total number of pomRecords" });
+    t.int("total", { description: "Total number of pomRecords" });
     t.nonNull.list.nonNull.field("result", {
       type: PomRecord,
       description:

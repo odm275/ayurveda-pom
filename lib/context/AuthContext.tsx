@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import { useLogInMutation, Viewer } from "../generated";
 
 const initialViewer: Viewer = {
+  __typename: "Viewer",
   avatar:
     "https://www.vectorstock.com/royalty-free-vector/avatar-icon-with-question-mark-symbol-with-male-vector-28785263",
   didRequest: false,
@@ -26,9 +27,17 @@ const initialViewer: Viewer = {
   pomCount: null,
   pomCycle: null,
   pomDuration: null,
-  pomData: null,
+  pomData: {
+    __typename: "PomData",
+    result: [],
+    total: 0
+  },
+  currentTasks: {
+    __typename: "Tasks",
+    result: [],
+    total: 0
+  },
   shortBreakDuration: null,
-  currentTasks: null,
   token: null
 };
 
@@ -57,6 +66,13 @@ export const useAuth = () => {
   return useContext(authContext);
 };
 
+// const viewerUpdater = (prevViewer, newViewer) => {
+//   return {
+//     ...prevViewer,
+//     pomData:
+//   };
+// };
+
 function useProvideAuth() {
   const [viewer, setViewer] = useState<Viewer>(initialViewer);
 
@@ -65,8 +81,11 @@ function useProvideAuth() {
       if (data && data.logIn) {
         const newViewerObj = {
           ...viewer,
-          ...data.logIn
+          ...data.logIn,
+          pomData: { ...data.logIn.pomData },
+          currentTasks: { ...data.logIn.currentTasks }
         };
+        console.log(data.logIn);
 
         setViewer(newViewerObj);
 
