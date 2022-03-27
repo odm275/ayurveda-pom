@@ -9,16 +9,18 @@ export const SecondaryMenu = () => (
     direction={"row"}
     spacing={6}
   >
-    <NextLink href="https://www.buymeacoffee.com/odm275">
-      <Link display={{ base: "none", md: "inline-flex" }}>
-        <Image
-          src="/bmc-button.png"
-          alt="Buy me Coffee Button"
-          width="140px"
-          height="40px"
-        />
-      </Link>
-    </NextLink>
+    <Link
+      display={{ base: "none", md: "inline-flex" }}
+      href="https://www.buymeacoffee.com/odm275"
+      target="_blank"
+    >
+      <Image
+        src="/bmc-button.png"
+        alt="Buy me Coffee Button"
+        width="140px"
+        height="40px"
+      />
+    </Link>
     <NextLink href="/login">
       <Link>
         <Button

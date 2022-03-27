@@ -8,7 +8,7 @@ export const withProtectedRoute = (WrappedComponent) => {
     const Router = useRouter();
     const { isAuthenticated, loading } = useAuth();
 
-    if (loading) return <GenericLoadingScreen />;
+    if (loading || !isAuthenticated) return <GenericLoadingScreen />;
 
     useEffect(() => {
       if (!isAuthenticated) {

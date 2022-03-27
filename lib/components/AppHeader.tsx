@@ -24,7 +24,9 @@ import {
 import { useLogOutMutation } from "../generated";
 
 export const AppHeader = () => {
-  const { viewer, setViewer } = useAuth();
+  const { viewer, setViewer, isAuthenticated } = useAuth();
+  console.log(viewer);
+
   const [isOpen, setOpen] = useState(false);
 
   const [logOut] = useLogOutMutation({
@@ -125,7 +127,7 @@ export const AppHeader = () => {
     </Flex>
   );
 
-  const menu = viewer.id && viewer.avatar ? viewerMenu : loginButton;
+  const menu = isAuthenticated ? viewerMenu : loginButton;
   return (
     <Box>
       <Flex alignItems="center">

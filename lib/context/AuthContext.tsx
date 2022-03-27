@@ -68,7 +68,6 @@ function useProvideAuth() {
           ...data.logIn
         };
 
-        console.log("newViewerObj", newViewerObj);
         setViewer(newViewerObj);
 
         if (data.logIn.token) {
