@@ -3,7 +3,7 @@ import { AppProps } from "next/app";
 import { ApolloProvider } from "@apollo/client";
 import { ChakraProvider } from "@chakra-ui/react";
 
-import { ProvideAuth, ProtectRoute } from "../lib/context";
+import { ProvideAuth } from "../lib/context";
 import { useApollo } from "../apollo/client";
 
 import "../styles/styles.css";
