@@ -70,17 +70,10 @@ export const useAuth = () => {
 function useProvideAuth() {
   const [viewer, setViewer] = useState<Viewer>(initialViewer);
 
-  const [logIn, { data, error, loading }] = useLogInMutation({
+  const [logIn, { error, loading }] = useLogInMutation({
     onCompleted: (data) => {
       if (data && data.logIn) {
-        const newViewerObj = {
-          ...viewer,
-          ...data.logIn,
-          pomData: { ...data.logIn.pomData },
-          currentTasks: { ...data.logIn.currentTasks }
-        };
-
-        setViewer(newViewerObj);
+        setViewer(data.logIn);
 
         if (data.logIn.token) {
           sessionStorage.setItem("token", data.logIn.token);
@@ -95,7 +88,7 @@ function useProvideAuth() {
   });
 
   const logInRef = useRef(logIn);
-  const isAuthenticated = !!viewer.id;
+  const isAuthenticated = !!viewer.id && viewer.id !== null;
 
   useEffect(() => {
     logInRef.current({

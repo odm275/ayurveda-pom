@@ -1,6 +1,6 @@
-import PropTypes from 'prop-types';
-import { useEffect, useState, useRef } from 'react';
-import ResizeObserver from 'resize-observer-polyfill';
+import PropTypes from "prop-types";
+import { useEffect, useState, useRef } from "react";
+import ResizeObserver from "resize-observer-polyfill";
 
 export const accessorPropsType = PropTypes.oneOfType([
   PropTypes.func,
@@ -8,7 +8,7 @@ export const accessorPropsType = PropTypes.oneOfType([
 ]);
 
 export const callAccessor = (accessor, d, i) =>
-  typeof accessor === 'function' ? accessor(d, i) : accessor;
+  typeof accessor === "function" ? accessor(d, i) : accessor;
 
 export const dimensionsPropsType = PropTypes.shape({
   height: PropTypes.number,
@@ -20,7 +20,7 @@ export const dimensionsPropsType = PropTypes.shape({
 });
 
 export const combineChartDimensions = (dimensions) => {
-  let parsedDimensions = {
+  const parsedDimensions = {
     marginTop: 40,
     marginRight: 30,
     marginBottom: 40,
@@ -53,7 +53,7 @@ export const useChartDimensions = (passedSettings) => {
   const [height, changeHeight] = useState(0);
 
   useEffect(() => {
-    if (dimensions.width && dimensions.height) return [ref, dimensions];
+    // if (dimensions.width && dimensions.height) return [ref, dimensions];
 
     const element = ref.current;
     const resizeObserver = new ResizeObserver((entries) => {
@@ -83,7 +83,7 @@ export const useChartDimensions = (passedSettings) => {
 };
 
 let lastId = 0;
-export const useUniqueId = (prefix = '') => {
+export const useUniqueId = (prefix = "") => {
   lastId++;
-  return [prefix, lastId].join('-');
+  return [prefix, lastId].join("-");
 };

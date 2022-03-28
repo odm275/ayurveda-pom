@@ -1,4 +1,3 @@
-import { useMutation } from "@apollo/client";
 import { useForm, Controller } from "react-hook-form";
 
 import {
@@ -14,11 +13,7 @@ import {
 } from "@chakra-ui/react";
 
 import { AppLayout } from "@/lib/components/AppLayout";
-import { UPDATE_USER_SETTINGS } from "@/lib/graphql/mutations/";
-import {
-  UpdateUserSettings,
-  UpdateUserSettingsVariables
-} from "@/lib/graphql/mutations/UpdateUserSettings/__generated__/UpdateUserSettings";
+
 import { displaySuccessNotification } from "@/lib/utils/toast";
 import { useUpdateUserSettingsMutation } from "@/lib/generated";
 import { withProtectedRoute } from "@/lib/utils/withProtectedRoute";
@@ -69,8 +64,8 @@ const Settings = () => {
             <Controller
               control={control}
               name="pomDuration"
-              render={({ name, ...restProps }) => (
-                <NumberInput name={name} {...restProps}>
+              render={({ field: { value }, ...restProps }) => (
+                <NumberInput value={value} {...restProps}>
                   <NumberInputField />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
@@ -86,8 +81,8 @@ const Settings = () => {
             <Controller
               control={control}
               name="shortBreakDuration"
-              render={({ name, ...restProps }) => (
-                <NumberInput name={name} {...restProps}>
+              render={({ field: { value }, ...restProps }) => (
+                <NumberInput value={value} {...restProps}>
                   <NumberInputField />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
@@ -103,8 +98,8 @@ const Settings = () => {
             <Controller
               control={control}
               name="longBreakDuration"
-              render={({ name, ...restProps }) => (
-                <NumberInput name={name} {...restProps}>
+              render={({ field: { value }, ...restProps }) => (
+                <NumberInput value={value} {...restProps}>
                   <NumberInputField />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
@@ -120,8 +115,8 @@ const Settings = () => {
             <Controller
               control={control}
               name="longBreakInterval"
-              render={({ name, ...restProps }) => (
-                <NumberInput name={name} {...restProps}>
+              render={({ field: { value }, ...restProps }) => (
+                <NumberInput value={value} {...restProps}>
                   <NumberInputField />
                   <NumberInputStepper>
                     <NumberIncrementStepper />

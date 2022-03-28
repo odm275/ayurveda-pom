@@ -9,14 +9,13 @@ import { Timeline } from "@/lib/components/Timeline";
 import { useAuth } from "@/lib/context/AuthContext";
 import ErrorBanner from "@/lib/components/ErrorBanner";
 import { pomDataFormatter } from "@/lib/utils/data_viz";
-import { PomEntry } from "@/lib/types";
 import { withProtectedRoute } from "@/lib/utils/withProtectedRoute";
 
 dayjs.extend(isBetween);
 
 const parseDate = d3.timeParse("%m-%d-%Y");
-const dateAccessor = (d: PomEntry) => parseDate(d.date);
-const countAccessor = (d: PomEntry) => d.count;
+const dateAccessor = (d) => parseDate(d.date);
+const countAccessor = (d) => d.count;
 
 const StatsPage = () => {
   const { viewer, setViewer, error } = useAuth();
@@ -60,7 +59,7 @@ const StatsPage = () => {
   ];
   const dataWToday = entryForToday ? pomData : dataDummyEntry;
 
-  const data = dataWToday.reduce(pomDataFormatter, []) as PomEntry[];
+  const data = dataWToday.reduce(pomDataFormatter, []);
 
   const handleOnClick =
     ({ numOfMonths }) =>
