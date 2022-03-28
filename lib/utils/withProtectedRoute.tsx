@@ -6,15 +6,15 @@ import { GenericLoadingScreen } from "@/lib/components";
 export const withProtectedRoute = (WrappedComponent) => {
   const AuthenticatedComponent = () => {
     const Router = useRouter();
-    const { isAuthenticated, loading } = useAuth();
+    const { viewer, isAuthenticated, loading } = useAuth();
 
-    if (loading || !isAuthenticated) return <GenericLoadingScreen />;
+    if (loading) return <GenericLoadingScreen />;
 
     useEffect(() => {
       if (!isAuthenticated) {
         Router.replace("/login");
       }
-    }, [isAuthenticated]);
+    }, [viewer]);
 
     return <WrappedComponent />;
   };

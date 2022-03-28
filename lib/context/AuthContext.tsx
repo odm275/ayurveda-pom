@@ -9,13 +9,14 @@ import {
   SetStateAction,
   Dispatch
 } from "react";
+import Router from "next/router";
 
 import { ApolloError } from "@apollo/client";
 import dayjs from "dayjs";
 
 import { useLogInMutation, Viewer } from "../generated";
 
-const initialViewer: Viewer = {
+export const initialViewer: Viewer = {
   __typename: "Viewer",
   avatar:
     "https://www.vectorstock.com/royalty-free-vector/avatar-icon-with-question-mark-symbol-with-male-vector-28785263",
@@ -66,13 +67,6 @@ export const useAuth = () => {
   return useContext(authContext);
 };
 
-// const viewerUpdater = (prevViewer, newViewer) => {
-//   return {
-//     ...prevViewer,
-//     pomData:
-//   };
-// };
-
 function useProvideAuth() {
   const [viewer, setViewer] = useState<Viewer>(initialViewer);
 
@@ -85,7 +79,6 @@ function useProvideAuth() {
           pomData: { ...data.logIn.pomData },
           currentTasks: { ...data.logIn.currentTasks }
         };
-        console.log(data.logIn);
 
         setViewer(newViewerObj);
 
@@ -102,6 +95,7 @@ function useProvideAuth() {
   });
 
   const logInRef = useRef(logIn);
+  const isAuthenticated = !!viewer.id;
 
   useEffect(() => {
     logInRef.current({
@@ -112,7 +106,7 @@ function useProvideAuth() {
   }, []);
 
   return {
-    isAuthenticated: !!viewer.id,
+    isAuthenticated,
     viewer,
     setViewer,
     error,

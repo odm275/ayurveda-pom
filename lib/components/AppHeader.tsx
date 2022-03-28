@@ -21,18 +21,19 @@ import {
   displaySuccessNotification,
   displayErrorNotification
 } from "@/lib/utils/toast";
+import { initialViewer } from "../context";
 import { useLogOutMutation } from "../generated";
 
 export const AppHeader = () => {
   const { viewer, setViewer, isAuthenticated } = useAuth();
-  console.log(viewer);
 
   const [isOpen, setOpen] = useState(false);
 
   const [logOut] = useLogOutMutation({
     onCompleted: (data) => {
       if (data && data.logOut) {
-        setViewer(data.logOut);
+        setViewer(initialViewer);
+
         sessionStorage.removeItem("token");
         displaySuccessNotification(
           "You've succesfully logged out!",
