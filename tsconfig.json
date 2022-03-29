@@ -35,7 +35,7 @@
     "temp/clear.js",
     "apollo/utils/cookies-helper.js",
     "lib/utils/data_viz.js",
-    "lib/components/Chart/Line.jsx"
+    "lib/components/Chart/Line.tsx"
   ],
   "exclude": ["node_modules"]
 }
