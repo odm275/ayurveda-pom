@@ -9,8 +9,8 @@ import LineMarker from "@/lib/components/Chart/LineMarker";
 
 interface Props {
   data: any;
-  xAccessor: any;
-  yAccessor: any;
+  xAccessor: (d: any) => Date;
+  yAccessor: (d: any) => number;
 }
 
 const formatDate = d3.timeFormat("%-d");

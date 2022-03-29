@@ -1,23 +1,8 @@
-import PropTypes from "prop-types";
 import { useEffect, useState, useRef } from "react";
 import ResizeObserver from "resize-observer-polyfill";
 
-export const accessorPropsType = PropTypes.oneOfType([
-  PropTypes.func,
-  PropTypes.number
-]);
-
 export const callAccessor = (accessor, d, i) =>
   typeof accessor === "function" ? accessor(d, i) : accessor;
-
-export const dimensionsPropsType = PropTypes.shape({
-  height: PropTypes.number,
-  width: PropTypes.number,
-  marginTop: PropTypes.number,
-  marginRight: PropTypes.number,
-  marginBottom: PropTypes.number,
-  marginLeft: PropTypes.number
-});
 
 export const combineChartDimensions = (dimensions) => {
   const parsedDimensions = {
@@ -45,7 +30,7 @@ export const combineChartDimensions = (dimensions) => {
   };
 };
 
-export const useChartDimensions = (passedSettings) => {
+export const useChartDimensions = (passedSettings?: any): any => {
   const ref = useRef();
   const dimensions = combineChartDimensions(passedSettings);
 
@@ -53,7 +38,7 @@ export const useChartDimensions = (passedSettings) => {
   const [height, changeHeight] = useState(0);
 
   useEffect(() => {
-    // if (dimensions.width && dimensions.height) return [ref, dimensions];
+    if (dimensions.width && dimensions.height) return () => [ref, dimensions];
 
     const element = ref.current;
     const resizeObserver = new ResizeObserver((entries) => {
