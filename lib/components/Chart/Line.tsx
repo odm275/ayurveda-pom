@@ -19,13 +19,10 @@ export const Line = ({
   interpolation = d3.curveMonotoneX,
   ...props
 }: Props): ReactElement => {
-  const lineGenerator = d3[type]()
-    .x(xAccessor)
-    .y(yAccessor)
-    .curve(interpolation);
+  const lineGenerator = d3[type](xAccessor, yAccessor).curve(interpolation);
 
   if (type == "area") {
-    lineGenerator.y0(y0Accessor).y1(yAccessor);
+    // lineGenerator.y0(y0Accessor).y1(yAccessor);
   }
 
   const line = lineGenerator(data);
