@@ -1,7 +1,6 @@
 export * from "./Footer";
 export * from "./HomeSection";
 export * from "./TaskListSection";
-export * from "./AppHeader";
 export * from "./AppHeaderSkeleton";
 export * from "./ErrorBanner";
 export * from "./AppLayout";
@@ -15,3 +14,4 @@ export * from "./Navbar";
 export * from "./GenericLoadingScreen";
 export * from "./PageLayout";
 export * from "./BuyMeCoffeeButton";
+export * from "./SideBarWithHeader";

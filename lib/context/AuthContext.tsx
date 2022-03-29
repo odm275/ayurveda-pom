@@ -91,11 +91,13 @@ function useProvideAuth() {
   const isAuthenticated = !!viewer.id && viewer.id !== null;
 
   useEffect(() => {
-    logInRef.current({
-      variables: {
-        date: dayjs().format("MM-DD-YYYY")
-      }
-    });
+    if (!isAuthenticated) {
+      logInRef.current({
+        variables: {
+          date: dayjs().format("MM-DD-YYYY")
+        }
+      });
+    }
   }, []);
 
   return {

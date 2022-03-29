@@ -1,7 +1,7 @@
 import NextLink from "next/link";
-import { Flex, Icon, useBreakpointValue, Link } from "@chakra-ui/react";
+import { Flex, useBreakpointValue, Link } from "@chakra-ui/react";
 import { DesktopNav } from "./components";
-import WindLogo from "../../../../../public/wind.svg";
+import { WindIcon } from "@/lib/components/WindIcon";
 export const MainMenu = () => (
   <Flex
     flex={{ base: 1 }}
@@ -10,7 +10,7 @@ export const MainMenu = () => (
   >
     <Link textAlign={useBreakpointValue({ base: "center", md: "left" })}>
       <NextLink href="/">
-        <Icon as={WindLogo} w={12} h={12} fill="pink.400" />
+        <WindIcon />
       </NextLink>
     </Link>
 
