@@ -40,10 +40,11 @@ export const Hero = () => {
             </Text>
           </Heading>
           <Text color={"gray.500"}>
-            Vata Pom is an app I created to help organize my messy mind. I'm the
-            type of person that gets very easily excited for new things, focuses
-            on them nonstop and a week later gets bored and moves onto something
-            new. This app is an effort to organize all that creative chaos.
+            Vata Pom is an app I created to help organize my messy mind.
+            I&apos;m the type of person that gets very easily excited for new
+            things, focuses on them nonstop and a week later gets bored and
+            moves onto something new. This app is an effort to organize all that
+            creative chaos.
           </Text>
           <Stack
             direction={"column"}
