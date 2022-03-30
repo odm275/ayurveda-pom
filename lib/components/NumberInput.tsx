@@ -3,7 +3,11 @@ import { Input, Button, HStack } from "@chakra-ui/react";
 
 const DEFAULT_AMT = 1;
 
-const NumberInput = ({ register }) => {
+interface Props {
+  register: any;
+}
+
+const NumberInput = ({ register }: Props) => {
   const [amt, setAmt] = useState(DEFAULT_AMT);
 
   const addAmt = () => setAmt(amt + 1);

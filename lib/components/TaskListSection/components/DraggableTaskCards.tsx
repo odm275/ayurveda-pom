@@ -1,13 +1,20 @@
-import React from "react";
+import { ReactNode } from "react";
 import { Stack, Box } from "@chakra-ui/react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
+
+interface Props {
+  children: ReactNode;
+  tasks: any;
+  setTasks: (tasks) => void;
+  setLastDraggedIndex: any;
+}
 
 export const DraggableTaskCards = ({
   children,
   tasks,
   setTasks,
   setLastDraggedIndex
-}) => {
+}: Props) => {
   const handleOnDragEnd = (result) => {
     if (!result.destination) return;
     const items = Array.from(tasks);

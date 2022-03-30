@@ -1,8 +1,14 @@
-import React from "react";
+import { ReactNode } from "react";
 import { DrawerBody, Box, useDisclosure } from "@chakra-ui/react";
 import { AddTaskButton, AddTaskModal } from "./components";
 
-export const TaskListBody = ({ children, tasks, setTasks }) => {
+interface Props {
+  children: ReactNode;
+  tasks: any;
+  setTasks: (tasks) => void;
+}
+
+export const TaskListBody = ({ children, tasks, setTasks }: Props) => {
   const {
     isOpen: openAddTask,
     onOpen: openNewTaskForm,

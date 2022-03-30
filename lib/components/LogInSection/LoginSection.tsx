@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useApolloClient } from "@apollo/client";
-import { Heading, Text, Box, Flex, Button } from "@chakra-ui/react";
+import { Heading, Text, Box, Flex } from "@chakra-ui/react";
 import { PageLayout } from "@/lib/components/PageLayout";
 import { useAuth } from "@/lib/context/AuthContext";
 import { displaySuccessNotification } from "@/lib/utils/toast";
@@ -102,8 +102,8 @@ export const LogInSection = () => {
           <Text>Sign in with Google to start booking available rentals</Text>
           <LogInGoogleButton onClick={handleAuthorize} />
           <Text>
-            Note: By singing in, you'll be redirected to the Google consent form
-            to sign in with your Google account.
+            Note: By singing in, you&apos;ll be redirected to the Google consent
+            form to sign in with your Google account.
           </Text>
         </Box>
       </Flex>

@@ -1,10 +1,15 @@
-import React, { useRef } from "react";
+import { useRef, ReactNode } from "react";
 import { useOutsideNode } from "./hooks";
 /**
  * Component that alerts if you click outside of it
  */
 
-export function OutsideClick({ children, setLastDraggedIndex }) {
+interface Props {
+  children: ReactNode;
+  setLastDraggedIndex: any;
+}
+
+export function OutsideClick({ children, setLastDraggedIndex }: Props) {
   const wrapperRef = useRef(null);
   useOutsideNode(wrapperRef, setLastDraggedIndex);
 

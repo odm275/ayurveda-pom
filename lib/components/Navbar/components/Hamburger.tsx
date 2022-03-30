@@ -1,7 +1,12 @@
 import { CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { Flex, IconButton } from "@chakra-ui/react";
 
-export const Hamburger = ({ isOpen, onToggle }) => (
+interface Props {
+  isOpen: boolean;
+  onToggle: () => void;
+}
+
+export const Hamburger = ({ isOpen, onToggle }: Props) => (
   <Flex
     flex={{ base: 1, md: "auto" }}
     ml={{ base: -2 }}

@@ -1,7 +1,11 @@
 import { Button } from "@chakra-ui/react";
 import GoogleLogo from "../../../../public/btn_google_light_normal_ios.svg";
 
-export const LogInGoogleButton = ({ onClick }) => (
+interface Props {
+  onClick: () => void;
+}
+
+export const LogInGoogleButton = ({ onClick }: Props) => (
   <Button
     my="10"
     background="#4285f4"
