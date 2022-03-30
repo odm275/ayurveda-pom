@@ -9,20 +9,6 @@ import dayjs from "dayjs";
 import { BiPlay, BiPause, BiReset } from "react-icons/bi";
 import { useInterval } from "@/lib/hooks/useInterval";
 import { useEffectWithoutOnMount } from "@/lib/hooks/useEffectWithoutOnMount";
-
-import {
-  pomReducer,
-  selectTimePerCycle,
-  timeConversion,
-  POMODORO,
-  SHORT_BREAK,
-  LONG_BREAK,
-  RUN_TIMER,
-  PAUSE_TIMER,
-  RESET_TIMER,
-  NEW_TIME,
-  ADD_POM_COUNT
-} from "@/lib/utils/pomodoro";
 import {
   displayErrorNotification,
   displaySuccessNotification
@@ -34,6 +20,22 @@ import {
   PomCycle
 } from "@/lib/generated";
 
+import {
+  selectTimePerCycle,
+  timeConversion,
+  cycleAlert,
+  POMODORO,
+  SHORT_BREAK,
+  LONG_BREAK,
+  RUN_TIMER,
+  PAUSE_TIMER,
+  RESET_TIMER,
+  NEW_TIME,
+  ADD_POM_COUNT,
+  SECOND
+} from "./utils";
+import { pomReducer } from "./reducer";
+
 interface Props {
   pomCycle: PomCycle;
   pomDuration: number;
@@ -44,16 +46,6 @@ interface Props {
   tasks: TaskType[];
   setTasks: any;
   updateTasks: any;
-}
-
-function successfulCycleAlert(message: string) {
-  new Notification(message);
-
-  const audioTune = new Audio(
-    "https://ayurveda-pomodoro.s3.amazonaws.com/Store_Door_Chime-Mike_Koenig-570742973.mp3"
-  );
-  audioTune.load();
-  audioTune.play();
 }
 
 const removeAmtCurrentTask = (tasks: TaskType[]) => {
@@ -76,9 +68,7 @@ const removeAmtCurrentTask = (tasks: TaskType[]) => {
   return newTasksArray;
 };
 
-const SECOND = 1000;
-
-const PomodoroTimer = ({
+export const Pomodoro = ({
   pomCycle,
   pomDuration,
   shortBreakDuration,
@@ -140,7 +130,7 @@ const PomodoroTimer = ({
     if (timeEnded) {
       if (timeForPomodoro) {
         dispatch({ type: POMODORO, payload: durationValues });
-        successfulCycleAlert("Time to work!");
+        cycleAlert("Time to work!");
       } else {
         dispatch({ type: ADD_POM_COUNT });
       }
@@ -153,12 +143,10 @@ const PomodoroTimer = ({
 
     if (timeForShortBreak) {
       dispatch({ type: SHORT_BREAK, payload: durationValues });
-      successfulCycleAlert(
-        "Take a short Break -- go to the bathroom or medidate"
-      );
+      cycleAlert("Take a short Break -- go to the bathroom or medidate");
     } else if (timeForLongBreak) {
       dispatch({ type: LONG_BREAK, payload: durationValues });
-      successfulCycleAlert("Take a long break! Take a nap or go outside :)");
+      cycleAlert("Take a long break! Take a nap or go outside :)");
     }
   }, state.pomCount);
 
@@ -172,9 +160,9 @@ const PomodoroTimer = ({
       }
     });
   }, state.cycle);
-  // This needs to only run when????
   useEffectWithoutOnMount(() => {
     if (tasks.length > 0 && timeEnded) {
+      console.log("updating tasks ....");
       updateTasks({
         variables: {
           input: { tasks: tasks }
@@ -221,5 +209,3 @@ const PomodoroTimer = ({
     </Box>
   );
 };
-
-export default PomodoroTimer;

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Flex, Button, Spinner, useDisclosure } from "@chakra-ui/react";
-import PomodoroTimer from "@/lib/components/PomodoroTimer";
+import { Pomodoro } from "@/lib/components";
 import AppHeaderSkeleton from "@/lib/components/AppHeaderSkeleton";
 import ErrorBanner from "@/lib/components/ErrorBanner";
 import { AppLayout } from "@/lib/components/AppLayout";
@@ -68,7 +68,7 @@ const Index = () => {
           My Tasks
         </Button>
       </Flex>
-      <PomodoroTimer
+      <Pomodoro
         pomCycle={viewer.pomCycle}
         pomDuration={viewer.pomDuration}
         shortBreakDuration={viewer.shortBreakDuration}

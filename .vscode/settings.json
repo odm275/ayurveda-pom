@@ -1,5 +1,5 @@
 {
   "editor.formatOnSave": true,
-  "cSpell.words": ["Pomodoro"],
+  "cSpell.words": ["Longbreak", "Pomodoro", "Shortbreak"]
   // "typescript.tsserver.experimental.enableProjectDiagnostics": true
 }
