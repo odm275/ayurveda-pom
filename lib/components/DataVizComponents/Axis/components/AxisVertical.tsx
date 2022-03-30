@@ -1,7 +1,7 @@
 interface Props {
   dimensions: any;
   label: string;
-  formatTick: any;
+  formatTick?: any;
   scale: d3.ScaleTime<number, number, never>;
 }
 
@@ -26,7 +26,7 @@ export function AxisVertical({
           className="Axis__tick"
           transform={`translate(-16, ${scale(tick)})`}
         >
-          {formatTick(tick)}
+          {tick}
         </text>
       ))}
 

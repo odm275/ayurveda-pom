@@ -7,7 +7,8 @@ import {
   DrawerCloseButton,
   DrawerHeader,
   DrawerContent,
-  DrawerFooter
+  DrawerFooter,
+  useDisclosure
 } from "@chakra-ui/react";
 import { useTaskHandlers } from "./hooks";
 import {
@@ -17,7 +18,7 @@ import {
   Task
 } from "./components";
 import { useUpdateTasksMutation, Task as TaskType } from "@/lib/generated";
-
+import { LoadingOverlay } from "../LoadingOverlay";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -36,6 +37,8 @@ export const TaskListSection = ({
   loadingUpdateTasks
 }: Props) => {
   const [updateTasks, { loading, error }] = useUpdateTasksMutation();
+  // const { isOpen: loadingOverlayIsOpen, onClose: loadingOverlayOnClose } =
+  //   useDisclosure();
 
   const [lastDraggedIndex, setLastDraggedIndex] = useState(null);
 
@@ -47,9 +50,9 @@ export const TaskListSection = ({
       },
       onCompleted: (data) => {
         console.log(data);
+        onClose();
       }
     });
-    onClose();
   };
 
   const handleOnClose = () => {
@@ -93,29 +96,31 @@ export const TaskListSection = ({
       size="full"
     >
       <DrawerOverlay>
-        <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader>My Tasks</DrawerHeader>
-          <TaskListBody tasks={tasks} setTasks={setTasks}>
-            <OutsideClick setLastDraggedIndex={setLastDraggedIndex}>
-              <DraggableTaskCards
-                tasks={tasks}
-                setTasks={setTasks}
-                setLastDraggedIndex={setLastDraggedIndex}
-              >
-                {taskCards}
-              </DraggableTaskCards>
-            </OutsideClick>
-          </TaskListBody>
-          <DrawerFooter>
-            <Button variant="outline" mr={3} onClick={handleOnClose}>
-              Cancel
-            </Button>
-            <Button color="blue" type="submit" onClick={onSave}>
-              Save
-            </Button>
-          </DrawerFooter>
-        </DrawerContent>
+        <LoadingOverlay isOpen={loading}>
+          <DrawerContent>
+            <DrawerCloseButton />
+            <DrawerHeader>My Tasks</DrawerHeader>
+            <TaskListBody tasks={tasks} setTasks={setTasks}>
+              <OutsideClick setLastDraggedIndex={setLastDraggedIndex}>
+                <DraggableTaskCards
+                  tasks={tasks}
+                  setTasks={setTasks}
+                  setLastDraggedIndex={setLastDraggedIndex}
+                >
+                  {taskCards}
+                </DraggableTaskCards>
+              </OutsideClick>
+            </TaskListBody>
+            <DrawerFooter>
+              <Button variant="outline" mr={3} onClick={handleOnClose}>
+                Cancel
+              </Button>
+              <Button color="blue" type="submit" onClick={onSave}>
+                Save
+              </Button>
+            </DrawerFooter>
+          </DrawerContent>
+        </LoadingOverlay>
       </DrawerOverlay>
     </Drawer>
   );
