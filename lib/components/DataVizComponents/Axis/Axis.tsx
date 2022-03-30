@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import * as d3 from 'd3';
-import { useDimensionsContext } from './Chart';
+import React from "react";
+import PropTypes from "prop-types";
+import * as d3 from "d3";
+import { useDimensionsContext } from "../Chart";
 
 const axisComponentsByDimension = {
   x: AxisHorizontal,
@@ -9,15 +9,15 @@ const axisComponentsByDimension = {
 };
 
 enum Dimension {
-  x = 'x',
-  y = 'y'
+  x = "x",
+  y = "y"
 }
 interface Props {
   dimension: Dimension;
   scale: () => void;
 }
 
-const Axis = ({ dimension, ...props }) => {
+export const Axis = ({ dimension, ...props }) => {
   const dimensions = useDimensionsContext();
   const Component = axisComponentsByDimension[dimension];
   if (!Component) return null;
@@ -26,15 +26,15 @@ const Axis = ({ dimension, ...props }) => {
 };
 
 Axis.propTypes = {
-  dimension: PropTypes.oneOf(['x', 'y']),
+  dimension: PropTypes.oneOf(["x", "y"]),
   scale: PropTypes.func,
   label: PropTypes.string,
   formatTick: PropTypes.func
 };
 
-const formatNumber = d3.format(',');
+const formatNumber = d3.format(",");
 Axis.defaultProps = {
-  dimension: 'x',
+  dimension: "x",
   scale: null,
   formatTick: formatNumber
 };
@@ -67,7 +67,7 @@ function AxisHorizontal({ dimensions, label, formatTick, scale, ...props }) {
   const numberOfTicks = responsiveTicks(dimensions);
 
   const ticks = scale.ticks(numberOfTicks);
-  console.log('ticks', numberOfTicks, ticks);
+  console.log("ticks", numberOfTicks, ticks);
 
   return (
     <g

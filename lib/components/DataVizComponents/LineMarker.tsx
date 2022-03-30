@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface Props {
   x1: number;
@@ -8,7 +8,7 @@ interface Props {
   text: string;
 }
 
-const LineMarker = ({ x1, x2, y1, y2, text }: Props) => {
+export const LineMarker = ({ x1, x2, y1, y2, text }: Props) => {
   return (
     <>
       <line
@@ -32,5 +32,3 @@ const LineMarker = ({ x1, x2, y1, y2, text }: Props) => {
     </>
   );
 };
-
-export default LineMarker;

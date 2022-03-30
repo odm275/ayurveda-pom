@@ -1,6 +1,11 @@
 import React, { ReactElement } from "react";
 import * as d3 from "d3";
 
+interface MyData {
+  yData: number;
+  xData: number;
+}
+
 interface Props {
   type?: "line" | "area";
   data: any;
@@ -19,12 +24,22 @@ export const Line = ({
   interpolation = d3.curveMonotoneX,
   ...props
 }: Props): ReactElement => {
-  const lineGenerator = d3[type]()
-    .x(xAccessor)
-    .y(yAccessor)
-    .curve(interpolation);
+  let lineGenerator;
 
-  if (type == "area") {
+  if (type === "line") {
+    lineGenerator = d3
+      .line<MyData>()
+      .x(xAccessor)
+      .y(yAccessor)
+      .curve(interpolation);
+  }
+
+  if (type === "area") {
+    lineGenerator = d3
+      .area<MyData>()
+      .x(xAccessor)
+      .y(yAccessor)
+      .curve(interpolation);
     lineGenerator.y0(y0Accessor).y1(yAccessor);
   }
 

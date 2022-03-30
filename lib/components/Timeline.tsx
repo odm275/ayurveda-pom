@@ -2,10 +2,12 @@ import React from "react";
 import * as d3 from "d3";
 import { useChartDimensions } from "@/lib/hooks/useChartDimensions";
 
-import { Chart } from "@/lib/components/Chart/Chart";
-import { Line } from "@/lib/components/Chart/Line";
-import Axis from "@/lib/components/Chart/Axis";
-import LineMarker from "@/lib/components/Chart/LineMarker";
+import {
+  Chart,
+  Line,
+  Axis,
+  LineMarker
+} from "@/lib/components/DataVizComponents";
 
 interface Props {
   data: any;
