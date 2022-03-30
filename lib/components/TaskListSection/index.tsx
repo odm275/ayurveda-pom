@@ -37,8 +37,6 @@ export const TaskListSection = ({
   loadingUpdateTasks
 }: Props) => {
   const [updateTasks, { loading, error }] = useUpdateTasksMutation();
-  // const { isOpen: loadingOverlayIsOpen, onClose: loadingOverlayOnClose } =
-  //   useDisclosure();
 
   const [lastDraggedIndex, setLastDraggedIndex] = useState(null);
 

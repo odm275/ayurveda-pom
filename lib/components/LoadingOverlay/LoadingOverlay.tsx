@@ -9,7 +9,7 @@ interface Props {
 export const LoadingOverlay = ({ children, isOpen }: Props) => (
   <>
     {children}
-    <Modal isOpen={isOpen}>
+    <Modal isOpen={isOpen} onClose={() => "dummy function to shush typescript"}>
       <ModalOverlay />
     </Modal>
   </>
