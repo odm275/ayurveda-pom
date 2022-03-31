@@ -1,4 +1,5 @@
-import React, { useReducer } from "react";
+import ReactDOM from "react-dom";
+import { useReducer } from "react";
 import {
   Box,
   Flex,
@@ -17,6 +18,7 @@ import SuccessBanner from "@/lib/components/SuccessBanner";
 import {
   Task as TaskType,
   useUpdateUserSettingsMutation,
+  useUpdateViewerDataMutation,
   PomCycle
 } from "@/lib/generated";
 
@@ -68,6 +70,15 @@ const removeAmtCurrentTask = (tasks: TaskType[]) => {
   return newTasksArray;
 };
 
+// When the timer runs out, this will be the next cycle
+function getNextCycle({ pomCycle, pomCount, longBreakInterval }) {
+  if (pomCycle === PomCycle.Pomodoro && pomCount % longBreakInterval !== 0)
+    return "shortBreak";
+  if (pomCycle === PomCycle.Pomodoro && pomCount % longBreakInterval === 0)
+    return "longBreak";
+  return "pomodoro";
+}
+
 export const Pomodoro = ({
   pomCycle,
   pomDuration,
@@ -94,7 +105,6 @@ export const Pomodoro = ({
     shortBreakDuration,
     longBreakDuration
   };
-  const [state, dispatch] = useReducer(pomReducer, initialState);
 
   const durationValues = {
     pomDuration,
@@ -103,20 +113,7 @@ export const Pomodoro = ({
     longBreakInterval
   };
 
-  const timeForPomodoro =
-    state.cycle === PomCycle.Shortbreak || state.cycle === PomCycle.Longbreak;
-  const timeForShortBreak = state.pomCount % longBreakInterval !== 0;
-  const timeForLongBreak = state.pomCount % longBreakInterval === 0;
-  const timeEnded = state.timer === 0;
-
-  const [updateUserSettings] = useUpdateUserSettingsMutation({
-    onCompleted: () => {
-      displaySuccessNotification("Updated User Settings");
-    },
-    onError: () => {
-      displayErrorNotification("Sorry! Could't update your user settings");
-    }
-  });
+  const [state, dispatch] = useReducer(pomReducer, initialState);
 
   useInterval(
     () => {
@@ -126,40 +123,55 @@ export const Pomodoro = ({
     state.isRunning ? 10 : null
   );
 
-  useEffectWithoutOnMount(() => {
-    if (timeEnded) {
-      if (timeForPomodoro) {
-        dispatch({ type: POMODORO, payload: durationValues });
-        cycleAlert("Time to work!");
-      } else {
-        dispatch({ type: ADD_POM_COUNT });
-      }
+  const [updateViewerData] = useUpdateViewerDataMutation({
+    onCompleted: () => {
+      displaySuccessNotification("Updated User Settings");
+    },
+    onError: () => {
+      displayErrorNotification("Sorry! Could't update your user settings");
     }
-  }, state.timer);
+  });
 
-  useEffectWithoutOnMount(() => {
+  const timeEnded = state.timer === 0;
+
+  const handleTaskCompletion = () => {
     const newTasksData = removeAmtCurrentTask(tasks);
     setTasks(newTasksData);
+  };
 
-    if (timeForShortBreak) {
+  const setUpdate = {
+    pomodoro: () => {
+      dispatch({ type: POMODORO, payload: durationValues });
+      cycleAlert("Time to work!");
+    },
+    shortBreak: () => {
       dispatch({ type: SHORT_BREAK, payload: durationValues });
-      cycleAlert("Take a short Break -- go to the bathroom or medidate");
-    } else if (timeForLongBreak) {
+      handleTaskCompletion();
+      cycleAlert("Take a short Break -- go to the bathroom or stretch");
+    },
+    longBreak: () => {
       dispatch({ type: LONG_BREAK, payload: durationValues });
-      cycleAlert("Take a long break! Take a nap or go outside :)");
+      handleTaskCompletion();
+      cycleAlert("Take a long break! Walk around or go outside!");
     }
-  }, state.pomCount);
+  };
+
+  if (timeEnded) {
+    const selector = getNextCycle(state);
+    setUpdate[selector]();
+  }
 
   useEffectWithoutOnMount(() => {
-    updateUserSettings({
+    updateViewerData({
       variables: {
         input: {
           pomCycle: state.cycle,
-          date: dayjs().format("MM-DD-YYYY")
+          date: dayjs().format("MM-DD-YYYY"),
+          increasePomCounter: true
         }
       }
     });
-  }, state.cycle);
+  }, [state.cycle, state.pomCount]);
   useEffectWithoutOnMount(() => {
     if (tasks.length > 0 && timeEnded) {
       console.log("updating tasks ....");
@@ -169,7 +181,7 @@ export const Pomodoro = ({
         }
       });
     }
-  }, tasks);
+  }, [tasks]);
 
   const progressPercentage = (state.timer / selectTimePerCycle(state)) * 100;
 

@@ -15,6 +15,11 @@ type Mutation {
   updates user in database when a pomodoro counter goes up, and when settings change
   """
   updateUserSettings(input: UpdateUserSettingsInput): Viewer!
+
+  """
+  Updates Viewer in database when a pomodoro counter goes up or when settings change.
+  """
+  updateViewerData(input: UpdateViewerDataInput): Viewer!
 }
 
 type PomData {
@@ -74,6 +79,16 @@ input UpdateTaskUserInput {
 
 input UpdateUserSettingsInput {
   date: String
+  longBreakDuration: Int
+  longBreakInterval: Int
+  pomCycle: pomCycle
+  pomDuration: Int
+  shortBreakDuration: Int
+}
+
+input UpdateViewerDataInput {
+  date: String
+  increasePomCounter: Boolean
   longBreakDuration: Int
   longBreakInterval: Int
   pomCycle: pomCycle

@@ -26,14 +26,16 @@ export function pomReducer(state, action) {
         ...state,
         timer: action.payload.shortBreakDuration,
         cycle: PomCycle.Shortbreak,
-        isRunning: false
+        isRunning: false,
+        pomCount: state.pomCount + 1
       };
     case LONG_BREAK:
       return {
         ...state,
         timer: action.payload.longBreakDuration,
         cycle: PomCycle.Longbreak,
-        isRunning: false
+        isRunning: false,
+        pomCount: state.pomCount + 1
       };
     case RUN_TIMER:
       return {

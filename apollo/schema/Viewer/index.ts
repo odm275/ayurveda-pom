@@ -15,7 +15,6 @@ import { Google } from "apollo/api/Google";
 import { clearCookie } from "@/apollo/utils/cookies-helper";
 import { authorize } from "@/apollo/utils/authorize";
 import { addPomDateCounter } from "./helpers";
-import { resolve } from "path";
 
 export const PomRecord = objectType({
   name: "PomRecord",
@@ -174,6 +173,19 @@ const UpdateUserSettingsInput = inputObjectType({
   }
 });
 
+const UpdateViewerDataInput = inputObjectType({
+  name: "UpdateViewerDataInput",
+  definition(t) {
+    t.int("pomDuration");
+    t.int("shortBreakDuration");
+    t.int("longBreakDuration");
+    t.int("longBreakInterval");
+    t.field("pomCycle", { type: PomCycle });
+    t.string("date");
+    t.boolean("increasePomCounter");
+  }
+});
+
 export const ViewerMutation = extendType({
   type: "Mutation",
   definition(t) {
@@ -252,6 +264,44 @@ export const ViewerMutation = extendType({
 
         // If optional parameter with today's date is provided
         if (input.date) {
+          const updatedViewer = addPomDateCounter(db, viewer, input);
+          return updatedViewer;
+        } else {
+          const updateRes = await db.users.findOneAndUpdate(
+            {
+              _id: viewer._id
+            },
+            {
+              $set: input
+            },
+            { returnOriginal: false }
+          );
+
+          const updatedViewer = updateRes.value;
+          return updatedViewer;
+        }
+      }
+    });
+
+    t.nonNull.field("updateViewerData", {
+      type: Viewer,
+      description:
+        "Updates Viewer in database when a pomodoro counter goes up or when settings change.",
+      args: {
+        input: arg({ type: UpdateViewerDataInput })
+      },
+      async resolve(
+        __root: undefined,
+        { input },
+        { db, req, res }: { db; req; res }
+      ) {
+        console.log("update viewer data");
+        const viewer = await authorize(db, req);
+        if (!viewer) {
+          throw new Error("viewer cannot be found");
+        }
+
+        if (input.increasePomCounter) {
           const updatedViewer = addPomDateCounter(db, viewer, input);
           return updatedViewer;
         } else {

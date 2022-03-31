@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 export function useEffectWithoutOnMount(callback, dependencies) {
   const isMounted = useRef(false);
@@ -9,5 +9,5 @@ export function useEffectWithoutOnMount(callback, dependencies) {
     } else {
       isMounted.current = true;
     }
-  }, [dependencies]);
+  }, dependencies);
 }

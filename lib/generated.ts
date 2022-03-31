@@ -26,6 +26,8 @@ export type Mutation = {
   updateTasks: Tasks;
   /** updates user in database when a pomodoro counter goes up, and when settings change */
   updateUserSettings: Viewer;
+  /** Updates Viewer in database when a pomodoro counter goes up or when settings change. */
+  updateViewerData: Viewer;
 };
 
 
@@ -42,6 +44,11 @@ export type MutationUpdateTasksArgs = {
 
 export type MutationUpdateUserSettingsArgs = {
   input?: InputMaybe<UpdateUserSettingsInput>;
+};
+
+
+export type MutationUpdateViewerDataArgs = {
+  input?: InputMaybe<UpdateViewerDataInput>;
 };
 
 export type PomData = {
@@ -103,6 +110,16 @@ export type UpdateTaskUserInput = {
 
 export type UpdateUserSettingsInput = {
   date?: InputMaybe<Scalars['String']>;
+  longBreakDuration?: InputMaybe<Scalars['Int']>;
+  longBreakInterval?: InputMaybe<Scalars['Int']>;
+  pomCycle?: InputMaybe<PomCycle>;
+  pomDuration?: InputMaybe<Scalars['Int']>;
+  shortBreakDuration?: InputMaybe<Scalars['Int']>;
+};
+
+export type UpdateViewerDataInput = {
+  date?: InputMaybe<Scalars['String']>;
+  increasePomCounter?: InputMaybe<Scalars['Boolean']>;
   longBreakDuration?: InputMaybe<Scalars['Int']>;
   longBreakInterval?: InputMaybe<Scalars['Int']>;
   pomCycle?: InputMaybe<PomCycle>;
@@ -197,6 +214,13 @@ export type UpdateUserSettingsMutationVariables = Exact<{
 
 
 export type UpdateUserSettingsMutation = { __typename?: 'Mutation', updateUserSettings: { __typename?: 'Viewer', id?: string | null, longBreakInterval?: number | null, pomDuration?: number | null, shortBreakDuration?: number | null, longBreakDuration?: number | null } };
+
+export type UpdateViewerDataMutationVariables = Exact<{
+  input?: InputMaybe<UpdateViewerDataInput>;
+}>;
+
+
+export type UpdateViewerDataMutation = { __typename?: 'Mutation', updateViewerData: { __typename?: 'Viewer', id?: string | null, longBreakInterval?: number | null, pomDuration?: number | null, shortBreakDuration?: number | null, longBreakDuration?: number | null } };
 
 export type AuthUrlQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -374,6 +398,43 @@ export function useUpdateUserSettingsMutation(baseOptions?: Apollo.MutationHookO
 export type UpdateUserSettingsMutationHookResult = ReturnType<typeof useUpdateUserSettingsMutation>;
 export type UpdateUserSettingsMutationResult = Apollo.MutationResult<UpdateUserSettingsMutation>;
 export type UpdateUserSettingsMutationOptions = Apollo.BaseMutationOptions<UpdateUserSettingsMutation, UpdateUserSettingsMutationVariables>;
+export const UpdateViewerDataDocument = gql`
+    mutation UpdateViewerData($input: UpdateViewerDataInput) {
+  updateViewerData(input: $input) {
+    id
+    longBreakInterval
+    pomDuration
+    shortBreakDuration
+    longBreakDuration
+  }
+}
+    `;
+export type UpdateViewerDataMutationFn = Apollo.MutationFunction<UpdateViewerDataMutation, UpdateViewerDataMutationVariables>;
+
+/**
+ * __useUpdateViewerDataMutation__
+ *
+ * To run a mutation, you first call `useUpdateViewerDataMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateViewerDataMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateViewerDataMutation, { data, loading, error }] = useUpdateViewerDataMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateViewerDataMutation(baseOptions?: Apollo.MutationHookOptions<UpdateViewerDataMutation, UpdateViewerDataMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateViewerDataMutation, UpdateViewerDataMutationVariables>(UpdateViewerDataDocument, options);
+      }
+export type UpdateViewerDataMutationHookResult = ReturnType<typeof useUpdateViewerDataMutation>;
+export type UpdateViewerDataMutationResult = Apollo.MutationResult<UpdateViewerDataMutation>;
+export type UpdateViewerDataMutationOptions = Apollo.BaseMutationOptions<UpdateViewerDataMutation, UpdateViewerDataMutationVariables>;
 export const AuthUrlDocument = gql`
     query AuthUrl {
   authUrl
