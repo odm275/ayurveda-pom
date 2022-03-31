@@ -71,11 +71,14 @@ const removeAmtCurrentTask = (tasks: TaskType[]) => {
 };
 
 // When the timer runs out, this will be the next cycle
-function getNextCycle({ pomCycle, pomCount, longBreakInterval }) {
-  if (pomCycle === PomCycle.Pomodoro && pomCount % longBreakInterval !== 0)
+function getNextCycle({ cycle, pomCount, longBreakInterval }) {
+  const rem = pomCount % longBreakInterval;
+  if (cycle === PomCycle.Pomodoro && rem !== 0) {
     return "shortBreak";
-  if (pomCycle === PomCycle.Pomodoro && pomCount % longBreakInterval === 0)
+  }
+  if (cycle === PomCycle.Pomodoro && rem === 0) {
     return "longBreak";
+  }
   return "pomodoro";
 }
 
@@ -103,7 +106,8 @@ export const Pomodoro = ({
     timerReset: false,
     pomDuration,
     shortBreakDuration,
-    longBreakDuration
+    longBreakDuration,
+    longBreakInterval
   };
 
   const durationValues = {
@@ -132,8 +136,6 @@ export const Pomodoro = ({
     }
   });
 
-  const timeEnded = state.timer === 0;
-
   const handleTaskCompletion = () => {
     const newTasksData = removeAmtCurrentTask(tasks);
     setTasks(newTasksData);
@@ -155,9 +157,14 @@ export const Pomodoro = ({
       cycleAlert("Take a long break! Walk around or go outside!");
     }
   };
+  const timeEnded = state.timer === 0;
 
   if (timeEnded) {
-    const selector = getNextCycle(state);
+    const selector = getNextCycle({
+      longBreakInterval,
+      cycle: state.cycle,
+      pomCount: state.pomCount
+    });
     setUpdate[selector]();
   }
 
@@ -171,10 +178,22 @@ export const Pomodoro = ({
         }
       }
     });
-  }, [state.cycle, state.pomCount]);
+  }, [state.pomCount]);
+
+  useEffectWithoutOnMount(() => {
+    updateViewerData({
+      variables: {
+        input: {
+          pomCycle: state.cycle,
+          date: dayjs().format("MM-DD-YYYY"),
+          increasePomCounter: false
+        }
+      }
+    });
+  }, [state.cycle]);
+
   useEffectWithoutOnMount(() => {
     if (tasks.length > 0 && timeEnded) {
-      console.log("updating tasks ....");
       updateTasks({
         variables: {
           input: { tasks: tasks }
