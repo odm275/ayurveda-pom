@@ -36,7 +36,7 @@ import {
   SECOND
 } from "./utils";
 import { pomReducer } from "./reducer";
-import { NoTasksWarning, ActionButton } from "./components";
+import { ActionButton } from "./components";
 
 interface Props {
   pomCycle: PomCycle;
@@ -93,7 +93,6 @@ export const Pomodoro = ({
   setTasks,
   updateTasks
 }: Props) => {
-  console.log("tasks", tasks);
   const initialState = {
     cycle: pomCycle,
     timer: selectTimePerCycle({
@@ -193,27 +192,31 @@ export const Pomodoro = ({
   }, [tasks]);
 
   const progressPercentage = (state.timer / selectTimePerCycle(state)) * 100;
-  const tasksExist = tasks.length > 0;
+  const canUsePom = tasks.length > 0 || state.cycle !== PomCycle.Pomodoro;
 
   const pauseOrPlayButton = !state.isRunning ? (
-    <ActionButton
-      isDisabled={tasksExist}
-      onClick={() => dispatch({ type: RUN_TIMER })}
-    >
-      <span>
-        <BiPlay size={45} />
-      </span>
+    <ActionButton isDisabled={canUsePom}>
+      <BiPlay
+        size={45}
+        onClick={canUsePom ? () => dispatch({ type: RUN_TIMER }) : null}
+      />
     </ActionButton>
   ) : (
-    <Tooltip
-      isDisabled={tasksExist}
-      label="Create a task to use pom"
-      fontSize="md"
-    >
-      <span>
-        <BiPause onClick={() => dispatch({ type: PAUSE_TIMER })} size={45} />
-      </span>
-    </Tooltip>
+    <ActionButton isDisabled={canUsePom}>
+      <BiPause
+        onClick={canUsePom ? () => dispatch({ type: PAUSE_TIMER }) : null}
+        size={45}
+      />
+    </ActionButton>
+  );
+
+  const resetButton = (
+    <ActionButton isDisabled={canUsePom}>
+      <BiReset
+        size={45}
+        onClick={canUsePom ? () => dispatch({ type: RESET_TIMER }) : null}
+      />
+    </ActionButton>
   );
   const successCycleBannerElement =
     state.timer === 0 ? (
@@ -234,7 +237,7 @@ export const Pomodoro = ({
           </CircularProgressLabel>
         </CircularProgress>
         <Flex>
-          <BiReset size={45} onClick={() => dispatch({ type: RESET_TIMER })} />
+          {resetButton}
           {pauseOrPlayButton}
         </Flex>
       </Flex>
