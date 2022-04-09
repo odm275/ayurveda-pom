@@ -80,7 +80,6 @@ export const TaskMutation = extendType({
         }
 
         // Set positions
-
         const tasksWPosition = input.tasks.map((task, i) => {
           return {
             ...task,

@@ -41,13 +41,13 @@ export const TaskListSection = ({
   const [lastDraggedIndex, setLastDraggedIndex] = useState(null);
 
   const onSave = () => {
-    // ToDo?: after update Tasks is successful -> update Tasks with response from server.
     updateTasks({
       variables: {
         input: { tasks: tasks }
       },
       onCompleted: (data) => {
-        console.log(data);
+        console.log(data.updateTasks.result);
+        setTasks(data.updateTasks.result);
         onClose();
       }
     });
