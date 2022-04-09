@@ -52,11 +52,13 @@ const Index = () => {
     <ErrorBanner description="We aren't able to verify if you were logged in. Please try again later!" />
   ) : null;
 
+  const unFinishedTasks = tasks.filter((task) => task.amt > 0);
+
   return (
     <AppLayout>
       {logInErrorBannerElement}
       <TaskListSection
-        tasks={tasks}
+        tasks={unFinishedTasks}
         setTasks={setTasks}
         isOpen={isOpen}
         onClose={onClose}
@@ -75,7 +77,7 @@ const Index = () => {
         longBreakDuration={viewer.longBreakDuration}
         longBreakInterval={viewer.longBreakInterval}
         pomCount={viewer.pomCount}
-        tasks={tasks}
+        tasks={unFinishedTasks}
         setTasks={setTasks}
         updateTasks={updateTasks}
       />

@@ -304,20 +304,19 @@ export const ViewerMutation = extendType({
         if (input.increasePomCounter) {
           const updatedViewer = addPomDateCounter(db, viewer, input);
           return updatedViewer;
-        } else {
-          const updateRes = await db.users.findOneAndUpdate(
-            {
-              _id: viewer._id
-            },
-            {
-              $set: input
-            },
-            { returnOriginal: false }
-          );
-
-          const updatedViewer = updateRes.value;
-          return updatedViewer;
         }
+        const updateRes = await db.users.findOneAndUpdate(
+          {
+            _id: viewer._id
+          },
+          {
+            $set: input
+          },
+          { returnOriginal: false }
+        );
+
+        const updatedViewer = updateRes.value;
+        return updatedViewer;
       }
     });
   }

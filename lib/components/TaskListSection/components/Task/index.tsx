@@ -99,8 +99,6 @@ export const Task = ({
         ref={provided.innerRef}
         {...provided.draggableProps}
         {...provided.dragHandleProps}
-        className={`${isFinished ? "isFinished" : ""}`}
-        display={isFinished ? "none" : ""}
         {...getItemStyles(snapshot.isDragging, lastDraggedIndex, index)}
       >
         <Flex

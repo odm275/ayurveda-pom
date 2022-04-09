@@ -1,10 +1,10 @@
-import ReactDOM from "react-dom";
 import { useReducer } from "react";
 import {
   Box,
   Flex,
   CircularProgress,
-  CircularProgressLabel
+  CircularProgressLabel,
+  Tooltip
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import { BiPlay, BiPause, BiReset } from "react-icons/bi";
@@ -33,10 +33,10 @@ import {
   PAUSE_TIMER,
   RESET_TIMER,
   NEW_TIME,
-  ADD_POM_COUNT,
   SECOND
 } from "./utils";
 import { pomReducer } from "./reducer";
+import { NoTasksWarning, ActionButton } from "./components";
 
 interface Props {
   pomCycle: PomCycle;
@@ -93,6 +93,7 @@ export const Pomodoro = ({
   setTasks,
   updateTasks
 }: Props) => {
+  console.log("tasks", tasks);
   const initialState = {
     cycle: pomCycle,
     timer: selectTimePerCycle({
@@ -159,13 +160,14 @@ export const Pomodoro = ({
   };
   const timeEnded = state.timer === 0;
 
+  const nextCycle = getNextCycle({
+    longBreakInterval,
+    cycle: state.cycle,
+    pomCount: state.pomCount
+  });
+
   if (timeEnded) {
-    const selector = getNextCycle({
-      longBreakInterval,
-      cycle: state.cycle,
-      pomCount: state.pomCount
-    });
-    setUpdate[selector]();
+    setUpdate[nextCycle]();
   }
 
   useEffectWithoutOnMount(() => {
@@ -174,23 +176,11 @@ export const Pomodoro = ({
         input: {
           pomCycle: state.cycle,
           date: dayjs().format("MM-DD-YYYY"),
-          increasePomCounter: true
+          increasePomCounter: state.cycle !== PomCycle.Pomodoro
         }
       }
     });
-  }, [state.pomCount]);
-
-  useEffectWithoutOnMount(() => {
-    updateViewerData({
-      variables: {
-        input: {
-          pomCycle: state.cycle,
-          date: dayjs().format("MM-DD-YYYY"),
-          increasePomCounter: false
-        }
-      }
-    });
-  }, [state.cycle]);
+  }, [state.pomCount, state.cycle]);
 
   useEffectWithoutOnMount(() => {
     if (tasks.length > 0 && timeEnded) {
@@ -203,25 +193,36 @@ export const Pomodoro = ({
   }, [tasks]);
 
   const progressPercentage = (state.timer / selectTimePerCycle(state)) * 100;
+  const tasksExist = tasks.length > 0;
 
   const pauseOrPlayButton = !state.isRunning ? (
-    <BiPlay onClick={() => dispatch({ type: RUN_TIMER })} size={45} />
+    <ActionButton
+      isDisabled={tasksExist}
+      onClick={() => dispatch({ type: RUN_TIMER })}
+    >
+      <span>
+        <BiPlay size={45} />
+      </span>
+    </ActionButton>
   ) : (
-    <BiPause onClick={() => dispatch({ type: PAUSE_TIMER })} size={45} />
+    <Tooltip
+      isDisabled={tasksExist}
+      label="Create a task to use pom"
+      fontSize="md"
+    >
+      <span>
+        <BiPause onClick={() => dispatch({ type: PAUSE_TIMER })} size={45} />
+      </span>
+    </Tooltip>
   );
-
-  const resetButton = (
-    <BiReset size={45} onClick={() => dispatch({ type: RESET_TIMER })} />
-  );
-
-  const succesCycleBannerElement =
+  const successCycleBannerElement =
     state.timer === 0 ? (
       <SuccessBanner description="You've succesfully completed a cycle!" />
     ) : null;
 
   return (
     <Box>
-      {succesCycleBannerElement}
+      {successCycleBannerElement}
       <Flex justifyContent="center" flexDir="column" alignItems="center">
         <CircularProgress
           value={progressPercentage}
@@ -233,7 +234,7 @@ export const Pomodoro = ({
           </CircularProgressLabel>
         </CircularProgress>
         <Flex>
-          {resetButton}
+          <BiReset size={45} onClick={() => dispatch({ type: RESET_TIMER })} />
           {pauseOrPlayButton}
         </Flex>
       </Flex>
