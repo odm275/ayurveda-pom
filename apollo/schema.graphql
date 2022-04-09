@@ -2,11 +2,16 @@
 ### Do not make changes to this file directly
 
 
+input DeleteTaskViewerInput {
+  taskId: String!
+}
+
 input LogInInput {
   code: String!
 }
 
 type Mutation {
+  deleteTask(input: DeleteTaskViewerInput): Task!
   logIn(date: String, input: LogInInput): Viewer!
   logOut: Viewer!
   updateTasks(input: UpdateTaskUserInput): Tasks!

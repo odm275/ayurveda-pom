@@ -64,6 +64,20 @@ const TaskInput = inputObjectType({
   }
 });
 
+const DeleteTaskInput = inputObjectType({
+  name: "DeleteTaskInput",
+  definition(t) {
+    t.string("taskId");
+  }
+});
+
+const DeleteTaskViewerInput = inputObjectType({
+  name: "DeleteTaskViewerInput",
+  definition(t) {
+    t.nonNull.string("taskId");
+  }
+});
+
 export const TaskMutation = extendType({
   type: "Mutation",
   definition(t) {
@@ -73,6 +87,7 @@ export const TaskMutation = extendType({
         input: arg({ type: UpdateTaskUserInput })
       },
       async resolve(__root: undefined, { input }, { db, req }) {
+        console.log("tasks input", input.tasks);
         const viewer = await authorize(db, req);
 
         if (!viewer) {
@@ -156,7 +171,7 @@ export const TaskMutation = extendType({
             total: total
           };
         } else {
-          // Get all the tasks are not finished
+          // Get all the tasks are not new
 
           await updateTasksPositions(db, tasksWPosition);
 
@@ -173,6 +188,23 @@ export const TaskMutation = extendType({
             total: total
           };
         }
+      }
+    });
+    t.nonNull.field("deleteTask", {
+      type: Task,
+      args: {
+        input: arg({ type: DeleteTaskViewerInput })
+      },
+      async resolve(__root: undefined, { input }, { db, req }) {
+        // get task id
+        console.log("input", input.taskId);
+        // look inside db for task that matches id
+        const deletedTask = await db.tasks.remove({ _id: input.taskId });
+        console.log("deletedTask", deletedTask);
+
+        //return data of deleted task
+
+        return deletedTask;
       }
     });
   }

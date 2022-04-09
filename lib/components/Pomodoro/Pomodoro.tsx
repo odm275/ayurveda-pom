@@ -3,8 +3,7 @@ import {
   Box,
   Flex,
   CircularProgress,
-  CircularProgressLabel,
-  Tooltip
+  CircularProgressLabel
 } from "@chakra-ui/react";
 import dayjs from "dayjs";
 import { BiPlay, BiPause, BiReset } from "react-icons/bi";
@@ -17,7 +16,6 @@ import {
 import SuccessBanner from "@/lib/components/SuccessBanner";
 import {
   Task as TaskType,
-  useUpdateUserSettingsMutation,
   useUpdateViewerDataMutation,
   PomCycle
 } from "@/lib/generated";
@@ -26,6 +24,7 @@ import {
   selectTimePerCycle,
   timeConversion,
   cycleAlert,
+  getNextCycle,
   POMODORO,
   SHORT_BREAK,
   LONG_BREAK,
@@ -52,35 +51,19 @@ interface Props {
 
 const removeAmtCurrentTask = (tasks: TaskType[]) => {
   const copyAllTasks = Array.from(tasks);
-  const unFinishedTasks = copyAllTasks.filter((task) => !task.isFinished);
-  const finishedTasks = copyAllTasks.filter((task) => task.isFinished);
 
-  const [currentTask] = unFinishedTasks.slice(0, 1);
+  const [currentTask] = copyAllTasks.slice(0, 1);
   const newAmt = currentTask.amt - 1;
-  const isFinished = newAmt < 1;
 
   const updatedTaskData = {
     ...currentTask,
-    amt: newAmt,
-    isFinished: isFinished
+    amt: newAmt
   };
 
-  unFinishedTasks.splice(0, 1, updatedTaskData);
-  const newTasksArray = [...unFinishedTasks, ...finishedTasks];
+  copyAllTasks.splice(0, 1, updatedTaskData);
+  const newTasksArray = [...copyAllTasks];
   return newTasksArray;
 };
-
-// When the timer runs out, this will be the next cycle
-function getNextCycle({ cycle, pomCount, longBreakInterval }) {
-  const rem = pomCount % longBreakInterval;
-  if (cycle === PomCycle.Pomodoro && rem !== 0) {
-    return "shortBreak";
-  }
-  if (cycle === PomCycle.Pomodoro && rem === 0) {
-    return "longBreak";
-  }
-  return "pomodoro";
-}
 
 export const Pomodoro = ({
   pomCycle,
@@ -183,6 +166,7 @@ export const Pomodoro = ({
 
   useEffectWithoutOnMount(() => {
     if (tasks.length > 0 && timeEnded) {
+      console.log("run updateTasks mutation");
       updateTasks({
         variables: {
           input: { tasks: tasks }

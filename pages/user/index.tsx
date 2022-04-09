@@ -19,7 +19,11 @@ const Index = () => {
   const [
     updateTasks,
     { loading: loadingUpdateTasks, error: updateTasksError }
-  ] = useUpdateTasksMutation();
+  ] = useUpdateTasksMutation({
+    onCompleted: () => {
+      console.log("update tasks mutation was completed");
+    }
+  });
 
   useEffect(() => {
     const _tasks = viewer?.currentTasks?.result
