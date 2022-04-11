@@ -196,13 +196,15 @@ export const TaskMutation = extendType({
         input: arg({ type: DeleteTaskViewerInput })
       },
       async resolve(__root: undefined, { input }, { db, req }) {
-        // get task id
-        console.log("input", input.taskId);
-        // look inside db for task that matches id
-        const deletedTask = await db.tasks.remove({ _id: input.taskId });
-        console.log("deletedTask", deletedTask);
+        const viewer = await authorize(db, req);
+        if (!viewer) {
+          throw new Error("Viewer cannot be found!");
+        }
+        const deletedTaskRes = await db.tasks.findOneAndDelete({
+          _id: new ObjectId(input.taskId)
+        });
 
-        //return data of deleted task
+        const deletedTask = deletedTaskRes.value;
 
         return deletedTask;
       }
