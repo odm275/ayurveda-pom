@@ -1,9 +1,11 @@
 import { makeSchema } from "nexus";
 import { join } from "path";
 import path from "path";
+import { shield } from "graphql-shield";
 import * as types from "./schema/index";
+import { applyMiddleware } from "graphql-middleware";
 
-export const nexusSchema = makeSchema({
+export const baseSchema = makeSchema({
   types: [types],
   outputs: {
     typegen: join(
@@ -28,3 +30,10 @@ export const nexusSchema = makeSchema({
     ]
   }
 });
+
+export const permissions = shield({
+  Query: {},
+  Mutation: {}
+});
+
+export const nexusSchema = applyMiddleware(baseSchema, permissions);

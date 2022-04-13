@@ -1,5 +1,8 @@
 {
   "editor.formatOnSave": true,
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  },
   "cSpell.words": ["Longbreak", "Pomodoro", "Shortbreak"]
   // "typescript.tsserver.experimental.enableProjectDiagnostics": true
 }

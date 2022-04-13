@@ -15,12 +15,17 @@ export type Scalars = {
   Float: number;
 };
 
+export type DeleteTaskViewerInput = {
+  taskId: Scalars['String'];
+};
+
 export type LogInInput = {
   code: Scalars['String'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
+  deleteTask: Task;
   logIn: Viewer;
   logOut: Viewer;
   updateTasks: Tasks;
@@ -28,6 +33,11 @@ export type Mutation = {
   updateUserSettings: Viewer;
   /** Updates Viewer in database when a pomodoro counter goes up or when settings change. */
   updateViewerData: Viewer;
+};
+
+
+export type MutationDeleteTaskArgs = {
+  input?: InputMaybe<DeleteTaskViewerInput>;
 };
 
 
