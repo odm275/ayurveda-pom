@@ -17,7 +17,11 @@ import {
   OutsideClick,
   Task
 } from "./components";
-import { useUpdateTasksMutation, Task as TaskType } from "@/lib/generated";
+import {
+  useUpdateTasksMutation,
+  Task as TaskType,
+  useDeleteTaskMutation
+} from "@/lib/generated";
 import { LoadingOverlay } from "../LoadingOverlay";
 interface Props {
   isOpen: boolean;
@@ -36,9 +40,16 @@ export const TaskListSection = ({
   setTasks,
   loadingUpdateTasks
 }: Props) => {
-  const [updateTasks, { loading, error }] = useUpdateTasksMutation();
-
   const [lastDraggedIndex, setLastDraggedIndex] = useState(null);
+  const [updateTasks, { loading, error }] = useUpdateTasksMutation();
+  const { addAmtTask, removeAmtTask, deleteTask } = useTaskHandlers();
+
+  const [deleteViewerTask] = useDeleteTaskMutation({
+    onCompleted: (task) => {
+      const newTaskArr = deleteTask(task);
+      setTasks(newTaskArr);
+    }
+  });
 
   const onSave = () => {
     updateTasks({
@@ -59,12 +70,17 @@ export const TaskListSection = ({
     onClose();
   };
 
-  const taskCards = tasks.map((task, i) => {
-    const { addAmtTask, removeAmtTask, deleteTask } = useTaskHandlers({
-      task,
-      tasks,
-      index: i
+  const handleDeleteTask = ({ task }) => {
+    deleteViewerTask({
+      variables: {
+        input: {
+          id: task.id
+        }
+      }
     });
+  };
+
+  const taskCards = tasks.map((task, i) => {
     return (
       <Draggable key={i} draggableId={`id-${i}`} index={i}>
         {(provided, snapshot) => (
@@ -73,7 +89,7 @@ export const TaskListSection = ({
             provided={provided}
             addAmtTask={() => setTasks(addAmtTask)}
             subAmtTask={() => setTasks(removeAmtTask)}
-            deleteTask={() => setTasks(deleteTask)}
+            deleteTask={() => handleDeleteTask({ task })}
             index={i}
             snapshot={snapshot}
             lastDraggedIndex={lastDraggedIndex}

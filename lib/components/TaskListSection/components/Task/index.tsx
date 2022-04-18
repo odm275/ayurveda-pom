@@ -20,7 +20,7 @@ interface Props {
   provided: any;
   addAmtTask: any;
   subAmtTask: any;
-  deleteTask: any;
+  deleteTask: (task?) => void;
   index: number;
   snapshot: any;
   lastDraggedIndex: number;

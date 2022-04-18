@@ -3,7 +3,7 @@
 
 
 input DeleteTaskViewerInput {
-  taskId: String!
+  id: String!
 }
 
 input LogInInput {
@@ -56,6 +56,7 @@ type Task {
   id: ID
   isFinished: Boolean
   isNew: Boolean
+  positionId: Int
   title: String
   user: String
 }

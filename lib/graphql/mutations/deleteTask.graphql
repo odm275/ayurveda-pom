@@ -1,0 +1,6 @@
+mutation deleteTask($input: DeleteTaskViewerInput) {
+  deleteTask(input: $input) {
+    id
+    positionId
+  }
+}

@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL_2")
+  referentialIntegrity = "prisma"
+
+}
+
+enum pomCycle {
+  POMODORO
+  SHORTBREAK
+  LONGBREAK
+}
+
+model PomEntry {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  date      String
+  count     Int
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+}
+
+model Task {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  title      String   @db.VarChar(255)
+  amt        Int
+  positionId Int
+  eta        DateTime
+  User       User?    @relation(fields: [userId], references: [id])
+  userId     String?
+}
+
+model User {
+  id                 String     @id @default(cuid())
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  token              String
+  name               String
+  email              String
+  avatar             String
+  pomDuration        Int
+  shortBreakDuration Int
+  longBreakDuration  Int
+  pomCycle           pomCycle   @default(POMODORO)
+  pomData            PomEntry[]
+  tasks              Task[]
+}

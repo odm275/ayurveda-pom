@@ -36,4 +36,5 @@ export const permissions = shield({
   Mutation: {}
 });
 
-export const nexusSchema = applyMiddleware(baseSchema, permissions);
+// export const nexusSchema = applyMiddleware(baseSchema, permissions);
+export const nexusSchema = baseSchema;

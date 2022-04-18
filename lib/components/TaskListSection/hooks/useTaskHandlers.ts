@@ -2,8 +2,8 @@
 // Index is the location of the task in the list.
 // Task is the current task being iterated.
 
-export function useTaskHandlers({ tasks, task, index }) {
-  const addAmtTask = (prevTasks) => {
+export function useTaskHandlers() {
+  const addAmtTask = (tasks, task, index) => (prevTasks) => {
     const copyAllTasks = Array.from(tasks);
     const updatedTaskData = {
       ...task,
@@ -14,7 +14,7 @@ export function useTaskHandlers({ tasks, task, index }) {
     return copyAllTasks;
   };
 
-  const removeAmtTask = (prevTasks) => {
+  const removeAmtTask = (tasks, task, index) => (prevTasks) => {
     const copyAllTasks = Array.from(tasks);
     const newAmt = task.amt - 1;
 
@@ -28,10 +28,10 @@ export function useTaskHandlers({ tasks, task, index }) {
     return copyAllTasks;
   };
 
-  const deleteTask = (prevTasks) => {
-    const copyAllTasks = Array.from(tasks);
+  const deleteTask = (task) => (prevTasks) => {
+    const copyAllTasks = Array.from(prevTasks);
 
-    copyAllTasks.splice(index, 1);
+    copyAllTasks.splice(task.positionId, 1);
 
     return copyAllTasks;
   };

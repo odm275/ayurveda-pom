@@ -13,10 +13,12 @@ export const Task = objectType({
     });
     t.string("title");
     t.int("amt");
+    t.int("positionId");
     t.string("user");
     t.boolean("isNew");
     t.boolean("isFinished");
     t.string("category");
+
     t.string("createdAt", {
       resolve: (task) => {
         return task.createdAt.toString();
@@ -64,17 +66,11 @@ const TaskInput = inputObjectType({
   }
 });
 
-const DeleteTaskInput = inputObjectType({
-  name: "DeleteTaskInput",
-  definition(t) {
-    t.string("taskId");
-  }
-});
 
 const DeleteTaskViewerInput = inputObjectType({
   name: "DeleteTaskViewerInput",
   definition(t) {
-    t.nonNull.string("taskId");
+    t.nonNull.string("id");
   }
 });
 
@@ -201,7 +197,7 @@ export const TaskMutation = extendType({
           throw new Error("Viewer cannot be found!");
         }
         const deletedTaskRes = await db.tasks.findOneAndDelete({
-          _id: new ObjectId(input.taskId)
+          _id: new ObjectId(input.id)
         });
 
         const deletedTask = deletedTaskRes.value;

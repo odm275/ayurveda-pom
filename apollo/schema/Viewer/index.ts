@@ -195,7 +195,10 @@ export const ViewerMutation = extendType({
         input: arg({ type: LogInInput }),
         date: stringArg()
       },
-      async resolve(_root, { input }, { db, req, res }) {
+      async resolve(_root, { input }, { db, req, res, prisma }) {
+        const allUsers = await prisma.user.findMany();
+        console.log("allUsers", allUsers);
+
         try {
           const code = input ? input.code : null; // Comes from google after clicking sign in and being re-directed back to the app
           const token = crypto.randomBytes(16).toString("hex");
