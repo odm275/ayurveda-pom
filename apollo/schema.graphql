@@ -2,6 +2,11 @@
 ### Do not make changes to this file directly
 
 
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
 input DeleteTaskViewerInput {
   id: String!
 }
@@ -28,20 +33,19 @@ type Mutation {
 }
 
 type PomData {
-  """All the pomRecords for a User. Note: [PomRecord!]! might be incorrect"""
-  result: [PomRecord!]!
+  """All the PomEntry(s) for a User. Note: [PomEntry!]! might be incorrect"""
+  result: [PomEntry!]!
 
   """Total number of pomRecords"""
   total: Int
 }
 
-"""How many Pomodoros got done for a day"""
-type PomRecord {
-  """How many pomodoros happened that day"""
-  count: Int!
-
-  """date for record"""
-  date: String!
+type PomEntry {
+  count: Int
+  createdAt: DateTime
+  id: ID
+  updatedAt: DateTime
+  userId: String
 }
 
 type Query {
@@ -123,6 +127,9 @@ type User {
   """Generic duration for pomodoro"""
   pomDuration: Int
 
+  """List of pomEntry(s)"""
+  pomEntry: [PomEntry]!
+
   """Short break after pomodoro"""
   shortBreakDuration: Int
   status: String!
@@ -140,11 +147,6 @@ type Viewer {
 
   """Confirmation that the user's request came back to the client"""
   didRequest: Boolean!
-
-  """
-  Resolve this as a boolean since we don't want the actual walletId to make it to the client
-  """
-  hasWallet: Boolean
 
   """ID for a Viewer"""
   id: ID

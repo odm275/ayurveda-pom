@@ -8,33 +8,23 @@ import {
 } from "nexus";
 import crypto from "crypto";
 import { Tasks } from "../Task/index";
+import { PomEntry } from "../PomEntry";
 import { PomCycle } from "../enums/PomCycle";
 import { logInViaGoogle, logInViaCookie } from "./helpers";
-import { Viewer as SourceTypeViewer } from "@/database/types";
 import { Google } from "apollo/api/Google";
 import { clearCookie } from "@/apollo/utils/cookies-helper";
 import { authorize } from "@/apollo/utils/authorize";
 import { addPomDateCounter } from "./helpers";
-
-export const PomRecord = objectType({
-  name: "PomRecord",
-  description: "How many Pomodoros got done for a day",
-  definition(t) {
-    t.nonNull.string("date", { description: "date for record" });
-    t.nonNull.int("count", {
-      description: "How many pomodoros happened that day"
-    });
-  }
-});
+import { Context } from "@/apollo/createContext";
 
 export const PomData = objectType({
   name: "PomData",
   definition(t) {
     t.int("total", { description: "Total number of pomRecords" });
     t.nonNull.list.nonNull.field("result", {
-      type: PomRecord,
+      type: PomEntry,
       description:
-        "All the pomRecords for a User. Note: [PomRecord!]! might be incorrect"
+        "All the PomEntry(s) for a User. Note: [PomEntry!]! might be incorrect"
     });
   }
 });
@@ -43,24 +33,16 @@ export const Viewer = objectType({
   name: "Viewer",
   definition(t) {
     t.id("id", {
-      description: "ID for a Viewer",
-      resolve: (viewer) => {
-        return viewer._id;
-      }
+      description: "ID for a Viewer"
     });
     t.string("token");
     t.string("avatar", { description: "User avatar(picture)" });
-    t.boolean("hasWallet", {
-      description:
-        "Resolve this as a boolean since we don't want the actual walletId to make it to the client",
-      resolve(viewer) {
-        return viewer.walletId ? true : undefined;
-      }
-    });
+
     t.nonNull.boolean("didRequest", {
       description:
         "Confirmation that the user's request came back to the client"
     });
+
     t.int("pomDuration", {
       description: "User properties that the Viewer also has"
     });
@@ -77,29 +59,11 @@ export const Viewer = objectType({
       type: PomCycle,
       description: "User properties that the Viewer also has"
     });
-
-    t.nonNull.int("pomCount", {
-      description: "pomodoro Count for the current day",
-      args: {
-        date: nonNull(stringArg())
-      },
-      resolve(viewer, { date }) {
-        if (!viewer.pomData) {
-          return 0;
-        }
-        const todayViewerEntry = viewer.pomData.find(
-          (entry) => entry.date === date
-        );
-        const pomCount = todayViewerEntry ? todayViewerEntry.count : 0;
-
-        return pomCount;
-      }
-    });
     t.nonNull.field("pomData", {
       type: PomData,
       description: "Amount of pomodoros completed per day for a Viewer",
-      resolve(viewer) {
-        if (!viewer.pomData) {
+      resolve(viewer, _args, _ctx) {
+        if (viewer?.pomData) {
           return {
             result: [],
             total: 0
@@ -111,24 +75,36 @@ export const Viewer = objectType({
         };
       }
     });
+    t.nonNull.int("pomCount", {
+      description: "pomodoro Count for the current day",
+      args: {
+        date: nonNull(stringArg())
+      },
+      resolve(viewer, { date }, _ctx) {
+        if (viewer?.pomData) {
+          return 0;
+        }
+        const todayViewerEntry = viewer.pomData.find(
+          (entry) => entry.date === date
+        );
+        const pomCount = todayViewerEntry ? todayViewerEntry.count : 0;
+
+        return pomCount;
+      }
+    });
+
     t.nonNull.field("currentTasks", {
       type: Tasks,
       description: "Tasks that aren't finished aka ongoing for the User",
-      async resolve(viewer, _args, { db }) {
-        console.log("hi");
+      async resolve(viewer, _args, _ctx) {
         try {
           const data = {
             total: 0,
             result: []
           };
           if (viewer?.currentTasks) {
-            const cursor = await db.tasks.find({
-              _id: { $in: viewer.currentTasks },
-              isFinished: false
-            });
-
-            data.total = await cursor.count();
-            data.result = await cursor.sort({ positionId: 1 }).toArray();
+            data.total = viewer.currentTasks.length;
+            data.result = viewer.currentTasks;
           }
           return data;
         } catch (error) {
@@ -195,16 +171,13 @@ export const ViewerMutation = extendType({
         input: arg({ type: LogInInput }),
         date: stringArg()
       },
-      async resolve(_root, { input }, { db, req, res, prisma }) {
-        const allUsers = await prisma.user.findMany();
-        console.log("allUsers", allUsers);
-
+      async resolve(_root, { input }, { req, res, prisma }) {
         try {
           const code = input ? input.code : null; // Comes from google after clicking sign in and being re-directed back to the app
           const token = crypto.randomBytes(16).toString("hex");
           const viewer = code
-            ? await logInViaGoogle(code, token, db, res)
-            : await logInViaCookie(token, db, req, res); // req object will have the cookie
+            ? await logInViaGoogle({ code, token, prisma, res })
+            : await logInViaCookie({ token, prisma, req, res });
 
           if (!viewer) {
             console.log("no viewer was found");
@@ -213,11 +186,11 @@ export const ViewerMutation = extendType({
             };
           }
 
-          const resViewer: SourceTypeViewer = {
-            _id: viewer._id,
+          // Ide is dumb and thinks this is user?
+          const resViewer = {
+            id: viewer.id,
             token: viewer.token,
             avatar: viewer.avatar,
-            walletId: viewer.walletId,
             didRequest: true,
             pomDuration: viewer.pomDuration,
             shortBreakDuration: viewer.shortBreakDuration,
@@ -232,6 +205,7 @@ export const ViewerMutation = extendType({
         } catch (error) {
           throw new Error(`Failed to log in: ${error}`);
         }
+        ``;
       }
     });
 

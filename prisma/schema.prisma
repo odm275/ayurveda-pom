@@ -43,16 +43,17 @@ model Task {
 }
 
 model User {
-  id                 String     @id @default(cuid())
+  id                 String     @unique // We'll use the userId from google as our own
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
   token              String
   name               String
   email              String
   avatar             String
-  pomDuration        Int
-  shortBreakDuration Int
-  longBreakDuration  Int
+  pomDuration        Int?
+  shortBreakDuration Int?
+  longBreakDuration  Int?
+  longBreakInterval  Int?
   pomCycle           pomCycle   @default(POMODORO)
   pomData            PomEntry[]
   tasks              Task[]

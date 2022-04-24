@@ -1,15 +1,14 @@
 import { objectType, arg } from "nexus";
 import { PomCycle } from "../enums/PomCycle";
 import { Task } from "../Task";
+import { PomData } from "../Viewer";
+import { PomEntry } from "../PomEntry";
 
 export const User = objectType({
   name: "User",
   definition(t) {
     t.nonNull.id("id", {
-      description: "Unique ID for the User",
-      resolve: (user): string => {
-        return user._id;
-      }
+      description: "Unique ID for the User"
     });
     t.nonNull.string("name", { description: "name of the User" });
     t.nonNull.string("status");
@@ -26,9 +25,31 @@ export const User = objectType({
       type: PomCycle,
       description: "enum for reference pomodoro cycles by a string name"
     });
+    t.nonNull.list.field("pomEntry", {
+      description: "List of pomEntry(s)",
+      type: PomEntry,
+      async resolve(parent, _args, { prisma }) {
+        return await prisma.pomEntrys
+          .findUnique({
+            where: {
+              id: parent.id
+            }
+          })
+          .pomEntrys();
+      }
+    });
     t.nonNull.list.field("tasks", {
       type: Task,
-      description: "Tasks for today's date"
+      description: "Tasks for today's date",
+      async resolve(parent, _args, { prisma }) {
+        return await prisma.tasks
+          .findUnique({
+            where: {
+              id: parent.id
+            }
+          })
+          .tasks();
+      }
     });
   }
 });

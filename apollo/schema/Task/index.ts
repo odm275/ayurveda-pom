@@ -6,11 +6,7 @@ import { concatTasksToUser, updateTasksPositions } from "./helpers";
 export const Task = objectType({
   name: "Task",
   definition(t) {
-    t.id("id", {
-      resolve: (task) => {
-        return task._id.toString();
-      }
-    });
+    t.id("id");
     t.string("title");
     t.int("amt");
     t.int("positionId");
@@ -18,17 +14,8 @@ export const Task = objectType({
     t.boolean("isNew");
     t.boolean("isFinished");
     t.string("category");
-
-    t.string("createdAt", {
-      resolve: (task) => {
-        return task.createdAt.toString();
-      }
-    });
-    t.string("eta", {
-      resolve: (task) => {
-        return task.eta.toString();
-      }
-    });
+    t.string("createdAt");
+    t.string("eta");
   }
 });
 
@@ -65,7 +52,6 @@ const TaskInput = inputObjectType({
     t.string("eta");
   }
 });
-
 
 const DeleteTaskViewerInput = inputObjectType({
   name: "DeleteTaskViewerInput",

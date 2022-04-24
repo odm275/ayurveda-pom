@@ -3,7 +3,6 @@ mutation LogIn($input: LogInInput, $date: String!) {
     id
     token
     avatar
-    hasWallet
     didRequest
     pomDuration
     shortBreakDuration

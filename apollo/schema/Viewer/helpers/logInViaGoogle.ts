@@ -1,6 +1,7 @@
 import { NextApiResponse } from "next";
 import Cryptr from "cryptr";
-import { Database, User, PomCycle } from "@/database/types";
+import { Database, PomCycle } from "@/database/types";
+import { User } from "@prisma/client";
 import { setCookie } from "@/apollo/utils/cookies-helper";
 import { Google } from "../../../api/Google";
 
@@ -11,12 +12,19 @@ const cookieOptions = {
   secure: process.env.NODE_ENV === "development" ? false : true
 };
 
-export const logInViaGoogle = async (
-  code: string,
-  token: string,
-  db: Database,
-  res: NextApiResponse
-): Promise<User | undefined> => {
+interface logInViaGoogleTypes {
+  code: string;
+  token: string;
+  res: NextApiResponse;
+  prisma: any;
+}
+
+export const logInViaGoogle = async ({
+  code,
+  token,
+  res,
+  prisma
+}: logInViaGoogleTypes): Promise<User | undefined> => {
   const { user } = await Google.logIn(code);
 
   if (!user) {
@@ -53,31 +61,25 @@ export const logInViaGoogle = async (
   if (!userId || !userName || !userAvatar || !userEmail) {
     throw new Error("Google login error");
   }
-  const updateRes = await db.users.findOneAndUpdate(
-    { _id: userId },
-    {
-      $set: {
+  let viewer = await prisma.user.findUnique({
+    where: {
+      id: userId
+    },
+    include: {
+      tasks: true
+    }
+  });
+
+  if (!viewer) {
+    viewer = await prisma.user.create({
+      data: {
+        id: userId,
+        token,
         name: userName,
         avatar: userAvatar,
-        email: userEmail,
-        token
+        email: userEmail
       }
-    },
-    { returnOriginal: false }
-  );
-
-  let viewer = updateRes.value;
-  if (!viewer) {
-    const insertResult = await db.users.insertOne({
-      _id: userId,
-      token,
-      name: userName,
-      avatar: userAvatar,
-      email: userEmail,
-      tasks: [],
-      pomCycle: PomCycle.Pomodoro
     });
-    viewer = insertResult.ops[0];
   }
 
   const cryptr = new Cryptr(process.env.SECRET);

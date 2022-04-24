@@ -1,9 +1,6 @@
 import { makeSchema } from "nexus";
 import { join } from "path";
-import path from "path";
-import { shield } from "graphql-shield";
 import * as types from "./schema/index";
-import { applyMiddleware } from "graphql-middleware";
 
 export const baseSchema = makeSchema({
   types: [types],
@@ -24,17 +21,11 @@ export const baseSchema = makeSchema({
   sourceTypes: {
     modules: [
       {
-        module: path.join(process.cwd(), "/database/types.ts"),
-        alias: "db"
+        module: "@prisma/client",
+        alias: "prisma"
       }
     ]
   }
 });
 
-export const permissions = shield({
-  Query: {},
-  Mutation: {}
-});
-
-// export const nexusSchema = applyMiddleware(baseSchema, permissions);
 export const nexusSchema = baseSchema;

@@ -1,3 +1,4 @@
+import { GraphQLResolveInfo } from 'graphql';
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
@@ -5,6 +6,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -167,8 +169,6 @@ export type Viewer = {
   currentTasks: Tasks;
   /** Confirmation that the user's request came back to the client */
   didRequest: Scalars['Boolean'];
-  /** Resolve this as a boolean since we don't want the actual walletId to make it to the client */
-  hasWallet?: Maybe<Scalars['Boolean']>;
   /** ID for a Viewer */
   id?: Maybe<Scalars['ID']>;
   /** User properties that the Viewer also has */
@@ -212,7 +212,7 @@ export type LogInMutationVariables = Exact<{
 }>;
 
 
-export type LogInMutation = { __typename?: 'Mutation', logIn: { __typename?: 'Viewer', id?: string | null, token?: string | null, avatar?: string | null, hasWallet?: boolean | null, didRequest: boolean, pomDuration?: number | null, shortBreakDuration?: number | null, longBreakDuration?: number | null, longBreakInterval?: number | null, pomCycle?: PomCycle | null, pomCount: number, pomData: { __typename?: 'PomData', result: Array<{ __typename?: 'PomRecord', date: string, count: number }> }, currentTasks: { __typename?: 'Tasks', total: number, result: Array<{ __typename?: 'Task', id?: string | null, title?: string | null, amt?: number | null, isNew?: boolean | null, isFinished?: boolean | null, createdAt?: string | null, eta?: string | null }> } } };
+export type LogInMutation = { __typename?: 'Mutation', logIn: { __typename?: 'Viewer', id?: string | null, token?: string | null, avatar?: string | null, didRequest: boolean, pomDuration?: number | null, shortBreakDuration?: number | null, longBreakDuration?: number | null, longBreakInterval?: number | null, pomCycle?: PomCycle | null, pomCount: number, pomData: { __typename?: 'PomData', result: Array<{ __typename?: 'PomRecord', date: string, count: number }> }, currentTasks: { __typename?: 'Tasks', total: number, result: Array<{ __typename?: 'Task', id?: string | null, title?: string | null, amt?: number | null, isNew?: boolean | null, isFinished?: boolean | null, createdAt?: string | null, eta?: string | null }> } } };
 
 export type LogOutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -286,7 +286,6 @@ export const LogInDocument = gql`
     id
     token
     avatar
-    hasWallet
     didRequest
     pomDuration
     shortBreakDuration
@@ -519,3 +518,200 @@ export function useAuthUrlLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Au
 export type AuthUrlQueryHookResult = ReturnType<typeof useAuthUrlQuery>;
 export type AuthUrlLazyQueryHookResult = ReturnType<typeof useAuthUrlLazyQuery>;
 export type AuthUrlQueryResult = Apollo.QueryResult<AuthUrlQuery, AuthUrlQueryVariables>;
+
+
+export type ResolverTypeWrapper<T> = Promise<T> | T;
+
+
+export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
+  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
+};
+export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> = ResolverFn<TResult, TParent, TContext, TArgs> | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
+
+export type ResolverFn<TResult, TParent, TContext, TArgs> = (
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => Promise<TResult> | TResult;
+
+export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => AsyncIterable<TResult> | Promise<AsyncIterable<TResult>>;
+
+export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => TResult | Promise<TResult>;
+
+export interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {
+  subscribe: SubscriptionSubscribeFn<{ [key in TKey]: TResult }, TParent, TContext, TArgs>;
+  resolve?: SubscriptionResolveFn<TResult, { [key in TKey]: TResult }, TContext, TArgs>;
+}
+
+export interface SubscriptionResolverObject<TResult, TParent, TContext, TArgs> {
+  subscribe: SubscriptionSubscribeFn<any, TParent, TContext, TArgs>;
+  resolve: SubscriptionResolveFn<TResult, any, TContext, TArgs>;
+}
+
+export type SubscriptionObject<TResult, TKey extends string, TParent, TContext, TArgs> =
+  | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>
+  | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;
+
+export type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TContext = {}, TArgs = {}> =
+  | ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
+  | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;
+
+export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
+  parent: TParent,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
+
+export type IsTypeOfResolverFn<T = {}, TContext = {}> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
+
+export type NextResolverFn<T> = () => Promise<T>;
+
+export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs = {}> = (
+  next: NextResolverFn<TResult>,
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => TResult | Promise<TResult>;
+
+/** Mapping between all available schema types and the resolvers types */
+export type ResolversTypes = {
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  DeleteTaskViewerInput: DeleteTaskViewerInput;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
+  LogInInput: LogInInput;
+  Mutation: ResolverTypeWrapper<{}>;
+  PomData: ResolverTypeWrapper<PomData>;
+  PomRecord: ResolverTypeWrapper<PomRecord>;
+  Query: ResolverTypeWrapper<{}>;
+  String: ResolverTypeWrapper<Scalars['String']>;
+  Task: ResolverTypeWrapper<Task>;
+  TaskInput: TaskInput;
+  Tasks: ResolverTypeWrapper<Tasks>;
+  UpdateTaskUserInput: UpdateTaskUserInput;
+  UpdateUserSettingsInput: UpdateUserSettingsInput;
+  UpdateViewerDataInput: UpdateViewerDataInput;
+  User: ResolverTypeWrapper<User>;
+  Viewer: ResolverTypeWrapper<Viewer>;
+  pomCycle: PomCycle;
+};
+
+/** Mapping between all available schema types and the resolvers parents */
+export type ResolversParentTypes = {
+  Boolean: Scalars['Boolean'];
+  DeleteTaskViewerInput: DeleteTaskViewerInput;
+  ID: Scalars['ID'];
+  Int: Scalars['Int'];
+  LogInInput: LogInInput;
+  Mutation: {};
+  PomData: PomData;
+  PomRecord: PomRecord;
+  Query: {};
+  String: Scalars['String'];
+  Task: Task;
+  TaskInput: TaskInput;
+  Tasks: Tasks;
+  UpdateTaskUserInput: UpdateTaskUserInput;
+  UpdateUserSettingsInput: UpdateUserSettingsInput;
+  UpdateViewerDataInput: UpdateViewerDataInput;
+  User: User;
+  Viewer: Viewer;
+};
+
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  deleteTask?: Resolver<ResolversTypes['Task'], ParentType, ContextType, Partial<MutationDeleteTaskArgs>>;
+  logIn?: Resolver<ResolversTypes['Viewer'], ParentType, ContextType, Partial<MutationLogInArgs>>;
+  logOut?: Resolver<ResolversTypes['Viewer'], ParentType, ContextType>;
+  updateTasks?: Resolver<ResolversTypes['Tasks'], ParentType, ContextType, Partial<MutationUpdateTasksArgs>>;
+  updateUserSettings?: Resolver<ResolversTypes['Viewer'], ParentType, ContextType, Partial<MutationUpdateUserSettingsArgs>>;
+  updateViewerData?: Resolver<ResolversTypes['Viewer'], ParentType, ContextType, Partial<MutationUpdateViewerDataArgs>>;
+};
+
+export type PomDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['PomData'] = ResolversParentTypes['PomData']> = {
+  result?: Resolver<Array<ResolversTypes['PomRecord']>, ParentType, ContextType>;
+  total?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PomRecordResolvers<ContextType = any, ParentType extends ResolversParentTypes['PomRecord'] = ResolversParentTypes['PomRecord']> = {
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  authUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
+export type TaskResolvers<ContextType = any, ParentType extends ResolversParentTypes['Task'] = ResolversParentTypes['Task']> = {
+  amt?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  category?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  eta?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  isFinished?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isNew?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  positionId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type TasksResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tasks'] = ResolversParentTypes['Tasks']> = {
+  result?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType>;
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  longBreakDuration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  longBreakInterval?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  pomCycle?: Resolver<ResolversTypes['pomCycle'], ParentType, ContextType>;
+  pomDuration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  shortBreakDuration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  tasks?: Resolver<Array<Maybe<ResolversTypes['Task']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ViewerResolvers<ContextType = any, ParentType extends ResolversParentTypes['Viewer'] = ResolversParentTypes['Viewer']> = {
+  avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  currentTasks?: Resolver<ResolversTypes['Tasks'], ParentType, ContextType>;
+  didRequest?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  longBreakDuration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  longBreakInterval?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  pomCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<ViewerPomCountArgs, 'date'>>;
+  pomCycle?: Resolver<Maybe<ResolversTypes['pomCycle']>, ParentType, ContextType>;
+  pomData?: Resolver<ResolversTypes['PomData'], ParentType, ContextType>;
+  pomDuration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  shortBreakDuration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type Resolvers<ContextType = any> = {
+  Mutation?: MutationResolvers<ContextType>;
+  PomData?: PomDataResolvers<ContextType>;
+  PomRecord?: PomRecordResolvers<ContextType>;
+  Query?: QueryResolvers<ContextType>;
+  Task?: TaskResolvers<ContextType>;
+  Tasks?: TasksResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
+  Viewer?: ViewerResolvers<ContextType>;
+};
+

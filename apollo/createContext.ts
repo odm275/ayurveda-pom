@@ -2,21 +2,23 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { Database } from "@/database/types";
 import { connectDatabase } from "../database";
 import { connectPrismaDatabase } from "../database/prisma";
-import { PrismaClient, Prisma } from "prisma";
+import { PrismaClient } from "prisma";
 
-interface Context {
+export interface Context {
   req: NextApiRequest;
   res: NextApiResponse;
   db: Database;
-  prisma: PrismaClient<
-    Prisma.PrismaClientOptions,
-    never,
-    Prisma.RejectOnNotFound | Prisma.RejectPerOperation
-  >;
+  prisma: PrismaClient;
 }
 
-export async function createContext({ req, res }): Promise<Context> {
+export async function createContext({
+  req,
+  res
+}: {
+  req: NextApiRequest;
+  res: NextApiResponse;
+}): Promise<Context> {
   const db = await connectDatabase();
-  const prisma = await connectPrismaDatabase();
+  const prisma = connectPrismaDatabase();
   return { db, req, res, prisma };
 }

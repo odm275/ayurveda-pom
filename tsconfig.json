@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@/lib/components/*": ["lib/components/*"],
+      "@/apollo/*": ["apollo/*"],
       "@/lib/context/*": ["lib/context/*"],
       "@/lib/hooks/*": ["lib/hooks/*"],
       "@/lib/graphql/*": ["lib/graphql/*"],
