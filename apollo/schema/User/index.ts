@@ -3,6 +3,7 @@ import { PomCycle } from "../enums/PomCycle";
 import { Task } from "../Task";
 import { PomData } from "../Viewer";
 import { PomEntry } from "../PomEntry";
+import { Context } from "@/apollo/types/context";
 
 export const User = objectType({
   name: "User",
@@ -28,7 +29,7 @@ export const User = objectType({
     t.nonNull.list.field("pomEntry", {
       description: "List of pomEntry(s)",
       type: PomEntry,
-      async resolve(parent, _args, { prisma }) {
+      async resolve(parent, _args, { prisma }: Context) {
         return await prisma.pomEntrys
           .findUnique({
             where: {

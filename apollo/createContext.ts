@@ -11,14 +11,15 @@ export interface Context {
   prisma: PrismaClient;
 }
 
-export async function createContext({
-  req,
-  res
-}: {
+interface Params {
   req: NextApiRequest;
   res: NextApiResponse;
-}): Promise<Context> {
+}
+
+export async function createContext({ req, res }: Params): Promise<Context> {
   const db = await connectDatabase();
   const prisma = connectPrismaDatabase();
-  return { db, req, res, prisma };
+  const value = { db, req, res, prisma };
+
+  return value;
 }

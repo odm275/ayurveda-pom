@@ -2,7 +2,7 @@ import { authorize } from "@/apollo/utils/authorize";
 import { ObjectId } from "mongodb";
 import { objectType, extendType, inputObjectType, arg } from "nexus";
 import { concatTasksToUser, updateTasksPositions } from "./helpers";
-
+import { Context } from "@/apollo/types/context";
 export const Task = objectType({
   name: "Task",
   definition(t) {
@@ -68,7 +68,7 @@ export const TaskMutation = extendType({
       args: {
         input: arg({ type: UpdateTaskUserInput })
       },
-      async resolve(__root: undefined, { input }, { db, req }) {
+      async resolve(__root: undefined, { input }, { db, req }: Context) {
         console.log("tasks input", input.tasks);
         const viewer = await authorize(db, req);
 
