@@ -22,14 +22,12 @@ type Mutation {
   updateTasks(input: UpdateTaskUserInput): Tasks!
 
   """
-  updates user in database when a pomodoro counter goes up, and when settings change
-  """
-  updateUserSettings(input: UpdateUserSettingsInput): User!
-
-  """
   Updates Viewer in database when a pomodoro counter goes up or when settings change.
   """
   updateViewerData(input: UpdateViewerDataInput): User!
+
+  """Update when Viewer Settings change"""
+  updateViewerSettings(input: UpdateViewerSettingsInput): User!
 }
 
 type PomEntry {
@@ -77,8 +75,9 @@ input UpdateTaskUserInput {
   tasks: [TaskInput]!
 }
 
-input UpdateUserSettingsInput {
+input UpdateViewerDataInput {
   date: String
+  increasePomCounter: Boolean
   longBreakDuration: Int
   longBreakInterval: Int
   pomCycle: pomCycle
@@ -86,12 +85,9 @@ input UpdateUserSettingsInput {
   shortBreakDuration: Int
 }
 
-input UpdateViewerDataInput {
-  date: String
-  increasePomCounter: Boolean
+input UpdateViewerSettingsInput {
   longBreakDuration: Int
   longBreakInterval: Int
-  pomCycle: pomCycle
   pomDuration: Int
   shortBreakDuration: Int
 }

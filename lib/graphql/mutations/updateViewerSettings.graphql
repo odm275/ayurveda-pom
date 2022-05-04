@@ -1,0 +1,9 @@
+mutation UpdateViewerSettings($input: UpdateViewerSettingsInput) {
+  updateViewerSettings(input: $input) {
+    id
+    longBreakInterval
+    pomDuration
+    shortBreakDuration
+    longBreakDuration
+  }
+}

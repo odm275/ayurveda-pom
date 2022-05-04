@@ -50,10 +50,10 @@ model User {
   name               String
   email              String
   avatar             String
-  pomDuration        Int?
-  shortBreakDuration Int?
-  longBreakDuration  Int?
-  longBreakInterval  Int?
+  pomDuration        Int?       @default(1500000)
+  shortBreakDuration Int?       @default(300000)
+  longBreakDuration  Int?       @default(1500000)
+  longBreakInterval  Int?       @default(4)
   pomCycle           pomCycle   @default(POMODORO)
   pomData            PomEntry[]
   tasks              Task[]

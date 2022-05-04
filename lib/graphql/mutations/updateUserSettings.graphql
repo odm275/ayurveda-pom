@@ -1,9 +1,0 @@
-mutation UpdateUserSettings($input: UpdateUserSettingsInput) {
-  updateUserSettings(input: $input) {
-    id
-    longBreakInterval
-    pomDuration
-    shortBreakDuration
-    longBreakDuration
-  }
-}

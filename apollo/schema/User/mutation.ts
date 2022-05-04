@@ -5,7 +5,7 @@ import { logInViaGoogle, logInViaCookie, addPomDateCounter } from "./helpers";
 import { clearCookie } from "@/apollo/utils/cookies-helper";
 import { authorize } from "@/apollo/utils/authorize";
 import {
-  UpdateUserSettingsInput,
+  UpdateViewerSettingsInput,
   UpdateViewerDataInput,
   LogInInput
 } from "./types";
@@ -65,42 +65,33 @@ export const UserMutation = extendType({
       }
     });
 
-    t.nonNull.field("updateUserSettings", {
+    t.nonNull.field("updateViewerSettings", {
       type: User,
-      description:
-        "updates user in database when a pomodoro counter goes up, and when settings change",
+      description: "Update when Viewer Settings change",
       args: {
-        input: arg({ type: UpdateUserSettingsInput })
+        input: arg({ type: UpdateViewerSettingsInput })
       },
-      async resolve(
-        __root: undefined,
-        { input },
-        { db, req, res }: { db; req; res }
-      ) {
-        console.log("updateUserSettings");
-        const viewer = await authorize(db, req);
+      async resolve(__root: undefined, { input }, { db, req, res, prisma }) {
+        const viewer = await authorize(prisma, req);
         if (!viewer) {
           throw new Error("viewer cannot be found");
         }
 
         // If optional parameter with today's date is provided
-        if (input.date) {
-          const updatedViewer = addPomDateCounter(db, viewer, input);
-          return updatedViewer;
-        } else {
-          const updateRes = await db.users.findOneAndUpdate(
-            {
-              _id: viewer._id
-            },
-            {
-              $set: input
-            },
-            { returnOriginal: false }
-          );
 
-          const updatedViewer = updateRes.value;
-          return updatedViewer;
-        }
+        const updatedUser = await prisma.user.update({
+          where: {
+            id: viewer.id
+          },
+          data: {
+            pomDuration: input.pomDuration,
+            shortBreakDuration: input.shortBreakDuration,
+            longBreakDuration: input.longBreakDuration,
+            longBreakInterval: input.longBreakInterval
+          }
+        });
+
+        return updatedUser;
       }
     });
 

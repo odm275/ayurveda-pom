@@ -15,7 +15,7 @@ import {
 import { AppLayout } from "@/lib/components/AppLayout";
 
 import { displaySuccessNotification } from "@/lib/utils/toast";
-import { useUpdateUserSettingsMutation } from "@/lib/generated";
+import { useUpdateViewerSettingsMutation } from "@/lib/generated";
 import { withProtectedRoute } from "@/lib/utils/withProtectedRoute";
 
 const defaultValues = {
@@ -28,7 +28,7 @@ const defaultValues = {
 const Settings = () => {
   const { control, handleSubmit } = useForm({ defaultValues });
 
-  const [updateUserSettings] = useUpdateUserSettingsMutation({
+  const [updateViewerSettings] = useUpdateViewerSettingsMutation({
     onCompleted: () => {
       displaySuccessNotification(
         "Your settings have been succesfully updated",
@@ -48,7 +48,7 @@ const Settings = () => {
       longBreakDuration: minutesToMilliseconds(data.longBreakDuration),
       longBreakInterval: parseInt(data.longBreakInterval)
     };
-    updateUserSettings({
+    updateViewerSettings({
       variables: {
         input: formattedTimeDurations
       }
