@@ -15,14 +15,15 @@ export const baseSchema = makeSchema({
     schema: join(process.cwd(), "apollo", "schema.graphql")
   },
   contextType: {
+    module: join(process.cwd(), "apollo", "createContext.ts"),
     export: "Context",
-    module: join(process.cwd(), "apollo", "createContext.ts")
+    alias: "Context"
   },
   sourceTypes: {
     modules: [
       {
         module: "@prisma/client",
-        alias: "prisma"
+        alias: "prismaClient"
       }
     ]
   }

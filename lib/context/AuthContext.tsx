@@ -9,44 +9,34 @@ import {
   SetStateAction,
   Dispatch
 } from "react";
-import Router from "next/router";
 
 import { ApolloError } from "@apollo/client";
 import dayjs from "dayjs";
 
-import { useLogInMutation, Viewer } from "../generated";
+import { useLogInMutation, User } from "../generated";
 
-export const initialViewer: Viewer = {
-  __typename: "Viewer",
+export const initialViewer: User = {
+  __typename: "User",
   avatar:
     "https://www.vectorstock.com/royalty-free-vector/avatar-icon-with-question-mark-symbol-with-male-vector-28785263",
   didRequest: false,
-  hasWallet: null,
   id: null,
-  longBreakDuration: null,
-  longBreakInterval: null,
-  pomCount: null,
+  name: null,
   pomCycle: null,
   pomDuration: null,
-  pomData: {
-    __typename: "PomData",
-    result: [],
-    total: 0
-  },
-  currentTasks: {
-    __typename: "Tasks",
-    result: [],
-    total: 0
-  },
   shortBreakDuration: null,
+  longBreakDuration: null,
+  longBreakInterval: null,
+  pomEntry: [],
+  tasks: [],
   token: null
 };
 
 export type ContextValue =
   | undefined
   | {
-      viewer: Viewer;
-      setViewer: Dispatch<SetStateAction<Viewer>>;
+      viewer: User;
+      setViewer: Dispatch<SetStateAction<User>>;
       error: ApolloError;
       loading: boolean;
       isAuthenticated: boolean;
@@ -68,11 +58,12 @@ export const useAuth = () => {
 };
 
 function useProvideAuth() {
-  const [viewer, setViewer] = useState<Viewer>(initialViewer);
+  const [viewer, setViewer] = useState<User>(initialViewer);
 
   const [logIn, { error, loading }] = useLogInMutation({
     onCompleted: (data) => {
       if (data && data.logIn) {
+        console.log(data.logIn);
         setViewer(data.logIn);
 
         if (data.logIn.token) {

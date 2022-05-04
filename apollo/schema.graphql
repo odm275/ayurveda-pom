@@ -17,27 +17,19 @@ input LogInInput {
 
 type Mutation {
   deleteTask(input: DeleteTaskViewerInput): Task!
-  logIn(date: String, input: LogInInput): Viewer!
-  logOut: Viewer!
+  logIn(date: String, input: LogInInput): User!
+  logOut: User!
   updateTasks(input: UpdateTaskUserInput): Tasks!
 
   """
   updates user in database when a pomodoro counter goes up, and when settings change
   """
-  updateUserSettings(input: UpdateUserSettingsInput): Viewer!
+  updateUserSettings(input: UpdateUserSettingsInput): User!
 
   """
   Updates Viewer in database when a pomodoro counter goes up or when settings change.
   """
-  updateViewerData(input: UpdateViewerDataInput): Viewer!
-}
-
-type PomData {
-  """All the PomEntry(s) for a User. Note: [PomEntry!]! might be incorrect"""
-  result: [PomEntry!]!
-
-  """Total number of pomRecords"""
-  total: Int
+  updateViewerData(input: UpdateViewerDataInput): User!
 }
 
 type PomEntry {
@@ -54,15 +46,13 @@ type Query {
 
 type Task {
   amt: Int
-  category: String
-  createdAt: String
-  eta: String
+  createdAt: DateTime
+  eta: DateTime
   id: ID
-  isFinished: Boolean
-  isNew: Boolean
   positionId: Int
   title: String
-  user: String
+  updatedAt: DateTime
+  userId: String
 }
 
 input TaskInput {
@@ -107,6 +97,14 @@ input UpdateViewerDataInput {
 }
 
 type User {
+  """User avatar(picture)"""
+  avatar: String
+
+  """
+  (not a db field) Confirmation that the user's request came back to the client
+  """
+  didRequest: Boolean!
+
   """Unique ID for the User"""
   id: ID!
 
@@ -118,59 +116,23 @@ type User {
   """
   longBreakInterval: Int
 
-  """name of the User"""
+  """Name of the User"""
   name: String!
 
-  """enum for reference pomodoro cycles by a string name"""
+  """Current cycle(shortbreak, longbreak, or pomodoro)"""
   pomCycle: pomCycle!
 
   """Generic duration for pomodoro"""
   pomDuration: Int
 
-  """List of pomEntry(s)"""
-  pomEntry: [PomEntry]!
+  """Find the PomEntry for TODAY"""
+  pomEntry(date: String!): PomEntry
 
   """Short break after pomodoro"""
   shortBreakDuration: Int
-  status: String!
 
-  """Tasks for today's date"""
+  """All tasks for an User"""
   tasks: [Task]!
-}
-
-type Viewer {
-  """User avatar(picture)"""
-  avatar: String
-
-  """Tasks that aren't finished aka ongoing for the User"""
-  currentTasks: Tasks!
-
-  """Confirmation that the user's request came back to the client"""
-  didRequest: Boolean!
-
-  """ID for a Viewer"""
-  id: ID
-
-  """User properties that the Viewer also has"""
-  longBreakDuration: Int
-
-  """User properties that the Viewer also has"""
-  longBreakInterval: Int
-
-  """pomodoro Count for the current day"""
-  pomCount(date: String!): Int!
-
-  """User properties that the Viewer also has"""
-  pomCycle: pomCycle
-
-  """Amount of pomodoros completed per day for a Viewer"""
-  pomData: PomData!
-
-  """User properties that the Viewer also has"""
-  pomDuration: Int
-
-  """User properties that the Viewer also has"""
-  shortBreakDuration: Int
   token: String
 }
 

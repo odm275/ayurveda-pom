@@ -7,15 +7,13 @@ export const Task = objectType({
   name: "Task",
   definition(t) {
     t.id("id");
+    t.DateTime("createdAt");
+    t.DateTime("updatedAt");
     t.string("title");
     t.int("amt");
     t.int("positionId");
-    t.string("user");
-    t.boolean("isNew");
-    t.boolean("isFinished");
-    t.string("category");
-    t.string("createdAt");
-    t.string("eta");
+    t.string("userId");
+    t.DateTime("eta");
   }
 });
 

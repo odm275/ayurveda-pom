@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
@@ -15,6 +15,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
+  DateTime: any;
 };
 
 export type DeleteTaskViewerInput = {
@@ -28,13 +30,13 @@ export type LogInInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   deleteTask: Task;
-  logIn: Viewer;
-  logOut: Viewer;
+  logIn: User;
+  logOut: User;
   updateTasks: Tasks;
   /** updates user in database when a pomodoro counter goes up, and when settings change */
-  updateUserSettings: Viewer;
+  updateUserSettings: User;
   /** Updates Viewer in database when a pomodoro counter goes up or when settings change. */
-  updateViewerData: Viewer;
+  updateViewerData: User;
 };
 
 
@@ -63,21 +65,13 @@ export type MutationUpdateViewerDataArgs = {
   input?: InputMaybe<UpdateViewerDataInput>;
 };
 
-export type PomData = {
-  __typename?: 'PomData';
-  /** All the pomRecords for a User. Note: [PomRecord!]! might be incorrect */
-  result: Array<PomRecord>;
-  /** Total number of pomRecords */
-  total?: Maybe<Scalars['Int']>;
-};
-
-/** How many Pomodoros got done for a day */
-export type PomRecord = {
-  __typename?: 'PomRecord';
-  /** How many pomodoros happened that day */
-  count: Scalars['Int'];
-  /** date for record */
-  date: Scalars['String'];
+export type PomEntry = {
+  __typename?: 'PomEntry';
+  count?: Maybe<Scalars['Int']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  id?: Maybe<Scalars['ID']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+  userId?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
@@ -88,15 +82,13 @@ export type Query = {
 export type Task = {
   __typename?: 'Task';
   amt?: Maybe<Scalars['Int']>;
-  category?: Maybe<Scalars['String']>;
-  createdAt?: Maybe<Scalars['String']>;
-  eta?: Maybe<Scalars['String']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  eta?: Maybe<Scalars['DateTime']>;
   id?: Maybe<Scalars['ID']>;
-  isFinished?: Maybe<Scalars['Boolean']>;
-  isNew?: Maybe<Scalars['Boolean']>;
   positionId?: Maybe<Scalars['Int']>;
   title?: Maybe<Scalars['String']>;
-  user?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+  userId?: Maybe<Scalars['String']>;
 };
 
 export type TaskInput = {
@@ -142,54 +134,33 @@ export type UpdateViewerDataInput = {
 
 export type User = {
   __typename?: 'User';
+  /** User avatar(picture) */
+  avatar?: Maybe<Scalars['String']>;
+  /** (not a db field) Confirmation that the user's request came back to the client */
+  didRequest: Scalars['Boolean'];
   /** Unique ID for the User */
   id: Scalars['ID'];
   /** Long break after a certain amt of pomodoro cycles are met */
   longBreakDuration?: Maybe<Scalars['Int']>;
   /** The amt of pomodoro cycles(pom,shortBreak) that have to happen before a long break */
   longBreakInterval?: Maybe<Scalars['Int']>;
-  /** name of the User */
+  /** Name of the User */
   name: Scalars['String'];
-  /** enum for reference pomodoro cycles by a string name */
+  /** Current cycle(shortbreak, longbreak, or pomodoro) */
   pomCycle: PomCycle;
   /** Generic duration for pomodoro */
   pomDuration?: Maybe<Scalars['Int']>;
+  /** Find the PomEntry for TODAY */
+  pomEntry?: Maybe<PomEntry>;
   /** Short break after pomodoro */
   shortBreakDuration?: Maybe<Scalars['Int']>;
-  status: Scalars['String'];
-  /** Tasks for today's date */
+  /** All tasks for an User */
   tasks: Array<Maybe<Task>>;
-};
-
-export type Viewer = {
-  __typename?: 'Viewer';
-  /** User avatar(picture) */
-  avatar?: Maybe<Scalars['String']>;
-  /** Tasks that aren't finished aka ongoing for the User */
-  currentTasks: Tasks;
-  /** Confirmation that the user's request came back to the client */
-  didRequest: Scalars['Boolean'];
-  /** ID for a Viewer */
-  id?: Maybe<Scalars['ID']>;
-  /** User properties that the Viewer also has */
-  longBreakDuration?: Maybe<Scalars['Int']>;
-  /** User properties that the Viewer also has */
-  longBreakInterval?: Maybe<Scalars['Int']>;
-  /** pomodoro Count for the current day */
-  pomCount: Scalars['Int'];
-  /** User properties that the Viewer also has */
-  pomCycle?: Maybe<PomCycle>;
-  /** Amount of pomodoros completed per day for a Viewer */
-  pomData: PomData;
-  /** User properties that the Viewer also has */
-  pomDuration?: Maybe<Scalars['Int']>;
-  /** User properties that the Viewer also has */
-  shortBreakDuration?: Maybe<Scalars['Int']>;
   token?: Maybe<Scalars['String']>;
 };
 
 
-export type ViewerPomCountArgs = {
+export type UserPomEntryArgs = {
   date: Scalars['String'];
 };
 
@@ -212,12 +183,12 @@ export type LogInMutationVariables = Exact<{
 }>;
 
 
-export type LogInMutation = { __typename?: 'Mutation', logIn: { __typename?: 'Viewer', id?: string | null, token?: string | null, avatar?: string | null, didRequest: boolean, pomDuration?: number | null, shortBreakDuration?: number | null, longBreakDuration?: number | null, longBreakInterval?: number | null, pomCycle?: PomCycle | null, pomCount: number, pomData: { __typename?: 'PomData', result: Array<{ __typename?: 'PomRecord', date: string, count: number }> }, currentTasks: { __typename?: 'Tasks', total: number, result: Array<{ __typename?: 'Task', id?: string | null, title?: string | null, amt?: number | null, isNew?: boolean | null, isFinished?: boolean | null, createdAt?: string | null, eta?: string | null }> } } };
+export type LogInMutation = { __typename?: 'Mutation', logIn: { __typename?: 'User', id: string, token?: string | null, avatar?: string | null, didRequest: boolean, pomDuration?: number | null, shortBreakDuration?: number | null, longBreakDuration?: number | null, longBreakInterval?: number | null, pomCycle: PomCycle, pomEntry?: { __typename?: 'PomEntry', createdAt?: any | null, count?: number | null } | null, tasks: Array<{ __typename?: 'Task', id?: string | null, createdAt?: any | null, title?: string | null, amt?: number | null, positionId?: number | null, eta?: any | null } | null> } };
 
 export type LogOutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type LogOutMutation = { __typename?: 'Mutation', logOut: { __typename?: 'Viewer', id?: string | null, token?: string | null, avatar?: string | null, didRequest: boolean } };
+export type LogOutMutation = { __typename?: 'Mutation', logOut: { __typename?: 'User', id: string, token?: string | null, avatar?: string | null, didRequest: boolean } };
 
 export type UpdateTasksMutationVariables = Exact<{
   input?: InputMaybe<UpdateTaskUserInput>;
@@ -231,14 +202,14 @@ export type UpdateUserSettingsMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserSettingsMutation = { __typename?: 'Mutation', updateUserSettings: { __typename?: 'Viewer', id?: string | null, longBreakInterval?: number | null, pomDuration?: number | null, shortBreakDuration?: number | null, longBreakDuration?: number | null } };
+export type UpdateUserSettingsMutation = { __typename?: 'Mutation', updateUserSettings: { __typename?: 'User', id: string, longBreakInterval?: number | null, pomDuration?: number | null, shortBreakDuration?: number | null, longBreakDuration?: number | null } };
 
 export type UpdateViewerDataMutationVariables = Exact<{
   input?: InputMaybe<UpdateViewerDataInput>;
 }>;
 
 
-export type UpdateViewerDataMutation = { __typename?: 'Mutation', updateViewerData: { __typename?: 'Viewer', id?: string | null, longBreakInterval?: number | null, pomDuration?: number | null, shortBreakDuration?: number | null, longBreakDuration?: number | null } };
+export type UpdateViewerDataMutation = { __typename?: 'Mutation', updateViewerData: { __typename?: 'User', id: string, longBreakInterval?: number | null, pomDuration?: number | null, shortBreakDuration?: number | null, longBreakDuration?: number | null } };
 
 export type AuthUrlQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -292,24 +263,17 @@ export const LogInDocument = gql`
     longBreakDuration
     longBreakInterval
     pomCycle
-    pomCount(date: $date)
-    pomData {
-      result {
-        date
-        count
-      }
+    pomEntry(date: $date) {
+      createdAt
+      count
     }
-    currentTasks {
-      total
-      result {
-        id
-        title
-        amt
-        isNew
-        isFinished
-        createdAt
-        eta
-      }
+    tasks {
+      id
+      createdAt
+      title
+      amt
+      positionId
+      eta
     }
   }
 }
@@ -588,13 +552,13 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   DeleteTaskViewerInput: DeleteTaskViewerInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   LogInInput: LogInInput;
   Mutation: ResolverTypeWrapper<{}>;
-  PomData: ResolverTypeWrapper<PomData>;
-  PomRecord: ResolverTypeWrapper<PomRecord>;
+  PomEntry: ResolverTypeWrapper<PomEntry>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Task: ResolverTypeWrapper<Task>;
@@ -604,20 +568,19 @@ export type ResolversTypes = {
   UpdateUserSettingsInput: UpdateUserSettingsInput;
   UpdateViewerDataInput: UpdateViewerDataInput;
   User: ResolverTypeWrapper<User>;
-  Viewer: ResolverTypeWrapper<Viewer>;
   pomCycle: PomCycle;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
+  DateTime: Scalars['DateTime'];
   DeleteTaskViewerInput: DeleteTaskViewerInput;
   ID: Scalars['ID'];
   Int: Scalars['Int'];
   LogInInput: LogInInput;
   Mutation: {};
-  PomData: PomData;
-  PomRecord: PomRecord;
+  PomEntry: PomEntry;
   Query: {};
   String: Scalars['String'];
   Task: Task;
@@ -627,27 +590,27 @@ export type ResolversParentTypes = {
   UpdateUserSettingsInput: UpdateUserSettingsInput;
   UpdateViewerDataInput: UpdateViewerDataInput;
   User: User;
-  Viewer: Viewer;
 };
+
+export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+  name: 'DateTime';
+}
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   deleteTask?: Resolver<ResolversTypes['Task'], ParentType, ContextType, Partial<MutationDeleteTaskArgs>>;
-  logIn?: Resolver<ResolversTypes['Viewer'], ParentType, ContextType, Partial<MutationLogInArgs>>;
-  logOut?: Resolver<ResolversTypes['Viewer'], ParentType, ContextType>;
+  logIn?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationLogInArgs>>;
+  logOut?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   updateTasks?: Resolver<ResolversTypes['Tasks'], ParentType, ContextType, Partial<MutationUpdateTasksArgs>>;
-  updateUserSettings?: Resolver<ResolversTypes['Viewer'], ParentType, ContextType, Partial<MutationUpdateUserSettingsArgs>>;
-  updateViewerData?: Resolver<ResolversTypes['Viewer'], ParentType, ContextType, Partial<MutationUpdateViewerDataArgs>>;
+  updateUserSettings?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationUpdateUserSettingsArgs>>;
+  updateViewerData?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationUpdateViewerDataArgs>>;
 };
 
-export type PomDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['PomData'] = ResolversParentTypes['PomData']> = {
-  result?: Resolver<Array<ResolversTypes['PomRecord']>, ParentType, ContextType>;
-  total?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type PomRecordResolvers<ContextType = any, ParentType extends ResolversParentTypes['PomRecord'] = ResolversParentTypes['PomRecord']> = {
-  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+export type PomEntryResolvers<ContextType = any, ParentType extends ResolversParentTypes['PomEntry'] = ResolversParentTypes['PomEntry']> = {
+  count?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  userId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -657,15 +620,13 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type TaskResolvers<ContextType = any, ParentType extends ResolversParentTypes['Task'] = ResolversParentTypes['Task']> = {
   amt?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  category?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  createdAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  eta?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  eta?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  isFinished?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  isNew?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   positionId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  user?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  userId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -676,42 +637,28 @@ export type TasksResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  didRequest?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   longBreakDuration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   longBreakInterval?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   pomCycle?: Resolver<ResolversTypes['pomCycle'], ParentType, ContextType>;
   pomDuration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  pomEntry?: Resolver<Maybe<ResolversTypes['PomEntry']>, ParentType, ContextType, RequireFields<UserPomEntryArgs, 'date'>>;
   shortBreakDuration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   tasks?: Resolver<Array<Maybe<ResolversTypes['Task']>>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ViewerResolvers<ContextType = any, ParentType extends ResolversParentTypes['Viewer'] = ResolversParentTypes['Viewer']> = {
-  avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  currentTasks?: Resolver<ResolversTypes['Tasks'], ParentType, ContextType>;
-  didRequest?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  longBreakDuration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  longBreakInterval?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  pomCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType, RequireFields<ViewerPomCountArgs, 'date'>>;
-  pomCycle?: Resolver<Maybe<ResolversTypes['pomCycle']>, ParentType, ContextType>;
-  pomData?: Resolver<ResolversTypes['PomData'], ParentType, ContextType>;
-  pomDuration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  shortBreakDuration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type Resolvers<ContextType = any> = {
+  DateTime?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
-  PomData?: PomDataResolvers<ContextType>;
-  PomRecord?: PomRecordResolvers<ContextType>;
+  PomEntry?: PomEntryResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Task?: TaskResolvers<ContextType>;
   Tasks?: TasksResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
-  Viewer?: ViewerResolvers<ContextType>;
 };
 

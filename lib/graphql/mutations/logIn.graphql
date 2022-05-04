@@ -9,24 +9,17 @@ mutation LogIn($input: LogInInput, $date: String!) {
     longBreakDuration
     longBreakInterval
     pomCycle
-    pomCount(date: $date)
-    pomData {
-      result {
-        date
-        count
-      }
+    pomEntry(date: $date) {
+      createdAt
+      count
     }
-    currentTasks {
-      total
-      result {
-        id
-        title
-        amt
-        isNew
-        isFinished
-        createdAt
-        eta
-      }
+    tasks {
+      id
+      createdAt
+      title
+      amt
+      positionId
+      eta
     }
   }
 }
