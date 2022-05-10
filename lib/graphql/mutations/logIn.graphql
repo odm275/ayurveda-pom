@@ -1,6 +1,7 @@
 mutation LogIn($input: LogInInput, $date: String!) {
   logIn(input: $input, date: $date) {
     id
+    name
     token
     avatar
     didRequest

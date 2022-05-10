@@ -1,5 +1,6 @@
+import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
-
+import { milliSecondsToMinutes } from "@/lib/utils";
 import {
   FormControl,
   FormLabel,
@@ -12,34 +13,67 @@ import {
   Button
 } from "@chakra-ui/react";
 
-import { AppLayout } from "@/lib/components/AppLayout";
-
-import { displaySuccessNotification } from "@/lib/utils/toast";
+import { AppLayout, LoadingOverlay } from "@/lib/components";
 import { useUpdateViewerSettingsMutation } from "@/lib/generated";
-import { withProtectedRoute } from "@/lib/utils/withProtectedRoute";
-
-const defaultValues = {
-  pomDuration: 25,
-  shortBreakDuration: 5,
-  longBreakDuration: 25,
-  longBreakInterval: 5
-};
+import {
+  minutesToMilliseconds,
+  displaySuccessNotification,
+  displayErrorNotification,
+  withProtectedRoute
+} from "@/lib/utils";
+import { useAuth } from "@/lib/context";
 
 const Settings = () => {
-  const { control, handleSubmit } = useForm({ defaultValues });
+  const { viewer } = useAuth();
 
-  const [updateViewerSettings] = useUpdateViewerSettingsMutation({
-    onCompleted: () => {
-      displaySuccessNotification(
-        "Your settings have been succesfully updated",
-        "Thank you!"
-      );
+  // This element is being rendered 2-3 times;
+  // hence defaultValues is the wrong parameter if you
+  // wanna keep the form in sync with the latest props from use Auth
+
+  const { control, handleSubmit, setValue } = useForm({
+    defaultValues: {
+      pomDuration: 0,
+      shortBreakDuration: 0,
+      longBreakDuration: 0,
+      longBreakInterval: 0
     }
   });
 
-  function minutesToMilliseconds(str) {
-    return parseInt(str) * 1000 * 60;
-  }
+  useEffect(() => {
+    console.log("hey", viewer);
+    if (
+      viewer.pomDuration &&
+      viewer.shortBreakDuration &&
+      viewer.longBreakDuration
+    ) {
+      setValue("pomDuration", milliSecondsToMinutes(viewer.pomDuration));
+      setValue(
+        "shortBreakDuration",
+        milliSecondsToMinutes(viewer.shortBreakDuration)
+      );
+      setValue(
+        "longBreakDuration",
+        milliSecondsToMinutes(viewer.longBreakDuration)
+      );
+      setValue("longBreakInterval", viewer.longBreakInterval);
+    }
+  }, [viewer.didRequest]);
+
+  const [updateViewerSettings, { loading, error }] =
+    useUpdateViewerSettingsMutation({
+      onCompleted: () => {
+        displaySuccessNotification(
+          "Your settings have been succesfully updated",
+          "Thank you!"
+        );
+      },
+      onError: () => {
+        displayErrorNotification(
+          "There was an error while trying to update your settings",
+          "Please Try Again Later"
+        );
+      }
+    });
 
   const onSubmit = (data) => {
     const formattedTimeDurations = {
@@ -57,81 +91,84 @@ const Settings = () => {
 
   return (
     <AppLayout>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack spacing={2}>
-          <FormControl id="pomDuration">
-            <FormLabel>Pomodoro Duration</FormLabel>
-            <Controller
-              control={control}
-              name="pomDuration"
-              render={({ field: { value }, ...restProps }) => (
-                <NumberInput value={value} {...restProps}>
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-              )}
-            />
-          </FormControl>
+      <LoadingOverlay isOpen={loading}>
+        {/* {loading ? "loading" : "not loading"} */}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Stack spacing={2}>
+            <FormControl id="pomDuration">
+              <FormLabel>Pomodoro Duration</FormLabel>
+              <Controller
+                name="pomDuration"
+                control={control}
+                render={({ field }) => (
+                  <NumberInput {...field}>
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                )}
+              />
+            </FormControl>
 
-          <FormControl id="shortBreakDuration">
-            <FormLabel>Short Break Duration</FormLabel>
-            <Controller
-              control={control}
-              name="shortBreakDuration"
-              render={({ field: { value }, ...restProps }) => (
-                <NumberInput value={value} {...restProps}>
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-              )}
-            />
-          </FormControl>
+            <FormControl id="shortBreakDuration">
+              <FormLabel>Short Break Duration</FormLabel>
+              <Controller
+                name="shortBreakDuration"
+                control={control}
+                render={({ field }) => (
+                  <NumberInput {...field}>
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                )}
+              />
+            </FormControl>
 
-          <FormControl id="longBreakDuration">
-            <FormLabel>Long Break Duration</FormLabel>
-            <Controller
-              control={control}
-              name="longBreakDuration"
-              render={({ field: { value }, ...restProps }) => (
-                <NumberInput value={value} {...restProps}>
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-              )}
-            />
-          </FormControl>
+            <FormControl id="longBreakDuration">
+              <FormLabel>Long Break Duration</FormLabel>
+              <Controller
+                name="longBreakDuration"
+                control={control}
+                render={({ field }) => (
+                  <NumberInput {...field}>
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                )}
+              />
+            </FormControl>
 
-          <FormControl id="longBreakInterval">
-            <FormLabel>Long Break Interval</FormLabel>
-            <Controller
-              control={control}
-              name="longBreakInterval"
-              render={({ field: { value }, ...restProps }) => (
-                <NumberInput value={value} {...restProps}>
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-              )}
-            />
-          </FormControl>
+            <FormControl id="longBreakInterval">
+              <FormLabel>Long Break Interval</FormLabel>
+              <Controller
+                name="longBreakInterval"
+                control={control}
+                render={({ field }) => (
+                  <NumberInput {...field}>
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                )}
+              />
+            </FormControl>
 
-          <Button mt={4} colorScheme="teal" type="submit">
-            Submit
-          </Button>
-        </Stack>
-      </form>
+            <Button mt={4} colorScheme="teal" type="submit">
+              Submit
+            </Button>
+          </Stack>
+        </form>
+      </LoadingOverlay>
     </AppLayout>
   );
 };

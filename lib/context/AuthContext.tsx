@@ -2,12 +2,13 @@ import {
   createContext,
   useState,
   useEffect,
-  useRef,
+  useMemo,
   useContext,
   FunctionComponent,
   ReactNode,
   SetStateAction,
-  Dispatch
+  Dispatch,
+  useCallback
 } from "react";
 
 import { ApolloError } from "@apollo/client";
@@ -27,7 +28,7 @@ export const initialViewer: User = {
   shortBreakDuration: null,
   longBreakDuration: null,
   longBreakInterval: null,
-  pomEntry: [],
+  pomEntry: null,
   tasks: [],
   token: null
 };
@@ -40,6 +41,7 @@ export type ContextValue =
       error: ApolloError;
       loading: boolean;
       isAuthenticated: boolean;
+      viewerHope: null | User;
     };
 
 export const authContext = createContext<ContextValue>(undefined);
@@ -50,20 +52,21 @@ interface Props {
 
 export const ProvideAuth: FunctionComponent = ({ children }: Props) => {
   const auth = useProvideAuth();
-  return <authContext.Provider value={auth}>{children}</authContext.Provider>;
+  const contextValue = useMemo(() => auth, [auth]);
+
+  return (
+    <authContext.Provider value={contextValue}>{children}</authContext.Provider>
+  );
 };
 
-export const useAuth = () => {
-  return useContext(authContext);
-};
+export const useAuth = () => useContext(authContext);
 
 function useProvideAuth() {
   const [viewer, setViewer] = useState<User>(initialViewer);
 
-  const [logIn, { error, loading }] = useLogInMutation({
+  const [logIn, { loading, error }] = useLogInMutation({
     onCompleted: (data) => {
       if (data && data.logIn) {
-        console.log(data.logIn);
         setViewer(data.logIn);
 
         if (data.logIn.token) {
@@ -78,24 +81,27 @@ function useProvideAuth() {
     }
   });
 
-  const logInRef = useRef(logIn);
   const isAuthenticated = !!viewer.id && viewer.id !== null;
+  const viewerHope = loading || !viewer.id ? null : viewer;
 
+  // If not authenticated -- try to log in
+  const logInCallback = useCallback(logIn, []);
   useEffect(() => {
     if (!isAuthenticated) {
-      logInRef.current({
+      logInCallback({
         variables: {
           date: dayjs().format("MM-DD-YYYY")
         }
       });
     }
-  }, []);
+  }, [logInCallback, viewer]);
 
   return {
+    loading,
     isAuthenticated,
     viewer,
     setViewer,
     error,
-    loading
+    viewerHope
   };
 }

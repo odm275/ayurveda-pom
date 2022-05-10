@@ -24,6 +24,7 @@ import {
   displayErrorNotification,
   displaySuccessNotification
 } from "@/lib/utils/toast";
+import { FaUser } from "react-icons/fa";
 
 interface MobileProps extends FlexProps {
   onOpen: () => void;
@@ -101,7 +102,7 @@ export const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               _focus={{ boxShadow: "none" }}
             >
               <HStack>
-                <Avatar size={"sm"} src={viewer.avatar} />
+                <Avatar name="avatar" size={"sm"} src={viewer.avatar} />
                 <VStack
                   display={{ base: "none", md: "flex" }}
                   alignItems="flex-start"

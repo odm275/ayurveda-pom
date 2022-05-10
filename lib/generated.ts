@@ -181,7 +181,7 @@ export type LogInMutationVariables = Exact<{
 }>;
 
 
-export type LogInMutation = { __typename?: 'Mutation', logIn: { __typename?: 'User', id: string, token?: string | null, avatar?: string | null, didRequest: boolean, pomDuration?: number | null, shortBreakDuration?: number | null, longBreakDuration?: number | null, longBreakInterval?: number | null, pomCycle: PomCycle, pomEntry?: { __typename?: 'PomEntry', createdAt?: any | null, count?: number | null } | null, tasks: Array<{ __typename?: 'Task', id?: string | null, createdAt?: any | null, title?: string | null, amt?: number | null, positionId?: number | null, eta?: any | null } | null> } };
+export type LogInMutation = { __typename?: 'Mutation', logIn: { __typename?: 'User', id: string, name: string, token?: string | null, avatar?: string | null, didRequest: boolean, pomDuration?: number | null, shortBreakDuration?: number | null, longBreakDuration?: number | null, longBreakInterval?: number | null, pomCycle: PomCycle, pomEntry?: { __typename?: 'PomEntry', createdAt?: any | null, count?: number | null } | null, tasks: Array<{ __typename?: 'Task', id?: string | null, createdAt?: any | null, title?: string | null, amt?: number | null, positionId?: number | null, eta?: any | null } | null> } };
 
 export type LogOutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -253,6 +253,7 @@ export const LogInDocument = gql`
     mutation LogIn($input: LogInInput, $date: String!) {
   logIn(input: $input, date: $date) {
     id
+    name
     token
     avatar
     didRequest

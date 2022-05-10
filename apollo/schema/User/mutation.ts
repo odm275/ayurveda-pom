@@ -36,6 +36,7 @@ export const UserMutation = extendType({
 
           const resViewer = {
             id: viewer.id,
+            name: viewer.name,
             token: viewer.token,
             avatar: viewer.avatar,
             didRequest: true,
