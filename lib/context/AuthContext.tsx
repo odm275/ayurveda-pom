@@ -2,13 +2,11 @@ import {
   createContext,
   useState,
   useEffect,
-  useMemo,
   useContext,
   FunctionComponent,
   ReactNode,
   SetStateAction,
-  Dispatch,
-  useCallback
+  Dispatch
 } from "react";
 
 import { ApolloError } from "@apollo/client";
@@ -41,7 +39,6 @@ export type ContextValue =
       error: ApolloError;
       loading: boolean;
       isAuthenticated: boolean;
-      viewerHope: null | User;
     };
 
 export const authContext = createContext<ContextValue>(undefined);
@@ -52,14 +49,17 @@ interface Props {
 
 export const ProvideAuth: FunctionComponent = ({ children }: Props) => {
   const auth = useProvideAuth();
-  const contextValue = useMemo(() => auth, [auth]);
 
-  return (
-    <authContext.Provider value={contextValue}>{children}</authContext.Provider>
-  );
+  return <authContext.Provider value={auth}>{children}</authContext.Provider>;
 };
 
 export const useAuth = () => useContext(authContext);
+
+// State in this hook
+// 1) { loading, error } state: loading true, loading false,
+// 2) viewer state
+// initial render + loading true + loading false + viewer state update = 4 renders.
+// I hope I'm doing the math right ...
 
 function useProvideAuth() {
   const [viewer, setViewer] = useState<User>(initialViewer);
@@ -82,26 +82,22 @@ function useProvideAuth() {
   });
 
   const isAuthenticated = !!viewer.id && viewer.id !== null;
-  const viewerHope = loading || !viewer.id ? null : viewer;
 
-  // If not authenticated -- try to log in
-  const logInCallback = useCallback(logIn, []);
   useEffect(() => {
     if (!isAuthenticated) {
-      logInCallback({
+      logIn({
         variables: {
           date: dayjs().format("MM-DD-YYYY")
         }
       });
     }
-  }, [logInCallback, viewer]);
+  }, [viewer, logIn]);
 
   return {
     loading,
     isAuthenticated,
     viewer,
     setViewer,
-    error,
-    viewerHope
+    error
   };
 }

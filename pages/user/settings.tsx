@@ -26,10 +26,6 @@ import { useAuth } from "@/lib/context";
 const Settings = () => {
   const { viewer } = useAuth();
 
-  // This element is being rendered 2-3 times;
-  // hence defaultValues is the wrong parameter if you
-  // wanna keep the form in sync with the latest props from use Auth
-
   const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
       pomDuration: 0,
@@ -40,11 +36,10 @@ const Settings = () => {
   });
 
   useEffect(() => {
-    console.log("hey", viewer);
     if (
-      viewer.pomDuration &&
-      viewer.shortBreakDuration &&
-      viewer.longBreakDuration
+      viewer?.pomDuration &&
+      viewer?.shortBreakDuration &&
+      viewer?.longBreakDuration
     ) {
       setValue("pomDuration", milliSecondsToMinutes(viewer.pomDuration));
       setValue(
@@ -57,7 +52,7 @@ const Settings = () => {
       );
       setValue("longBreakInterval", viewer.longBreakInterval);
     }
-  }, [viewer.didRequest]);
+  }, [viewer]);
 
   const [updateViewerSettings, { loading, error }] =
     useUpdateViewerSettingsMutation({

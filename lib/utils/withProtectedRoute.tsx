@@ -1,21 +1,20 @@
+import { FunctionComponent } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "../context";
-import { GenericLoadingScreen } from "@/lib/components";
 import { useEffectWithoutOnMount } from "../hooks/useEffectWithoutOnMount";
 
-export const withProtectedRoute = (WrappedComponent) => {
-  const AuthenticatedComponent = () => {
+export const withProtectedRoute = (WrappedComponent: FunctionComponent) => {
+  const AuthenticatedComponent = (props: unknown) => {
     const Router = useRouter();
-    const { isAuthenticated, loading } = useAuth();
-    if (loading) return <GenericLoadingScreen />;
+    const { isAuthenticated } = useAuth();
 
     useEffectWithoutOnMount(() => {
       if (!isAuthenticated) {
         Router.replace("/login");
       }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, Router]);
 
-    return <WrappedComponent />;
+    return <WrappedComponent {...props} />;
   };
   return AuthenticatedComponent;
 };
