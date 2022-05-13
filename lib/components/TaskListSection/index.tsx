@@ -1,14 +1,11 @@
 import React, { useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import {
-  Button,
   Drawer,
   DrawerOverlay,
   DrawerCloseButton,
   DrawerHeader,
-  DrawerContent,
-  DrawerFooter,
-  useDisclosure
+  DrawerContent
 } from "@chakra-ui/react";
 import { useTaskHandlers } from "./hooks";
 import {
@@ -17,11 +14,7 @@ import {
   OutsideClick,
   Task
 } from "./components";
-import {
-  useUpdateTasksPositionsMutation,
-  Task as TaskType,
-  useDeleteTaskMutation
-} from "@/lib/generated";
+import { Task as TaskType, useDeleteTaskMutation } from "@/lib/generated";
 import { LoadingOverlay } from "../LoadingOverlay";
 interface Props {
   isOpen: boolean;
@@ -43,15 +36,6 @@ export const TaskListSection = ({
   const [lastDraggedIndex, setLastDraggedIndex] = useState(null);
   const [lastDraggedSourceIndex, setLastDraggedSourceIndex] = useState(null);
 
-  const [updateTasksPositions, { loading, error }] =
-    useUpdateTasksPositionsMutation({
-      onCompleted: (data) => {
-        console.log(data);
-      },
-      onError: (err) => {
-        console.log(err);
-      }
-    });
   const { addAmtTask, removeAmtTask, deleteTask } = useTaskHandlers();
 
   const [deleteViewerTask] = useDeleteTaskMutation({
@@ -60,27 +44,6 @@ export const TaskListSection = ({
       setTasks(newTaskArr);
     }
   });
-
-  const onSave = () => {
-    // Todo: Think about whether I need to update state here after saving state in the server.
-    const taskIds = tasks.map((task) => {
-      return {
-        id: task.id
-      };
-    });
-    console.log("taskIds", taskIds);
-    updateTasksPositions({
-      variables: {
-        input: { taskIds }
-      }
-    });
-  };
-
-  const handleOnClose = () => {
-    // Todo: If tasks arent's saved, I wanna be able to reset
-    // them to their initial state when the task drawer was opened
-    onClose();
-  };
 
   const handleDeleteTask = ({ task }) => {
     deleteViewerTask({
@@ -120,7 +83,7 @@ export const TaskListSection = ({
       size="full"
     >
       <DrawerOverlay>
-        <LoadingOverlay isOpen={loading}>
+        <LoadingOverlay isOpen={false}>
           <DrawerContent>
             <DrawerCloseButton />
             <DrawerHeader>My Tasks</DrawerHeader>
@@ -136,14 +99,6 @@ export const TaskListSection = ({
                 </DraggableTaskCards>
               </OutsideClick>
             </TaskListBody>
-            <DrawerFooter>
-              <Button variant="outline" mr={3} onClick={handleOnClose}>
-                Cancel
-              </Button>
-              <Button color="blue" type="submit" onClick={onSave}>
-                Save
-              </Button>
-            </DrawerFooter>
           </DrawerContent>
         </LoadingOverlay>
       </DrawerOverlay>
