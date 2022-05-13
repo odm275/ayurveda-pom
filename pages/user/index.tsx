@@ -5,9 +5,8 @@ import AppHeaderSkeleton from "@/lib/components/AppHeaderSkeleton";
 import ErrorBanner from "@/lib/components/ErrorBanner";
 import { AppLayout } from "@/lib/components/AppLayout";
 import { useAuth } from "@/lib/context/AuthContext";
-import { newPayload } from "@/lib/utils/omitTypename";
 import { TaskListSection } from "@/lib/components/TaskListSection";
-import { useUpdateTasksMutation, Task } from "@/lib/generated";
+import { Task } from "@/lib/generated";
 import { withProtectedRoute } from "@/lib/utils/withProtectedRoute";
 
 const Index = () => {
@@ -16,20 +15,10 @@ const Index = () => {
   // Update tasks whenever a new pomodoro cycle is completed
   const [tasks, setTasks] = useState<Task[] | null>([]);
 
-  const [
-    updateTasks,
-    { loading: loadingUpdateTasks, error: updateTasksError }
-  ] = useUpdateTasksMutation({
-    onCompleted: () => {
-      console.log("update tasks mutation was completed");
-    }
-  });
-
   useEffect(() => {
-    const _tasks = viewer?.currentTasks?.result
-      ? newPayload(viewer.currentTasks.result)
-      : [];
-    setTasks(_tasks);
+    if (viewer?.tasks) {
+      setTasks(viewer.tasks);
+    }
   }, [viewer.didRequest]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -56,18 +45,16 @@ const Index = () => {
     <ErrorBanner description="We aren't able to verify if you were logged in. Please try again later!" />
   ) : null;
 
-  const unFinishedTasks = tasks.filter((task) => task.amt > 0);
-
   return (
     <AppLayout>
       {logInErrorBannerElement}
       <TaskListSection
-        tasks={unFinishedTasks}
+        tasks={tasks}
         setTasks={setTasks}
         isOpen={isOpen}
         onClose={onClose}
         btnRef={btnRef}
-        loadingUpdateTasks={loadingUpdateTasks}
+        loadingUpdateTasks={false}
       />
       <Flex justifyContent="center">
         <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>
@@ -81,9 +68,8 @@ const Index = () => {
         longBreakDuration={viewer.longBreakDuration}
         longBreakInterval={viewer.longBreakInterval}
         pomCount={viewer.pomCount}
-        tasks={unFinishedTasks}
+        tasks={tasks}
         setTasks={setTasks}
-        updateTasks={updateTasks}
       />
     </AppLayout>
   );

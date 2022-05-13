@@ -14,10 +14,9 @@ import {
 } from "@chakra-ui/react";
 import NumberInput from "@/lib/components/NumberInput";
 import { Controller, useForm } from "react-hook-form";
-
 import DatePicker from "react-datepicker";
-
 import "react-datepicker/dist/react-datepicker.css";
+import { useCreateTaskMutation } from "@/lib/generated";
 interface Task {
   title: string;
   amt: number;
@@ -33,23 +32,28 @@ interface Props {
   tasks: [Task];
 }
 
-export const AddTaskModal = ({ isOpen, onClose, setTasks, tasks }: Props) => {
+export const AddTaskModal = ({ isOpen, onClose, tasks, setTasks }: Props) => {
   const { control, register, handleSubmit } = useForm();
-
+  const [createTask, { loading, error }] = useCreateTaskMutation({
+    onCompleted: (data) => {
+      const newTask = data.createTask;
+      const newTasks = [...tasks, newTask];
+      setTasks(newTasks);
+      onClose();
+    }
+  });
   const onSubmit = (data) => {
     const { title, amt, eta } = data;
-    const newTasks = [
-      ...tasks,
-      {
-        title,
-        amt: parseInt(amt),
-        eta: new Date(eta),
-        isNew: true,
-        createdAt: new Date()
+    createTask({
+      variables: {
+        input: {
+          title,
+          amt: parseInt(amt),
+          eta,
+          positionId: tasks.length + 1
+        }
       }
-    ];
-    setTasks(newTasks);
-    onClose();
+    });
   };
 
   const addTaskCard = (

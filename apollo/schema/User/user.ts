@@ -34,22 +34,41 @@ export const User = objectType({
       type: PomCycle,
       description: "Current cycle(shortbreak, longbreak, or pomodoro)"
     });
+    t.int("pomCount", {
+      description: "Get the count for TODAY'S POM ENTRY",
+      args: {
+        today: nonNull(stringArg())
+      },
+      async resolve({ id }, { today }, { prisma }): Promise<any> {
+        try {
+          const todaysPomEntry = await prisma.pomEntry.findFirst({
+            where: {
+              id,
+              date: today
+            }
+          });
+          if (!todaysPomEntry) return 0;
+          return todaysPomEntry.count;
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    });
     t.field("pomEntry", {
-      description: "Find the PomEntry for TODAY",
+      description:
+        "All the Pom Entries for all time. As in, all the work ever done counted",
       type: PomEntry,
       args: {
         date: nonNull(stringArg())
       },
       async resolve({ id }, { date }, { prisma }): Promise<any> {
         try {
-          const allUserPomEntries = await prisma.pomEntry.findFirst({
+          const allUserPomEntries = await prisma.pomEntry.findUnique({
             where: {
-              id: id,
-              createdAt: {
-                equals: new Date(date)
-              }
+              id
             }
           });
+          if (!allUserPomEntries) return [];
           return allUserPomEntries;
         } catch (e) {
           console.log(e);
@@ -63,12 +82,17 @@ export const User = objectType({
         try {
           const userTasks = await prisma.task.findMany({
             where: {
-              userId: id
+              userId: id,
+              amt: {
+                gte: 0
+              }
             }
           });
-          console.log("userTasks", userTasks);
           if (!userTasks) return [];
-          return userTasks;
+          const sortedUsetTasks = userTasks.sort(
+            (a, b) => a.positionId - b.positionId
+          );
+          return sortedUsetTasks;
         } catch (e) {
           console.log(e);
         }

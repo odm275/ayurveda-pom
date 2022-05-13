@@ -1,5 +1,5 @@
-mutation LogIn($input: LogInInput, $date: String!) {
-  logIn(input: $input, date: $date) {
+mutation LogIn($input: LogInInput, $date: String!, $today: String!) {
+  logIn(input: $input, date: $date, today: $today) {
     id
     name
     token
@@ -14,6 +14,7 @@ mutation LogIn($input: LogInInput, $date: String!) {
       createdAt
       count
     }
+    pomCount(today: $today)
     tasks {
       id
       createdAt

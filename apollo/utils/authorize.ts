@@ -3,10 +3,19 @@ import { PrismaClient } from "@prisma/client";
 import { User } from "@prisma/client";
 import Cryptr from "cryptr";
 
-export const authorize = async (
-  prisma: PrismaClient,
-  req: NextApiRequest
-): Promise<User | null> => {
+interface Params {
+  db?: any;
+  prisma?: PrismaClient;
+  req: NextApiRequest;
+  includeTasks?: boolean;
+}
+
+export const authorize = async ({
+  db,
+  prisma,
+  req,
+  includeTasks = false
+}: Params): Promise<User | null> => {
   const token = req.headers["x-csrf-token"] as string;
 
   const viewerCookie = req.cookies.viewer;
@@ -17,6 +26,9 @@ export const authorize = async (
     where: {
       id: decryptedUserId,
       token: token
+    },
+    include: {
+      tasks: includeTasks
     }
   });
 

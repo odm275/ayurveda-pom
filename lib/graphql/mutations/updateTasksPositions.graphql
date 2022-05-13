@@ -1,0 +1,7 @@
+mutation updateTasksPositions($input: UpdateTasksPositionsInput) {
+  updateTasksPositions(input: $input) {
+    tasks {
+      id
+    }
+  }
+}

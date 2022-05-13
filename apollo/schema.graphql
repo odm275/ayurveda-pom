@@ -2,6 +2,13 @@
 ### Do not make changes to this file directly
 
 
+input CreateTaskInput {
+  amt: Int
+  eta: String
+  positionId: Int
+  title: String
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
@@ -16,10 +23,15 @@ input LogInInput {
 }
 
 type Mutation {
+  createTask(input: CreateTaskInput): Task!
   deleteTask(input: DeleteTaskViewerInput): Task!
-  logIn(date: String, input: LogInInput): User!
+  logIn(date: String, input: LogInInput, today: String): User!
   logOut: User!
-  updateTasks(input: UpdateTaskUserInput): Tasks!
+
+  """ Updates data that needs to be update whenever a pomodoro Cycle complates.
+  """
+  pomCycleUpdate(input: PomCycleUpdateInput): User!
+  updateTasksPositions(input: UpdateTasksPositionsInput): Tasks!
 
   """
   Updates Viewer in database when a pomodoro counter goes up or when settings change.
@@ -28,6 +40,12 @@ type Mutation {
 
   """Update when Viewer Settings change"""
   updateViewerSettings(input: UpdateViewerSettingsInput): User!
+}
+
+input PomCycleUpdateInput {
+  date: String
+  increasePomCounter: Boolean
+  pomCycle: pomCycle
 }
 
 type PomEntry {
@@ -53,26 +71,16 @@ type Task {
   userId: String
 }
 
-input TaskInput {
-  amt: Int
-  createdAt: String
-  eta: String
-  id: String
-  isFinished: Boolean
-  isNew: Boolean
-  title: String
+input TaskId {
+  id: ID
 }
 
 type Tasks {
-  """The total amt of tasks for a User"""
-  result: [Task!]!
-
-  """The total number of tasks for a User"""
-  total: Int!
+  tasks: [Task]
 }
 
-input UpdateTaskUserInput {
-  tasks: [TaskInput]!
+input UpdateTasksPositionsInput {
+  taskIds: [TaskId]
 }
 
 input UpdateViewerDataInput {
@@ -115,13 +123,18 @@ type User {
   """Name of the User"""
   name: String!
 
+  """Get the count for TODAY'S POM ENTRY"""
+  pomCount(today: String!): Int
+
   """Current cycle(shortbreak, longbreak, or pomodoro)"""
   pomCycle: pomCycle!
 
   """Generic duration for pomodoro"""
   pomDuration: Int
 
-  """Find the PomEntry for TODAY"""
+  """
+  All the Pom Entries for all time. As in, all the work ever done counted
+  """
   pomEntry(date: String!): PomEntry
 
   """Short break after pomodoro"""

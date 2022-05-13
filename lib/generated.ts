@@ -19,6 +19,13 @@ export type Scalars = {
   DateTime: any;
 };
 
+export type CreateTaskInput = {
+  amt?: InputMaybe<Scalars['Int']>;
+  eta?: InputMaybe<Scalars['String']>;
+  positionId?: InputMaybe<Scalars['Int']>;
+  title?: InputMaybe<Scalars['String']>;
+};
+
 export type DeleteTaskViewerInput = {
   id: Scalars['String'];
 };
@@ -29,14 +36,22 @@ export type LogInInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createTask: Task;
   deleteTask: Task;
   logIn: User;
   logOut: User;
-  updateTasks: Tasks;
+  /**  Updates data that needs to be update whenever a pomodoro Cycle complates. */
+  pomCycleUpdate: User;
+  updateTasksPositions: Tasks;
   /** Updates Viewer in database when a pomodoro counter goes up or when settings change. */
   updateViewerData: User;
   /** Update when Viewer Settings change */
   updateViewerSettings: User;
+};
+
+
+export type MutationCreateTaskArgs = {
+  input?: InputMaybe<CreateTaskInput>;
 };
 
 
@@ -48,11 +63,17 @@ export type MutationDeleteTaskArgs = {
 export type MutationLogInArgs = {
   date?: InputMaybe<Scalars['String']>;
   input?: InputMaybe<LogInInput>;
+  today?: InputMaybe<Scalars['String']>;
 };
 
 
-export type MutationUpdateTasksArgs = {
-  input?: InputMaybe<UpdateTaskUserInput>;
+export type MutationPomCycleUpdateArgs = {
+  input?: InputMaybe<PomCycleUpdateInput>;
+};
+
+
+export type MutationUpdateTasksPositionsArgs = {
+  input?: InputMaybe<UpdateTasksPositionsInput>;
 };
 
 
@@ -63,6 +84,12 @@ export type MutationUpdateViewerDataArgs = {
 
 export type MutationUpdateViewerSettingsArgs = {
   input?: InputMaybe<UpdateViewerSettingsInput>;
+};
+
+export type PomCycleUpdateInput = {
+  date?: InputMaybe<Scalars['String']>;
+  increasePomCounter?: InputMaybe<Scalars['Boolean']>;
+  pomCycle?: InputMaybe<PomCycle>;
 };
 
 export type PomEntry = {
@@ -91,26 +118,17 @@ export type Task = {
   userId?: Maybe<Scalars['String']>;
 };
 
-export type TaskInput = {
-  amt?: InputMaybe<Scalars['Int']>;
-  createdAt?: InputMaybe<Scalars['String']>;
-  eta?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['String']>;
-  isFinished?: InputMaybe<Scalars['Boolean']>;
-  isNew?: InputMaybe<Scalars['Boolean']>;
-  title?: InputMaybe<Scalars['String']>;
+export type TaskId = {
+  id?: InputMaybe<Scalars['ID']>;
 };
 
 export type Tasks = {
   __typename?: 'Tasks';
-  /** The total amt of tasks for a User */
-  result: Array<Task>;
-  /** The total number of tasks for a User */
-  total: Scalars['Int'];
+  tasks?: Maybe<Array<Maybe<Task>>>;
 };
 
-export type UpdateTaskUserInput = {
-  tasks: Array<InputMaybe<TaskInput>>;
+export type UpdateTasksPositionsInput = {
+  taskIds?: InputMaybe<Array<InputMaybe<TaskId>>>;
 };
 
 export type UpdateViewerDataInput = {
@@ -144,17 +162,24 @@ export type User = {
   longBreakInterval?: Maybe<Scalars['Int']>;
   /** Name of the User */
   name: Scalars['String'];
+  /** Get the count for TODAY'S POM ENTRY */
+  pomCount?: Maybe<Scalars['Int']>;
   /** Current cycle(shortbreak, longbreak, or pomodoro) */
   pomCycle: PomCycle;
   /** Generic duration for pomodoro */
   pomDuration?: Maybe<Scalars['Int']>;
-  /** Find the PomEntry for TODAY */
+  /** All the Pom Entries for all time. As in, all the work ever done counted */
   pomEntry?: Maybe<PomEntry>;
   /** Short break after pomodoro */
   shortBreakDuration?: Maybe<Scalars['Int']>;
   /** All tasks for an User */
   tasks: Array<Maybe<Task>>;
   token?: Maybe<Scalars['String']>;
+};
+
+
+export type UserPomCountArgs = {
+  today: Scalars['String'];
 };
 
 
@@ -168,6 +193,13 @@ export enum PomCycle {
   Shortbreak = 'SHORTBREAK'
 }
 
+export type CreateTaskMutationVariables = Exact<{
+  input?: InputMaybe<CreateTaskInput>;
+}>;
+
+
+export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Task', title?: string | null, amt?: number | null, eta?: any | null, positionId?: number | null } };
+
 export type DeleteTaskMutationVariables = Exact<{
   input?: InputMaybe<DeleteTaskViewerInput>;
 }>;
@@ -178,22 +210,30 @@ export type DeleteTaskMutation = { __typename?: 'Mutation', deleteTask: { __type
 export type LogInMutationVariables = Exact<{
   input?: InputMaybe<LogInInput>;
   date: Scalars['String'];
+  today: Scalars['String'];
 }>;
 
 
-export type LogInMutation = { __typename?: 'Mutation', logIn: { __typename?: 'User', id: string, name: string, token?: string | null, avatar?: string | null, didRequest: boolean, pomDuration?: number | null, shortBreakDuration?: number | null, longBreakDuration?: number | null, longBreakInterval?: number | null, pomCycle: PomCycle, pomEntry?: { __typename?: 'PomEntry', createdAt?: any | null, count?: number | null } | null, tasks: Array<{ __typename?: 'Task', id?: string | null, createdAt?: any | null, title?: string | null, amt?: number | null, positionId?: number | null, eta?: any | null } | null> } };
+export type LogInMutation = { __typename?: 'Mutation', logIn: { __typename?: 'User', id: string, name: string, token?: string | null, avatar?: string | null, didRequest: boolean, pomDuration?: number | null, shortBreakDuration?: number | null, longBreakDuration?: number | null, longBreakInterval?: number | null, pomCycle: PomCycle, pomCount?: number | null, pomEntry?: { __typename?: 'PomEntry', createdAt?: any | null, count?: number | null } | null, tasks: Array<{ __typename?: 'Task', id?: string | null, createdAt?: any | null, title?: string | null, amt?: number | null, positionId?: number | null, eta?: any | null } | null> } };
 
 export type LogOutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type LogOutMutation = { __typename?: 'Mutation', logOut: { __typename?: 'User', id: string, token?: string | null, avatar?: string | null, didRequest: boolean } };
 
-export type UpdateTasksMutationVariables = Exact<{
-  input?: InputMaybe<UpdateTaskUserInput>;
+export type PomCycleUpdateMutationVariables = Exact<{
+  input?: InputMaybe<PomCycleUpdateInput>;
 }>;
 
 
-export type UpdateTasksMutation = { __typename?: 'Mutation', updateTasks: { __typename?: 'Tasks', total: number, result: Array<{ __typename?: 'Task', id?: string | null }> } };
+export type PomCycleUpdateMutation = { __typename?: 'Mutation', pomCycleUpdate: { __typename?: 'User', id: string } };
+
+export type UpdateTasksPositionsMutationVariables = Exact<{
+  input?: InputMaybe<UpdateTasksPositionsInput>;
+}>;
+
+
+export type UpdateTasksPositionsMutation = { __typename?: 'Mutation', updateTasksPositions: { __typename?: 'Tasks', tasks?: Array<{ __typename?: 'Task', id?: string | null } | null> | null } };
 
 export type UpdateViewerDataMutationVariables = Exact<{
   input?: InputMaybe<UpdateViewerDataInput>;
@@ -215,6 +255,42 @@ export type AuthUrlQueryVariables = Exact<{ [key: string]: never; }>;
 export type AuthUrlQuery = { __typename?: 'Query', authUrl: string };
 
 
+export const CreateTaskDocument = gql`
+    mutation createTask($input: CreateTaskInput) {
+  createTask(input: $input) {
+    title
+    amt
+    eta
+    positionId
+  }
+}
+    `;
+export type CreateTaskMutationFn = Apollo.MutationFunction<CreateTaskMutation, CreateTaskMutationVariables>;
+
+/**
+ * __useCreateTaskMutation__
+ *
+ * To run a mutation, you first call `useCreateTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTaskMutation, { data, loading, error }] = useCreateTaskMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateTaskMutation(baseOptions?: Apollo.MutationHookOptions<CreateTaskMutation, CreateTaskMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateTaskMutation, CreateTaskMutationVariables>(CreateTaskDocument, options);
+      }
+export type CreateTaskMutationHookResult = ReturnType<typeof useCreateTaskMutation>;
+export type CreateTaskMutationResult = Apollo.MutationResult<CreateTaskMutation>;
+export type CreateTaskMutationOptions = Apollo.BaseMutationOptions<CreateTaskMutation, CreateTaskMutationVariables>;
 export const DeleteTaskDocument = gql`
     mutation deleteTask($input: DeleteTaskViewerInput) {
   deleteTask(input: $input) {
@@ -250,8 +326,8 @@ export type DeleteTaskMutationHookResult = ReturnType<typeof useDeleteTaskMutati
 export type DeleteTaskMutationResult = Apollo.MutationResult<DeleteTaskMutation>;
 export type DeleteTaskMutationOptions = Apollo.BaseMutationOptions<DeleteTaskMutation, DeleteTaskMutationVariables>;
 export const LogInDocument = gql`
-    mutation LogIn($input: LogInInput, $date: String!) {
-  logIn(input: $input, date: $date) {
+    mutation LogIn($input: LogInInput, $date: String!, $today: String!) {
+  logIn(input: $input, date: $date, today: $today) {
     id
     name
     token
@@ -266,6 +342,7 @@ export const LogInDocument = gql`
       createdAt
       count
     }
+    pomCount(today: $today)
     tasks {
       id
       createdAt
@@ -294,6 +371,7 @@ export type LogInMutationFn = Apollo.MutationFunction<LogInMutation, LogInMutati
  *   variables: {
  *      input: // value for 'input'
  *      date: // value for 'date'
+ *      today: // value for 'today'
  *   },
  * });
  */
@@ -339,42 +417,74 @@ export function useLogOutMutation(baseOptions?: Apollo.MutationHookOptions<LogOu
 export type LogOutMutationHookResult = ReturnType<typeof useLogOutMutation>;
 export type LogOutMutationResult = Apollo.MutationResult<LogOutMutation>;
 export type LogOutMutationOptions = Apollo.BaseMutationOptions<LogOutMutation, LogOutMutationVariables>;
-export const UpdateTasksDocument = gql`
-    mutation UpdateTasks($input: UpdateTaskUserInput) {
-  updateTasks(input: $input) {
-    total
-    result {
-      id
-    }
+export const PomCycleUpdateDocument = gql`
+    mutation pomCycleUpdate($input: PomCycleUpdateInput) {
+  pomCycleUpdate(input: $input) {
+    id
   }
 }
     `;
-export type UpdateTasksMutationFn = Apollo.MutationFunction<UpdateTasksMutation, UpdateTasksMutationVariables>;
+export type PomCycleUpdateMutationFn = Apollo.MutationFunction<PomCycleUpdateMutation, PomCycleUpdateMutationVariables>;
 
 /**
- * __useUpdateTasksMutation__
+ * __usePomCycleUpdateMutation__
  *
- * To run a mutation, you first call `useUpdateTasksMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateTasksMutation` returns a tuple that includes:
+ * To run a mutation, you first call `usePomCycleUpdateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePomCycleUpdateMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateTasksMutation, { data, loading, error }] = useUpdateTasksMutation({
+ * const [pomCycleUpdateMutation, { data, loading, error }] = usePomCycleUpdateMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useUpdateTasksMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTasksMutation, UpdateTasksMutationVariables>) {
+export function usePomCycleUpdateMutation(baseOptions?: Apollo.MutationHookOptions<PomCycleUpdateMutation, PomCycleUpdateMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateTasksMutation, UpdateTasksMutationVariables>(UpdateTasksDocument, options);
+        return Apollo.useMutation<PomCycleUpdateMutation, PomCycleUpdateMutationVariables>(PomCycleUpdateDocument, options);
       }
-export type UpdateTasksMutationHookResult = ReturnType<typeof useUpdateTasksMutation>;
-export type UpdateTasksMutationResult = Apollo.MutationResult<UpdateTasksMutation>;
-export type UpdateTasksMutationOptions = Apollo.BaseMutationOptions<UpdateTasksMutation, UpdateTasksMutationVariables>;
+export type PomCycleUpdateMutationHookResult = ReturnType<typeof usePomCycleUpdateMutation>;
+export type PomCycleUpdateMutationResult = Apollo.MutationResult<PomCycleUpdateMutation>;
+export type PomCycleUpdateMutationOptions = Apollo.BaseMutationOptions<PomCycleUpdateMutation, PomCycleUpdateMutationVariables>;
+export const UpdateTasksPositionsDocument = gql`
+    mutation updateTasksPositions($input: UpdateTasksPositionsInput) {
+  updateTasksPositions(input: $input) {
+    tasks {
+      id
+    }
+  }
+}
+    `;
+export type UpdateTasksPositionsMutationFn = Apollo.MutationFunction<UpdateTasksPositionsMutation, UpdateTasksPositionsMutationVariables>;
+
+/**
+ * __useUpdateTasksPositionsMutation__
+ *
+ * To run a mutation, you first call `useUpdateTasksPositionsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTasksPositionsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTasksPositionsMutation, { data, loading, error }] = useUpdateTasksPositionsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateTasksPositionsMutation(baseOptions?: Apollo.MutationHookOptions<UpdateTasksPositionsMutation, UpdateTasksPositionsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateTasksPositionsMutation, UpdateTasksPositionsMutationVariables>(UpdateTasksPositionsDocument, options);
+      }
+export type UpdateTasksPositionsMutationHookResult = ReturnType<typeof useUpdateTasksPositionsMutation>;
+export type UpdateTasksPositionsMutationResult = Apollo.MutationResult<UpdateTasksPositionsMutation>;
+export type UpdateTasksPositionsMutationOptions = Apollo.BaseMutationOptions<UpdateTasksPositionsMutation, UpdateTasksPositionsMutationVariables>;
 export const UpdateViewerDataDocument = gql`
     mutation UpdateViewerData($input: UpdateViewerDataInput) {
   updateViewerData(input: $input) {
@@ -551,19 +661,21 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  CreateTaskInput: CreateTaskInput;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   DeleteTaskViewerInput: DeleteTaskViewerInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   LogInInput: LogInInput;
   Mutation: ResolverTypeWrapper<{}>;
+  PomCycleUpdateInput: PomCycleUpdateInput;
   PomEntry: ResolverTypeWrapper<PomEntry>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Task: ResolverTypeWrapper<Task>;
-  TaskInput: TaskInput;
+  TaskId: TaskId;
   Tasks: ResolverTypeWrapper<Tasks>;
-  UpdateTaskUserInput: UpdateTaskUserInput;
+  UpdateTasksPositionsInput: UpdateTasksPositionsInput;
   UpdateViewerDataInput: UpdateViewerDataInput;
   UpdateViewerSettingsInput: UpdateViewerSettingsInput;
   User: ResolverTypeWrapper<User>;
@@ -573,19 +685,21 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
+  CreateTaskInput: CreateTaskInput;
   DateTime: Scalars['DateTime'];
   DeleteTaskViewerInput: DeleteTaskViewerInput;
   ID: Scalars['ID'];
   Int: Scalars['Int'];
   LogInInput: LogInInput;
   Mutation: {};
+  PomCycleUpdateInput: PomCycleUpdateInput;
   PomEntry: PomEntry;
   Query: {};
   String: Scalars['String'];
   Task: Task;
-  TaskInput: TaskInput;
+  TaskId: TaskId;
   Tasks: Tasks;
-  UpdateTaskUserInput: UpdateTaskUserInput;
+  UpdateTasksPositionsInput: UpdateTasksPositionsInput;
   UpdateViewerDataInput: UpdateViewerDataInput;
   UpdateViewerSettingsInput: UpdateViewerSettingsInput;
   User: User;
@@ -596,10 +710,12 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 }
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createTask?: Resolver<ResolversTypes['Task'], ParentType, ContextType, Partial<MutationCreateTaskArgs>>;
   deleteTask?: Resolver<ResolversTypes['Task'], ParentType, ContextType, Partial<MutationDeleteTaskArgs>>;
   logIn?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationLogInArgs>>;
   logOut?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  updateTasks?: Resolver<ResolversTypes['Tasks'], ParentType, ContextType, Partial<MutationUpdateTasksArgs>>;
+  pomCycleUpdate?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationPomCycleUpdateArgs>>;
+  updateTasksPositions?: Resolver<ResolversTypes['Tasks'], ParentType, ContextType, Partial<MutationUpdateTasksPositionsArgs>>;
   updateViewerData?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationUpdateViewerDataArgs>>;
   updateViewerSettings?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationUpdateViewerSettingsArgs>>;
 };
@@ -630,8 +746,7 @@ export type TaskResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type TasksResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tasks'] = ResolversParentTypes['Tasks']> = {
-  result?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType>;
-  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  tasks?: Resolver<Maybe<Array<Maybe<ResolversTypes['Task']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -642,6 +757,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   longBreakDuration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   longBreakInterval?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  pomCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<UserPomCountArgs, 'today'>>;
   pomCycle?: Resolver<ResolversTypes['pomCycle'], ParentType, ContextType>;
   pomDuration?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   pomEntry?: Resolver<Maybe<ResolversTypes['PomEntry']>, ParentType, ContextType, RequireFields<UserPomEntryArgs, 'date'>>;

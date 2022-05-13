@@ -28,7 +28,8 @@ export const initialViewer: User = {
   longBreakInterval: null,
   pomEntry: null,
   tasks: [],
-  token: null
+  token: null,
+  pomCount: 0
 };
 
 export type ContextValue =
@@ -87,7 +88,8 @@ function useProvideAuth() {
     if (!isAuthenticated) {
       logIn({
         variables: {
-          date: dayjs().format("MM-DD-YYYY")
+          date: dayjs().format("MM-DD-YYYY"),
+          today: dayjs().format("MM-DD-YYYY")
         }
       });
     }

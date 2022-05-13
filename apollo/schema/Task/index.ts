@@ -1,8 +1,8 @@
 import { authorize } from "@/apollo/utils/authorize";
 import { ObjectId } from "mongodb";
 import { objectType, extendType, inputObjectType, arg } from "nexus";
-import { concatTasksToUser, updateTasksPositions } from "./helpers";
-import { Context } from "@/apollo/types/context";
+import { CreateTaskInput, UpdateTasksPositionsInput } from "./types";
+
 export const Task = objectType({
   name: "Task",
   definition(t) {
@@ -20,34 +20,7 @@ export const Task = objectType({
 export const Tasks = objectType({
   name: "Tasks",
   definition(t) {
-    t.nonNull.int("total", {
-      description: "The total number of tasks for a User"
-    });
-    t.nonNull.list.nonNull.field("result", {
-      type: Task,
-      description: "The total amt of tasks for a User"
-    });
-  }
-});
-
-const UpdateTaskUserInput = inputObjectType({
-  name: "UpdateTaskUserInput",
-  definition(t) {
-    t.nonNull.list.field("tasks", { type: TaskInput });
-  }
-});
-
-const TaskInput = inputObjectType({
-  name: "TaskInput",
-  definition(t) {
-    t.string("id");
-    t.string("title");
-    t.int("amt");
-    t.string("eta");
-    t.boolean("isNew");
-    t.boolean("isFinished");
-    t.string("createdAt");
-    t.string("eta");
+    t.list.field("tasks", { type: Task });
   }
 });
 
@@ -61,122 +34,69 @@ const DeleteTaskViewerInput = inputObjectType({
 export const TaskMutation = extendType({
   type: "Mutation",
   definition(t) {
-    t.nonNull.field("updateTasks", {
+    t.nonNull.field("createTask", {
+      type: Task,
+      args: {
+        input: arg({ type: CreateTaskInput })
+      },
+      async resolve(__root: undefined, { input }, { db, req, prisma }) {
+        const viewer = await authorize({ prisma, req });
+        if (!viewer) {
+          throw new Error("Viewer cannot be found!");
+        }
+        const newTask = prisma.task.create({
+          data: {
+            userId: viewer.id,
+            title: input.title,
+            amt: input.amt,
+            eta: new Date(input.eta),
+            positionId: input.positionId
+          }
+        });
+        return newTask;
+      }
+    });
+    t.nonNull.field("updateTasksPositions", {
       type: Tasks,
       args: {
-        input: arg({ type: UpdateTaskUserInput })
+        input: arg({ type: UpdateTasksPositionsInput })
       },
-      async resolve(__root: undefined, { input }, { db, req }: Context) {
-        console.log("tasks input", input.tasks);
-        const viewer = await authorize(db, req);
-
+      async resolve(__root: undefined, { input }, { db, req, prisma }) {
+        const viewer = await authorize({ prisma, req });
         if (!viewer) {
           throw new Error("Viewer cannot be found!");
         }
 
-        // Set positions
-        const tasksWPosition = input.tasks.map((task, i) => {
-          return {
-            ...task,
-            amt: task.amt,
-            positionId: i
-          };
+        const updaterArr = input.taskIds.map((taskId, i) => ({
+          id: taskId.id,
+          positionId: i
+        }));
+
+        const response = updaterArr.map(async ({ id, positionId }) => {
+          const updatedTask = await prisma.task.update({
+            where: {
+              id
+            },
+            data: {
+              positionId
+            }
+          });
+          return updatedTask;
         });
 
-        // Create ONLY New Tasks
-        const newTasksData = tasksWPosition.filter((task) => task.isNew);
-
-        // New Task(s) creation
-        if (newTasksData.length > 0) {
-          console.log("new tasks coming in");
-          const oldTasksData = tasksWPosition.filter((task) => !task.isNew);
-          const newTasks = newTasksData.map(
-            ({ title, amt, positionId, createdAt, eta }) => ({
-              _id: new ObjectId(),
-              createdAt: new Date(createdAt),
-              eta: new Date(eta),
-              title,
-              amt,
-              user: viewer._id,
-              isNew: false,
-              isFinished: false,
-              positionId: positionId
-            })
-          );
-
-          const updateNewTasksPositionsData = newTasks.map(
-            ({ _id, positionId, amt, isNew, isFinished }) => {
-              return {
-                id: _id.toString(),
-                amt,
-                isNew,
-                isFinished,
-                positionId
-              };
-            }
-          );
-
-          const updateOldTasksPositionsData = oldTasksData.map(
-            ({ id, positionId, amt, isNew, isFinished }) => {
-              return {
-                id,
-                amt,
-                isNew,
-                isFinished,
-                positionId
-              };
-            }
-          );
-
-          const allTasksData = [
-            ...updateOldTasksPositionsData,
-            ...updateNewTasksPositionsData
-          ];
-
-          const insertResult = await db.tasks.insertMany(newTasks);
-          const newTasksDataIds = Object.values(insertResult["insertedIds"]);
-          // Merge new tasks with user's tasks.
-          await concatTasksToUser(db, viewer, newTasksDataIds);
-
-          await updateTasksPositions(db, allTasksData);
-
-          const cursor = await db.tasks.find({
-            isFinished: false
-          });
-          const unfinishedTasks = await cursor.toArray();
-          const total = await cursor.count();
-
-          return {
-            result: unfinishedTasks,
-            total: total
-          };
-        } else {
-          // Get all the tasks are not new
-
-          await updateTasksPositions(db, tasksWPosition);
-
-          const cursor = await db.tasks.find({
-            isFinished: false
-          });
-          const unfinishedTasks = await cursor.toArray();
-          const total = await cursor.count();
-
-          // Update their position index
-
-          return {
-            result: unfinishedTasks,
-            total: total
-          };
-        }
+        const resolveRes = await Promise.all(response);
+        console.log("resolveRes", resolveRes);
+        return resolveRes;
       }
     });
+
     t.nonNull.field("deleteTask", {
       type: Task,
       args: {
         input: arg({ type: DeleteTaskViewerInput })
       },
       async resolve(__root: undefined, { input }, { db, req }) {
-        const viewer = await authorize(db, req);
+        const viewer = await authorize({ db, req });
         if (!viewer) {
           throw new Error("Viewer cannot be found!");
         }

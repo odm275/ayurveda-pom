@@ -7,8 +7,11 @@ import { authorize } from "@/apollo/utils/authorize";
 import {
   UpdateViewerSettingsInput,
   UpdateViewerDataInput,
-  LogInInput
+  LogInInput,
+  PomCycleUpdateInput
 } from "./types";
+import user from "pages/user";
+import { PomEntry } from "../PomEntry";
 
 export const UserMutation = extendType({
   type: "Mutation",
@@ -17,7 +20,8 @@ export const UserMutation = extendType({
       type: User,
       args: {
         input: arg({ type: LogInInput }),
-        date: stringArg()
+        date: stringArg(),
+        today: stringArg()
       },
       async resolve(_root, { input }, { req, res, prisma }) {
         try {
@@ -73,7 +77,7 @@ export const UserMutation = extendType({
         input: arg({ type: UpdateViewerSettingsInput })
       },
       async resolve(__root: undefined, { input }, { db, req, res, prisma }) {
-        const viewer = await authorize(prisma, req);
+        const viewer = await authorize({ prisma, req });
         if (!viewer) {
           throw new Error("viewer cannot be found");
         }
@@ -96,6 +100,55 @@ export const UserMutation = extendType({
       }
     });
 
+    t.nonNull.field("pomCycleUpdate", {
+      type: User,
+      description:
+        " Updates data that needs to be update whenever a pomodoro Cycle complates.",
+      args: {
+        input: arg({ type: PomCycleUpdateInput })
+      },
+      async resolve(__root: undefined, { input }, { db, req, res, prisma }) {
+        const viewer = await authorize({ prisma, req, includeTasks: true });
+        if (!viewer) {
+          throw new Error("viewer cannot be found");
+        }
+        if (input.increasePomCounter) {
+          // This will find an unique record but prisma is dumb and
+          // won't let me do "where" with multiple options.
+          const pomEntry = prisma.pomEntry.updateMany({
+            where: {
+              userId: viewer.id,
+              date: input.date
+            },
+            data: {
+              count: {
+                increment: 1
+              }
+            }
+          });
+          if (!pomEntry) {
+            prisma.pomEntry.create({
+              data: {
+                userId: viewer.id,
+                count: 1,
+                date: input.date
+              }
+            });
+          }
+        }
+
+        const updatedViewer = prisma.user.update({
+          where: {
+            id: viewer.id
+          },
+          data: {
+            pomCycle: input.pomCycle
+          }
+        });
+        return updatedViewer;
+      }
+    });
+
     t.nonNull.field("updateViewerData", {
       type: User,
       description:
@@ -109,7 +162,7 @@ export const UserMutation = extendType({
         { db, req, res }: { db; req; res }
       ) {
         console.log("update viewer data");
-        const viewer = await authorize(db, req);
+        const viewer = await authorize({ db, req });
         if (!viewer) {
           throw new Error("viewer cannot be found");
         }

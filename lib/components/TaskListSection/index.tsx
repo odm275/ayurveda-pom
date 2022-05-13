@@ -18,7 +18,7 @@ import {
   Task
 } from "./components";
 import {
-  useUpdateTasksMutation,
+  useUpdateTasksPositionsMutation,
   Task as TaskType,
   useDeleteTaskMutation
 } from "@/lib/generated";
@@ -41,7 +41,17 @@ export const TaskListSection = ({
   loadingUpdateTasks
 }: Props) => {
   const [lastDraggedIndex, setLastDraggedIndex] = useState(null);
-  const [updateTasks, { loading, error }] = useUpdateTasksMutation();
+  const [lastDraggedSourceIndex, setLastDraggedSourceIndex] = useState(null);
+
+  const [updateTasksPositions, { loading, error }] =
+    useUpdateTasksPositionsMutation({
+      onCompleted: (data) => {
+        console.log(data);
+      },
+      onError: (err) => {
+        console.log(err);
+      }
+    });
   const { addAmtTask, removeAmtTask, deleteTask } = useTaskHandlers();
 
   const [deleteViewerTask] = useDeleteTaskMutation({
@@ -52,21 +62,23 @@ export const TaskListSection = ({
   });
 
   const onSave = () => {
-    updateTasks({
+    // Todo: Think about whether I need to update state here after saving state in the server.
+    const taskIds = tasks.map((task) => {
+      return {
+        id: task.id
+      };
+    });
+    console.log("taskIds", taskIds);
+    updateTasksPositions({
       variables: {
-        input: { tasks: tasks }
-      },
-      onCompleted: (data) => {
-        console.log(data.updateTasks.result);
-        setTasks(data.updateTasks.result);
-        onClose();
+        input: { taskIds }
       }
     });
   };
 
   const handleOnClose = () => {
-    const oldTasks = tasks.filter((task) => !task.isNew);
-    setTasks(oldTasks);
+    // Todo: If tasks arent's saved, I wanna be able to reset
+    // them to their initial state when the task drawer was opened
     onClose();
   };
 
@@ -99,8 +111,6 @@ export const TaskListSection = ({
     );
   });
 
-  // console.log(getBorderRadius(tasks));
-
   return (
     <Drawer
       isOpen={isOpen}
@@ -120,6 +130,7 @@ export const TaskListSection = ({
                   tasks={tasks}
                   setTasks={setTasks}
                   setLastDraggedIndex={setLastDraggedIndex}
+                  setLastDraggedSourceIndex={setLastDraggedSourceIndex}
                 >
                   {taskCards}
                 </DraggableTaskCards>

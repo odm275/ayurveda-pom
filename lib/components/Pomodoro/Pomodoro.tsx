@@ -17,7 +17,8 @@ import SuccessBanner from "@/lib/components/SuccessBanner";
 import {
   Task as TaskType,
   useUpdateViewerDataMutation,
-  PomCycle
+  PomCycle,
+  usePomCycleUpdateMutation
 } from "@/lib/generated";
 
 import {
@@ -46,7 +47,6 @@ interface Props {
   pomCount: number;
   tasks: TaskType[];
   setTasks: any;
-  updateTasks: any;
 }
 
 const removeAmtCurrentTask = (tasks: TaskType[]) => {
@@ -110,7 +110,7 @@ export const Pomodoro = ({
     state.isRunning ? 10 : null
   );
 
-  const [updateViewerData] = useUpdateViewerDataMutation({
+  const [updatePomCycle] = usePomCycleUpdateMutation({
     onCompleted: () => {
       displaySuccessNotification("Updated User Settings");
     },
@@ -153,7 +153,7 @@ export const Pomodoro = ({
   }
 
   useEffectWithoutOnMount(() => {
-    updateViewerData({
+    updatePomCycle({
       variables: {
         input: {
           pomCycle: state.cycle,
@@ -163,17 +163,6 @@ export const Pomodoro = ({
       }
     });
   }, [state.pomCount, state.cycle]);
-
-  useEffectWithoutOnMount(() => {
-    if (tasks.length > 0 && timeEnded) {
-      console.log("run updateTasks mutation");
-      updateTasks({
-        variables: {
-          input: { tasks: tasks }
-        }
-      });
-    }
-  }, [tasks]);
 
   const progressPercentage = (state.timer / selectTimePerCycle(state)) * 100;
   const canUsePom = tasks.length > 0 || state.cycle !== PomCycle.Pomodoro;
