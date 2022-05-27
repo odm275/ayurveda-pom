@@ -10,11 +10,17 @@ import { Task } from "@/lib/generated";
 import { withProtectedRoute } from "@/lib/utils/withProtectedRoute";
 
 const Index = () => {
-  const { viewer, error } = useAuth();
+  const {
+    viewer,
+    loading: loadingUser,
+    error: errorUser,
+    setViewer
+  } = useAuth();
 
-  // Update tasks whenever a new pomodoro cycle is completed
   const [tasks, setTasks] = useState<Task[] | null>([]);
+  console.log(viewer);
 
+  // Sync Tas
   useEffect(() => {
     if (viewer?.tasks) {
       setTasks(viewer.tasks);
@@ -25,7 +31,7 @@ const Index = () => {
 
   const btnRef = useRef();
   // User is loading
-  if (!viewer.didRequest && !error) {
+  if (loadingUser) {
     return (
       <Flex flexDir="column" p={3} w="100%" h="100vh">
         <AppHeaderSkeleton />
@@ -41,7 +47,7 @@ const Index = () => {
     );
   }
 
-  const logInErrorBannerElement = error ? (
+  const logInErrorBannerElement = errorUser ? (
     <ErrorBanner description="We aren't able to verify if you were logged in. Please try again later!" />
   ) : null;
 
@@ -68,8 +74,9 @@ const Index = () => {
         longBreakDuration={viewer.longBreakDuration}
         longBreakInterval={viewer.longBreakInterval}
         pomCount={viewer.pomCount}
-        tasks={tasks}
+        tasks={viewer.tasks}
         setTasks={setTasks}
+        setViewer={setViewer}
       />
     </AppLayout>
   );

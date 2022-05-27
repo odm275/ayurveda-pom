@@ -96,9 +96,9 @@ function useProvideAuth() {
   }, [viewer, logIn]);
 
   return {
+    viewer,
     loading,
     isAuthenticated,
-    viewer,
     setViewer,
     error
   };

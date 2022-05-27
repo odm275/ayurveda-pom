@@ -47,6 +47,7 @@ interface Props {
   pomCount: number;
   tasks: TaskType[];
   setTasks: any;
+  setViewer: (unknown) => void;
 }
 
 const removeAmtCurrentTask = (tasks: TaskType[]) => {
@@ -74,7 +75,7 @@ export const Pomodoro = ({
   pomCount,
   tasks,
   setTasks,
-  updateTasks
+  setViewer
 }: Props) => {
   const initialState = {
     cycle: pomCycle,
@@ -101,6 +102,8 @@ export const Pomodoro = ({
   };
 
   const [state, dispatch] = useReducer(pomReducer, initialState);
+
+  console.log(state.timer);
 
   useInterval(
     () => {
