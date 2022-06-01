@@ -1,0 +1,20 @@
+query viewerPomData {
+  viewerPomData {
+    pomDuration
+    pomCycle
+    shortBreakDuration
+    longBreakDuration
+    longBreakInterval
+    didRequest
+    tasks {
+      id
+      createdAt
+      updatedAt
+      title
+      amt
+      positionId
+      userId
+      eta
+    }
+  }
+}

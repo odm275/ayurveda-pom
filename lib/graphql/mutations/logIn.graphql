@@ -5,23 +5,33 @@ mutation LogIn($input: LogInInput, $date: String!, $today: String!) {
     token
     avatar
     didRequest
-    pomDuration
-    shortBreakDuration
-    longBreakDuration
-    longBreakInterval
-    pomCycle
-    pomEntry(date: $date) {
-      createdAt
-      count
-    }
-    pomCount(today: $today)
-    tasks {
-      id
-      createdAt
-      title
-      amt
-      positionId
-      eta
-    }
   }
 }
+
+# mutation LogIn($input: LogInInput, $date: String!, $today: String!) {
+#   logIn(input: $input, date: $date, today: $today) {
+#     id
+#     name
+#     token
+#     avatar
+#     didRequest
+#     pomDuration
+#     shortBreakDuration
+#     longBreakDuration
+#     longBreakInterval
+#     pomCycle
+#     pomEntry(date: $date) {
+#       createdAt
+#       count
+#     }
+#     pomCount(today: $today)
+#     tasks {
+#       id
+#       createdAt
+#       title
+#       amt
+#       positionId
+#       eta
+#     }
+#   }
+# }

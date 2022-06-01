@@ -1,0 +1,12 @@
+query viewerCurrentTasks {
+  viewerCurrentTasks {
+    tasks {
+      id
+      createdAt
+      title
+      amt
+      positionId
+      eta
+    }
+  }
+}

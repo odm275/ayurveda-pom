@@ -6,7 +6,7 @@ import ErrorBanner from "@/lib/components/ErrorBanner";
 import { AppLayout } from "@/lib/components/AppLayout";
 import { useAuth } from "@/lib/context/AuthContext";
 import { TaskListSection } from "@/lib/components/TaskListSection";
-import { Task } from "@/lib/generated";
+import { Task, useViewerCurrentTasksQuery } from "@/lib/generated";
 import { withProtectedRoute } from "@/lib/utils/withProtectedRoute";
 
 const Index = () => {
@@ -18,14 +18,13 @@ const Index = () => {
   } = useAuth();
 
   const [tasks, setTasks] = useState<Task[] | null>([]);
-  console.log(viewer);
-
-  // Sync Tas
-  useEffect(() => {
-    if (viewer?.tasks) {
-      setTasks(viewer.tasks);
+  const { loading: tasksLoading } = useViewerCurrentTasksQuery({
+    onCompleted: (data) => {
+      if (data?.viewerCurrentTasks?.tasks) {
+        setTasks(data.viewerCurrentTasks.tasks);
+      }
     }
-  }, [viewer.didRequest]);
+  });
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -55,12 +54,12 @@ const Index = () => {
     <AppLayout>
       {logInErrorBannerElement}
       <TaskListSection
+        tasksLoading={tasksLoading}
         tasks={tasks}
         setTasks={setTasks}
         isOpen={isOpen}
         onClose={onClose}
         btnRef={btnRef}
-        loadingUpdateTasks={false}
       />
       <Flex justifyContent="center">
         <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>
@@ -74,9 +73,9 @@ const Index = () => {
         longBreakDuration={viewer.longBreakDuration}
         longBreakInterval={viewer.longBreakInterval}
         pomCount={viewer.pomCount}
-        tasks={viewer.tasks}
-        setTasks={setTasks}
         setViewer={setViewer}
+        tasks={tasks}
+        setTasks={setTasks}
       />
     </AppLayout>
   );

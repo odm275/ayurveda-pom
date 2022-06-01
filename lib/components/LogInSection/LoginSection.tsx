@@ -20,16 +20,13 @@ import { LogInGoogleButton } from "./components";
 
 export const LogInSection = () => {
   const client = useApolloClient();
-  const { viewer, loading, setViewer, isAuthenticated } = useAuth();
+  const { setViewer, isAuthenticated, loading: loadingViewer } = useAuth();
+
   const router = useRouter();
-  const [logIn, { loading: manualLoginLoading }] = useLogInMutation({
+  const [logIn] = useLogInMutation({
     onCompleted: (data) => {
       if (data?.logIn?.token) {
-        const viewerObj = {
-          ...viewer,
-          ...data.logIn
-        };
-        setViewer(viewerObj);
+        setViewer(data.logIn);
         sessionStorage.setItem("token", data.logIn.token);
       } else {
         sessionStorage.removeItem("token");
@@ -41,23 +38,13 @@ export const LogInSection = () => {
           "Thank you"
         );
       }
+    },
+    onError: (e) => {
+      console.log("error", e);
     }
   });
 
   const logInRef = useRef(logIn);
-
-  useEffect(() => {
-    // If code from google is in the url -> try log in
-    const code = new URL(window.location.href).searchParams.get("code");
-    if (code) {
-      logInRef.current({
-        variables: {
-          date: dayjs().format("MM-DD-YYYY"),
-          input: { code }
-        }
-      });
-    }
-  }, []);
 
   const handleAuthorize = async () => {
     const { data } = await client.query<AuthUrlQuery>({
@@ -66,13 +53,22 @@ export const LogInSection = () => {
     window.location.href = data.authUrl;
   };
 
-  useEffect(() => {
-    if (!loading && isAuthenticated) {
-      router.push("/user");
-    }
-  }, [isAuthenticated, loading]);
+  const code = new URL(window.location.href).searchParams.get("code");
+  if (code) {
+    logInRef.current({
+      variables: {
+        date: dayjs().format("MM-DD-YYYY"),
+        today: dayjs().format("MM-DD-YYYY"),
+        input: { code }
+      }
+    });
+  }
 
-  if (loading || isAuthenticated || manualLoginLoading) {
+  if (loadingViewer) {
+    return <GenericLoadingScreen />;
+  }
+  if (isAuthenticated) {
+    router.push("/user");
     return <GenericLoadingScreen />;
   }
 

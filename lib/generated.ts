@@ -104,6 +104,8 @@ export type PomEntry = {
 export type Query = {
   __typename?: 'Query';
   authUrl: Scalars['String'];
+  viewerCurrentTasks: Tasks;
+  viewerPomData: User;
 };
 
 export type Task = {
@@ -214,7 +216,7 @@ export type LogInMutationVariables = Exact<{
 }>;
 
 
-export type LogInMutation = { __typename?: 'Mutation', logIn: { __typename?: 'User', id: string, name: string, token?: string | null, avatar?: string | null, didRequest: boolean, pomDuration?: number | null, shortBreakDuration?: number | null, longBreakDuration?: number | null, longBreakInterval?: number | null, pomCycle: PomCycle, pomCount?: number | null, pomEntry?: { __typename?: 'PomEntry', createdAt?: any | null, count?: number | null } | null, tasks: Array<{ __typename?: 'Task', id?: string | null, createdAt?: any | null, title?: string | null, amt?: number | null, positionId?: number | null, eta?: any | null } | null> } };
+export type LogInMutation = { __typename?: 'Mutation', logIn: { __typename?: 'User', id: string, name: string, token?: string | null, avatar?: string | null, didRequest: boolean } };
 
 export type LogOutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -253,6 +255,16 @@ export type AuthUrlQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type AuthUrlQuery = { __typename?: 'Query', authUrl: string };
+
+export type ViewerCurrentTasksQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ViewerCurrentTasksQuery = { __typename?: 'Query', viewerCurrentTasks: { __typename?: 'Tasks', tasks?: Array<{ __typename?: 'Task', id?: string | null, createdAt?: any | null, title?: string | null, amt?: number | null, positionId?: number | null, eta?: any | null } | null> | null } };
+
+export type ViewerPomDataQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ViewerPomDataQuery = { __typename?: 'Query', viewerPomData: { __typename?: 'User', pomDuration?: number | null, pomCycle: PomCycle, shortBreakDuration?: number | null, longBreakDuration?: number | null, longBreakInterval?: number | null, didRequest: boolean, tasks: Array<{ __typename?: 'Task', id?: string | null, createdAt?: any | null, updatedAt?: any | null, title?: string | null, amt?: number | null, positionId?: number | null, userId?: string | null, eta?: any | null } | null> } };
 
 
 export const CreateTaskDocument = gql`
@@ -333,24 +345,6 @@ export const LogInDocument = gql`
     token
     avatar
     didRequest
-    pomDuration
-    shortBreakDuration
-    longBreakDuration
-    longBreakInterval
-    pomCycle
-    pomEntry(date: $date) {
-      createdAt
-      count
-    }
-    pomCount(today: $today)
-    tasks {
-      id
-      createdAt
-      title
-      amt
-      positionId
-      eta
-    }
   }
 }
     `;
@@ -591,6 +585,96 @@ export function useAuthUrlLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Au
 export type AuthUrlQueryHookResult = ReturnType<typeof useAuthUrlQuery>;
 export type AuthUrlLazyQueryHookResult = ReturnType<typeof useAuthUrlLazyQuery>;
 export type AuthUrlQueryResult = Apollo.QueryResult<AuthUrlQuery, AuthUrlQueryVariables>;
+export const ViewerCurrentTasksDocument = gql`
+    query viewerCurrentTasks {
+  viewerCurrentTasks {
+    tasks {
+      id
+      createdAt
+      title
+      amt
+      positionId
+      eta
+    }
+  }
+}
+    `;
+
+/**
+ * __useViewerCurrentTasksQuery__
+ *
+ * To run a query within a React component, call `useViewerCurrentTasksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useViewerCurrentTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useViewerCurrentTasksQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useViewerCurrentTasksQuery(baseOptions?: Apollo.QueryHookOptions<ViewerCurrentTasksQuery, ViewerCurrentTasksQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ViewerCurrentTasksQuery, ViewerCurrentTasksQueryVariables>(ViewerCurrentTasksDocument, options);
+      }
+export function useViewerCurrentTasksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ViewerCurrentTasksQuery, ViewerCurrentTasksQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ViewerCurrentTasksQuery, ViewerCurrentTasksQueryVariables>(ViewerCurrentTasksDocument, options);
+        }
+export type ViewerCurrentTasksQueryHookResult = ReturnType<typeof useViewerCurrentTasksQuery>;
+export type ViewerCurrentTasksLazyQueryHookResult = ReturnType<typeof useViewerCurrentTasksLazyQuery>;
+export type ViewerCurrentTasksQueryResult = Apollo.QueryResult<ViewerCurrentTasksQuery, ViewerCurrentTasksQueryVariables>;
+export const ViewerPomDataDocument = gql`
+    query viewerPomData {
+  viewerPomData {
+    pomDuration
+    pomCycle
+    shortBreakDuration
+    longBreakDuration
+    longBreakInterval
+    didRequest
+    tasks {
+      id
+      createdAt
+      updatedAt
+      title
+      amt
+      positionId
+      userId
+      eta
+    }
+  }
+}
+    `;
+
+/**
+ * __useViewerPomDataQuery__
+ *
+ * To run a query within a React component, call `useViewerPomDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useViewerPomDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useViewerPomDataQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useViewerPomDataQuery(baseOptions?: Apollo.QueryHookOptions<ViewerPomDataQuery, ViewerPomDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ViewerPomDataQuery, ViewerPomDataQueryVariables>(ViewerPomDataDocument, options);
+      }
+export function useViewerPomDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ViewerPomDataQuery, ViewerPomDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ViewerPomDataQuery, ViewerPomDataQueryVariables>(ViewerPomDataDocument, options);
+        }
+export type ViewerPomDataQueryHookResult = ReturnType<typeof useViewerPomDataQuery>;
+export type ViewerPomDataLazyQueryHookResult = ReturnType<typeof useViewerPomDataLazyQuery>;
+export type ViewerPomDataQueryResult = Apollo.QueryResult<ViewerPomDataQuery, ViewerPomDataQueryVariables>;
 
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -731,6 +815,8 @@ export type PomEntryResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   authUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  viewerCurrentTasks?: Resolver<ResolversTypes['Tasks'], ParentType, ContextType>;
+  viewerPomData?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
 };
 
 export type TaskResolvers<ContextType = any, ParentType extends ResolversParentTypes['Task'] = ResolversParentTypes['Task']> = {

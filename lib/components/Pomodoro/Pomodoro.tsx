@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { ReactNode, useReducer, useState } from "react";
 import {
   Box,
   Flex,
@@ -18,7 +18,10 @@ import {
   Task as TaskType,
   useUpdateViewerDataMutation,
   PomCycle,
-  usePomCycleUpdateMutation
+  usePomCycleUpdateMutation,
+  useViewerPomDataQuery,
+  useViewerCurrentTasksQuery,
+  Task
 } from "@/lib/generated";
 
 import {
@@ -33,7 +36,8 @@ import {
   PAUSE_TIMER,
   RESET_TIMER,
   NEW_TIME,
-  SECOND
+  SECOND,
+  VIEWER_POM_DATA_QUERY_COMPLETE
 } from "./utils";
 import { pomReducer } from "./reducer";
 import { ActionButton } from "./components";
@@ -45,9 +49,9 @@ interface Props {
   longBreakDuration: number;
   longBreakInterval: number;
   pomCount: number;
-  tasks: TaskType[];
-  setTasks: any;
   setViewer: (unknown) => void;
+  tasks: null | Task[];
+  setTasks: (unknown) => void;
 }
 
 const removeAmtCurrentTask = (tasks: TaskType[]) => {
@@ -66,44 +70,49 @@ const removeAmtCurrentTask = (tasks: TaskType[]) => {
   return newTasksArray;
 };
 
-export const Pomodoro = ({
-  pomCycle,
-  pomDuration,
-  shortBreakDuration,
-  longBreakDuration,
-  longBreakInterval,
-  pomCount,
-  tasks,
-  setTasks,
-  setViewer
-}: Props) => {
-  const initialState = {
-    cycle: pomCycle,
-    timer: selectTimePerCycle({
-      cycle: pomCycle,
-      pomDuration,
-      shortBreakDuration,
-      longBreakDuration
-    }),
-    isRunning: false,
-    pomCount: pomCount,
+export const Pomodoro = ({ pomCount, setViewer, setTasks, tasks }: Props) => {
+  const pomData = useViewerPomDataQuery({
+    onCompleted: (data) => {
+      // Set pomReducer here
+      const {
+        longBreakDuration,
+        longBreakInterval,
+        pomCycle,
+        pomDuration,
+        shortBreakDuration
+      } = data.viewerPomData;
+
+      const values = {
+        cycle: pomCycle,
+        timer: selectTimePerCycle({
+          cycle: pomCycle,
+          pomDuration,
+          shortBreakDuration,
+          longBreakDuration
+        }),
+        isRunning: false,
+        pomCount: pomCount,
+        timerReset: false,
+        pomDuration,
+        shortBreakDuration,
+        longBreakDuration,
+        longBreakInterval
+      };
+      dispatch({ type: VIEWER_POM_DATA_QUERY_COMPLETE, payload: values });
+    }
+  });
+
+  const [state, dispatch] = useReducer(pomReducer, {
+    cycle: null,
+    timer: null,
+    isRunning: null,
+    pomCount: null,
     timerReset: false,
-    pomDuration,
-    shortBreakDuration,
-    longBreakDuration,
-    longBreakInterval
-  };
-
-  const durationValues = {
-    pomDuration,
-    shortBreakDuration,
-    longBreakDuration,
-    longBreakInterval
-  };
-
-  const [state, dispatch] = useReducer(pomReducer, initialState);
-
-  console.log(state.timer);
+    pomDuration: null,
+    shortBreakDuration: null,
+    longBreakDuration: null,
+    longBreakInterval: null
+  });
 
   useInterval(
     () => {
@@ -129,15 +138,33 @@ export const Pomodoro = ({
 
   const setUpdate = {
     pomodoro: () => {
+      const durationValues = {
+        pomDuration: state.pomDuration,
+        shortBreakDuration: state.shortBreakDuration,
+        longBreakDuration: state.longBreakDuration,
+        longBreakInterval: state.longBreakInterval
+      };
       dispatch({ type: POMODORO, payload: durationValues });
       cycleAlert("Time to work!");
     },
     shortBreak: () => {
+      const durationValues = {
+        pomDuration: state.pomDuration,
+        shortBreakDuration: state.shortBreakDuration,
+        longBreakDuration: state.longBreakDuration,
+        longBreakInterval: state.longBreakInterval
+      };
       dispatch({ type: SHORT_BREAK, payload: durationValues });
       handleTaskCompletion();
       cycleAlert("Take a short Break -- go to the bathroom or stretch");
     },
     longBreak: () => {
+      const durationValues = {
+        pomDuration: state.pomDuration,
+        shortBreakDuration: state.shortBreakDuration,
+        longBreakDuration: state.longBreakDuration,
+        longBreakInterval: state.longBreakInterval
+      };
       dispatch({ type: LONG_BREAK, payload: durationValues });
       handleTaskCompletion();
       cycleAlert("Take a long break! Walk around or go outside!");
@@ -146,14 +173,10 @@ export const Pomodoro = ({
   const timeEnded = state.timer === 0;
 
   const nextCycle = getNextCycle({
-    longBreakInterval,
+    longBreakInterval: state.longBreakInterval,
     cycle: state.cycle,
     pomCount: state.pomCount
   });
-
-  if (timeEnded) {
-    setUpdate[nextCycle]();
-  }
 
   useEffectWithoutOnMount(() => {
     updatePomCycle({
@@ -170,6 +193,9 @@ export const Pomodoro = ({
   const progressPercentage = (state.timer / selectTimePerCycle(state)) * 100;
   const canUsePom = tasks.length > 0 || state.cycle !== PomCycle.Pomodoro;
 
+  if (timeEnded) {
+    setUpdate[nextCycle]();
+  }
   const pauseOrPlayButton = !state.isRunning ? (
     <ActionButton isDisabled={canUsePom}>
       <BiPlay

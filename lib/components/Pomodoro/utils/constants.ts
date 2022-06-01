@@ -7,3 +7,4 @@ export const PAUSE_TIMER = "pause-timer";
 export const RESET_TIMER = "reset-timer";
 export const NEW_TIME = "new-time";
 export const ADD_POM_COUNT = "add-pom-count";
+export const VIEWER_POM_DATA_QUERY_COMPLETE = "viewer-pom-data-query-complete";

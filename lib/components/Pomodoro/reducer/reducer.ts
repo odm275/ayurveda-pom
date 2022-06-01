@@ -9,7 +9,7 @@ import {
   ADD_POM_COUNT
 } from "./utils/constants";
 import { PomCycle } from "@/lib/generated";
-import { selectTimePerCycle } from "../utils";
+import { selectTimePerCycle, VIEWER_POM_DATA_QUERY_COMPLETE } from "../utils";
 
 export function pomReducer(state, action) {
   switch (action.type) {
@@ -64,6 +64,20 @@ export function pomReducer(state, action) {
       return {
         ...state,
         pomCount: state.pomCount + 1
+      };
+
+    case VIEWER_POM_DATA_QUERY_COMPLETE:
+      return {
+        ...state,
+        cycle: action.payload.pomCycle,
+        timer: action.payload.timer,
+        isRunning: false,
+        pomCount: action.payload.pomCount,
+        timerReset: false,
+        pomDuration: action.payload.pomDuration,
+        shortBreakDuration: action.payload.shortBreakDuration,
+        longBreakDuration: action.payload.longBreakDuration,
+        longBreakInterval: action.payload.longBreakInterval
       };
 
     default:

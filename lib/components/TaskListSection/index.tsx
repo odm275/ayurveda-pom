@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import {
   Drawer,
@@ -14,15 +14,20 @@ import {
   OutsideClick,
   Task
 } from "./components";
-import { Task as TaskType, useDeleteTaskMutation } from "@/lib/generated";
+import {
+  Task as TaskType,
+  useDeleteTaskMutation,
+  useViewerCurrentTasksQuery
+} from "@/lib/generated";
 import { LoadingOverlay } from "../LoadingOverlay";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  btnRef: any;
+  btnRef: unknown;
   tasks: TaskType[];
   setTasks: (any) => void;
-  loadingUpdateTasks: boolean;
+  loadingUpdateTasks?: boolean;
+  tasksLoading: boolean;
 }
 
 export const TaskListSection = ({
@@ -31,7 +36,8 @@ export const TaskListSection = ({
   btnRef,
   tasks,
   setTasks,
-  loadingUpdateTasks
+  loadingUpdateTasks,
+  tasksLoading
 }: Props) => {
   const [lastDraggedIndex, setLastDraggedIndex] = useState(null);
   const [lastDraggedSourceIndex, setLastDraggedSourceIndex] = useState(null);
@@ -73,6 +79,10 @@ export const TaskListSection = ({
       </Draggable>
     );
   });
+
+  if (tasksLoading) {
+    return <p>loading</p>;
+  }
 
   return (
     <Drawer

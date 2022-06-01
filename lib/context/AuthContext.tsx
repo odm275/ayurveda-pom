@@ -84,6 +84,7 @@ function useProvideAuth() {
 
   const isAuthenticated = !!viewer.id && viewer.id !== null;
 
+  // If user is not authenticated -- will try to log in.
   useEffect(() => {
     if (!isAuthenticated) {
       logIn({
