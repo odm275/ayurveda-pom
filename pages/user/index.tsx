@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Flex, Button, Spinner, useDisclosure } from "@chakra-ui/react";
 import { Pomodoro } from "@/lib/components";
 import AppHeaderSkeleton from "@/lib/components/AppHeaderSkeleton";
@@ -18,10 +18,12 @@ const Index = () => {
   } = useAuth();
 
   const [tasks, setTasks] = useState<Task[] | null>([]);
+
   const { loading: tasksLoading } = useViewerCurrentTasksQuery({
     onCompleted: (data) => {
-      if (data?.viewerCurrentTasks?.tasks) {
-        setTasks(data.viewerCurrentTasks.tasks);
+      console.log("data", data);
+      if (data?.viewerCurrentTasks) {
+        setTasks(data.viewerCurrentTasks);
       }
     }
   });

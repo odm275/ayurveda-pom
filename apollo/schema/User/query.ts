@@ -2,7 +2,7 @@ import { extendType, stringArg } from "nexus";
 import { Google } from "apollo/api/Google";
 import { User } from "./user";
 import { authorize } from "@/apollo/utils/authorize";
-import { Tasks } from "../Task";
+import { Task, Tasks } from "../Task";
 
 export const ViewerQuery = extendType({
   type: "Query",
@@ -33,9 +33,10 @@ export const ViewerQuery = extendType({
         };
       }
     });
-    t.nonNull.field("viewerCurrentTasks", {
-      type: Tasks,
+    t.list.field("viewerCurrentTasks", {
+      type: Task,
       async resolve(_root, _args, { req, prisma }) {
+        console.log("hi boys");
         const viewer = await authorize({ prisma, req });
         if (!viewer) {
           throw new Error("viewer cannot be found");
@@ -53,6 +54,7 @@ export const ViewerQuery = extendType({
           const sortedUsetTasks = viewerTasks.sort(
             (a, b) => a.positionId - b.positionId
           );
+
           return sortedUsetTasks;
         } catch (e) {
           console.log(e);

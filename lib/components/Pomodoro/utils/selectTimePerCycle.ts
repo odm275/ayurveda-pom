@@ -13,6 +13,5 @@ export function selectTimePerCycle({
   } else if (cycle === PomCycle.Longbreak) {
     return longBreakDuration;
   }
-  console.log(cycle);
   return null;
 }

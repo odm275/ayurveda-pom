@@ -16,17 +16,26 @@ export const authorize = async ({
   req,
   includeTasks = false
 }: Params): Promise<User | null> => {
-  const token = req.headers["x-csrf-token"] as string;
+  console.log(process.env.NODE_ENV);
+
+  const token = req.headers?.["x-csrf-token"] as string | null;
 
   const viewerCookie = req.cookies.viewer;
   const cryptr = new Cryptr(process.env.SECRET);
   const decryptedUserId = viewerCookie ? cryptr.decrypt(viewerCookie) : null;
 
+  const whereObj =
+    process.env.NODE_ENV === "development"
+      ? {
+          id: "102370478380724182316"
+        }
+      : {
+          id: decryptedUserId,
+          token
+        };
+
   const viewer = await prisma.user.findFirst({
-    where: {
-      id: decryptedUserId,
-      token: token
-    },
+    where: whereObj,
     include: {
       tasks: includeTasks
     }

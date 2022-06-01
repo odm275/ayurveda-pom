@@ -53,16 +53,19 @@ export const LogInSection = () => {
     window.location.href = data.authUrl;
   };
 
-  const code = new URL(window.location.href).searchParams.get("code");
-  if (code) {
-    logInRef.current({
-      variables: {
-        date: dayjs().format("MM-DD-YYYY"),
-        today: dayjs().format("MM-DD-YYYY"),
-        input: { code }
-      }
-    });
-  }
+  // We wanna guarantee this runs on this client when window object is defined.
+  useEffect(() => {
+    const code = new URL(window.location.href).searchParams.get("code");
+    if (code) {
+      logInRef.current({
+        variables: {
+          date: dayjs().format("MM-DD-YYYY"),
+          today: dayjs().format("MM-DD-YYYY"),
+          input: { code }
+        }
+      });
+    }
+  }, []);
 
   if (loadingViewer) {
     return <GenericLoadingScreen />;

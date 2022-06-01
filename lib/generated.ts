@@ -104,7 +104,7 @@ export type PomEntry = {
 export type Query = {
   __typename?: 'Query';
   authUrl: Scalars['String'];
-  viewerCurrentTasks: Tasks;
+  viewerCurrentTasks?: Maybe<Array<Maybe<Task>>>;
   viewerPomData: User;
 };
 
@@ -259,7 +259,7 @@ export type AuthUrlQuery = { __typename?: 'Query', authUrl: string };
 export type ViewerCurrentTasksQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ViewerCurrentTasksQuery = { __typename?: 'Query', viewerCurrentTasks: { __typename?: 'Tasks', tasks?: Array<{ __typename?: 'Task', id?: string | null, createdAt?: any | null, title?: string | null, amt?: number | null, positionId?: number | null, eta?: any | null } | null> | null } };
+export type ViewerCurrentTasksQuery = { __typename?: 'Query', viewerCurrentTasks?: Array<{ __typename?: 'Task', id?: string | null, amt?: number | null, title?: string | null, positionId?: number | null, userId?: string | null, eta?: any | null } | null> | null };
 
 export type ViewerPomDataQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -588,14 +588,12 @@ export type AuthUrlQueryResult = Apollo.QueryResult<AuthUrlQuery, AuthUrlQueryVa
 export const ViewerCurrentTasksDocument = gql`
     query viewerCurrentTasks {
   viewerCurrentTasks {
-    tasks {
-      id
-      createdAt
-      title
-      amt
-      positionId
-      eta
-    }
+    id
+    amt
+    title
+    positionId
+    userId
+    eta
   }
 }
     `;
@@ -815,7 +813,7 @@ export type PomEntryResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   authUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  viewerCurrentTasks?: Resolver<ResolversTypes['Tasks'], ParentType, ContextType>;
+  viewerCurrentTasks?: Resolver<Maybe<Array<Maybe<ResolversTypes['Task']>>>, ParentType, ContextType>;
   viewerPomData?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
 };
 

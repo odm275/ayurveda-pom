@@ -58,7 +58,7 @@ type PomEntry {
 
 type Query {
   authUrl: String!
-  viewerCurrentTasks: Tasks!
+  viewerCurrentTasks: [Task]
   viewerPomData: User!
 }
 
