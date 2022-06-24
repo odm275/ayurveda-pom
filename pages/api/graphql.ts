@@ -2,6 +2,12 @@ import { ApolloServer } from "apollo-server-micro";
 import { PageConfig } from "next";
 import { nexusSchema } from "../../apollo/schema";
 import { createContext } from "../../apollo/createContext";
+import Cors from "micro-cors";
+
+const cors = Cors({
+  origin: "http://localhost:3000/*",
+  allowCredentials: true
+});
 
 const apolloServer = new ApolloServer({
   context: createContext,

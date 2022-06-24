@@ -1,4 +1,5 @@
 import NextLink from "next/link";
+import { useApolloClient, gql } from "@apollo/client";
 import {
   FlexProps,
   Flex,
@@ -19,23 +20,26 @@ import {
 import { FiBell, FiChevronDown, FiMenu } from "react-icons/fi";
 import { WindIcon } from "@/lib/components/WindIcon";
 import { initialViewer, useAuth } from "@/lib/context/AuthContext";
-import { useLogOutMutation } from "@/lib/generated";
+import {
+  useLogInMutation,
+  useLogOutMutation,
+  useMeQuery
+} from "@/lib/generated";
 import {
   displayErrorNotification,
   displaySuccessNotification
 } from "@/lib/utils/toast";
-import { FaUser } from "react-icons/fa";
 
 interface MobileProps extends FlexProps {
   onOpen: () => void;
 }
+
 export const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
-  const { viewer, setViewer, isAuthenticated } = useAuth();
-  const [logOut] = useLogOutMutation({
+  const { data, loading, error } = useMeQuery();
+
+  const [logOut, { loading: loadingLogOut }] = useLogOutMutation({
     onCompleted: (data) => {
       if (data && data.logOut) {
-        setViewer(initialViewer);
-
         sessionStorage.removeItem("token");
         displaySuccessNotification(
           "You've succesfully logged out!",
@@ -53,6 +57,12 @@ export const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const handleLogOut = () => {
     logOut();
   };
+
+  const userAvatar = loading ? (
+    <Avatar size={"sm"} />
+  ) : (
+    <Avatar name={data.me.name} size={"sm"} src={data.me.avatar} />
+  );
 
   return (
     <Flex
@@ -102,7 +112,7 @@ export const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               _focus={{ boxShadow: "none" }}
             >
               <HStack>
-                <Avatar name="avatar" size={"sm"} src={viewer.avatar} />
+                {userAvatar}
                 <VStack
                   display={{ base: "none", md: "flex" }}
                   alignItems="flex-start"

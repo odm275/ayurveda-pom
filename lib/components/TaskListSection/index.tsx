@@ -81,7 +81,7 @@ export const TaskListSection = ({
   });
 
   if (tasksLoading) {
-    return <p>loading</p>;
+    return null;
   }
 
   return (

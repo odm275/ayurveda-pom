@@ -2,11 +2,43 @@ import { extendType, stringArg } from "nexus";
 import { Google } from "apollo/api/Google";
 import { User } from "./user";
 import { authorize } from "@/apollo/utils/authorize";
-import { Task, Tasks } from "../Task";
+import { Task } from "../Task";
+import { logInViaCookie } from "./helpers";
+import crypto from "crypto";
 
 export const ViewerQuery = extendType({
   type: "Query",
   definition(t) {
+    t.nonNull.field("me", {
+      type: User,
+      async resolve(_root, _args, { req, res, prisma }) {
+        const token = crypto.randomBytes(16).toString("hex");
+
+        const viewer = await logInViaCookie({ token, prisma, req, res });
+
+        if (!viewer) {
+          console.log("no viewer was found");
+          return {
+            didRequest: true
+          };
+        }
+
+        const resViewer = {
+          id: viewer.id,
+          name: viewer.name,
+          token: viewer.token,
+          avatar: viewer.avatar,
+          didRequest: true,
+          pomDuration: viewer.pomDuration,
+          shortBreakDuration: viewer.shortBreakDuration,
+          longBreakDuration: viewer.shortBreakDuration,
+          longBreakInterval: viewer.longBreakInterval,
+          pomCycle: viewer.pomCycle
+        };
+
+        return resViewer;
+      }
+    });
     t.nonNull.string("authUrl", {
       async resolve() {
         try {

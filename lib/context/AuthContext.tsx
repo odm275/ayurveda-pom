@@ -65,11 +65,9 @@ export const useAuth = () => useContext(authContext);
 function useProvideAuth() {
   const [viewer, setViewer] = useState<User>(initialViewer);
 
-  const [logIn, { loading, error }] = useLogInMutation({
+  const [logIn, { data, loading, error }] = useLogInMutation({
     onCompleted: (data) => {
       if (data && data.logIn) {
-        setViewer(data.logIn);
-
         if (data.logIn.token) {
           sessionStorage.setItem("token", data.logIn.token);
         } else {
@@ -97,7 +95,7 @@ function useProvideAuth() {
   }, [viewer, logIn]);
 
   return {
-    viewer,
+    viewer: data?.logIn,
     loading,
     isAuthenticated,
     setViewer,

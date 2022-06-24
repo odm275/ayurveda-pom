@@ -24,10 +24,18 @@ export const logInViaCookie = async ({
   const viewerCookie = req.cookies.viewer;
   const cryptr = new Cryptr(process.env.SECRET);
   const decryptedUserId = viewerCookie ? cryptr.decrypt(viewerCookie) : null;
+  const whereObj =
+    process.env.NODE_ENV === "development"
+      ? {
+          id: "102370478380724182316"
+        }
+      : {
+          id: decryptedUserId,
+          token
+        };
+
   const viewer = await prisma.user.update({
-    where: {
-      id: decryptedUserId
-    },
+    where: whereObj,
     data: {
       token
     }

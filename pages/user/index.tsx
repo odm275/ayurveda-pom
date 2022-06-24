@@ -6,8 +6,9 @@ import ErrorBanner from "@/lib/components/ErrorBanner";
 import { AppLayout } from "@/lib/components/AppLayout";
 import { useAuth } from "@/lib/context/AuthContext";
 import { TaskListSection } from "@/lib/components/TaskListSection";
-import { Task, useViewerCurrentTasksQuery } from "@/lib/generated";
+import { Task, useMeQuery, useViewerCurrentTasksQuery } from "@/lib/generated";
 import { withProtectedRoute } from "@/lib/utils/withProtectedRoute";
+import { ClientOnly } from "@/lib/components/ClientOnly";
 
 const Index = () => {
   const {
@@ -21,7 +22,6 @@ const Index = () => {
 
   const { loading: tasksLoading } = useViewerCurrentTasksQuery({
     onCompleted: (data) => {
-      console.log("data", data);
       if (data?.viewerCurrentTasks) {
         setTasks(data.viewerCurrentTasks);
       }
@@ -32,7 +32,7 @@ const Index = () => {
 
   const btnRef = useRef();
   // User is loading
-  if (loadingUser) {
+  if (loadingUser || !viewer) {
     return (
       <Flex flexDir="column" p={3} w="100%" h="100vh">
         <AppHeaderSkeleton />
@@ -53,33 +53,35 @@ const Index = () => {
   ) : null;
 
   return (
-    <AppLayout>
-      {logInErrorBannerElement}
-      <TaskListSection
-        tasksLoading={tasksLoading}
-        tasks={tasks}
-        setTasks={setTasks}
-        isOpen={isOpen}
-        onClose={onClose}
-        btnRef={btnRef}
-      />
-      <Flex justifyContent="center">
-        <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>
-          My Tasks
-        </Button>
-      </Flex>
-      <Pomodoro
-        pomCycle={viewer.pomCycle}
-        pomDuration={viewer.pomDuration}
-        shortBreakDuration={viewer.shortBreakDuration}
-        longBreakDuration={viewer.longBreakDuration}
-        longBreakInterval={viewer.longBreakInterval}
-        pomCount={viewer.pomCount}
-        setViewer={setViewer}
-        tasks={tasks}
-        setTasks={setTasks}
-      />
-    </AppLayout>
+    <ClientOnly>
+      <AppLayout>
+        {logInErrorBannerElement}
+        <TaskListSection
+          tasksLoading={tasksLoading}
+          tasks={tasks}
+          setTasks={setTasks}
+          isOpen={isOpen}
+          onClose={onClose}
+          btnRef={btnRef}
+        />
+        <Flex justifyContent="center">
+          <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>
+            My Tasks
+          </Button>
+        </Flex>
+        <Pomodoro
+          pomCycle={viewer.pomCycle}
+          pomDuration={viewer.pomDuration}
+          shortBreakDuration={viewer.shortBreakDuration}
+          longBreakDuration={viewer.longBreakDuration}
+          longBreakInterval={viewer.longBreakInterval}
+          pomCount={viewer.pomCount}
+          setViewer={setViewer}
+          tasks={tasks}
+          setTasks={setTasks}
+        />
+      </AppLayout>
+    </ClientOnly>
   );
 };
 

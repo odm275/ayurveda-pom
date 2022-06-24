@@ -22,6 +22,9 @@ export const logInViaCookie = async ({
   // Look for userID in the db that matches decrypted ID.
 
   const viewerCookie = req.cookies.viewer;
+  if (!viewerCookie) {
+    return null;
+  }
   const cryptr = new Cryptr(process.env.SECRET);
   const decryptedUserId = viewerCookie ? cryptr.decrypt(viewerCookie) : null;
   const viewer = await prisma.user.update({
@@ -31,9 +34,6 @@ export const logInViaCookie = async ({
     data: {
       token
     }
-    // include: {
-    //   tasks: true
-    // }
   });
 
   if (!viewer) {

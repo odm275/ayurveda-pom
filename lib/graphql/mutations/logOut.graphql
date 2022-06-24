@@ -1,8 +1,5 @@
 mutation LogOut {
   logOut {
-    id
-    token
-    avatar
     didRequest
   }
 }

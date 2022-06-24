@@ -13,10 +13,10 @@ export const User = objectType({
         "(not a db field) Confirmation that the user's request came back to the client"
     });
     // User Fields
-    t.nonNull.id("id", {
+    t.id("id", {
       description: "Unique ID for the User"
     });
-    t.nonNull.string("name", {
+    t.string("name", {
       description: "Name of the User"
     });
     t.string("avatar", { description: "User avatar(picture)" });
@@ -30,7 +30,7 @@ export const User = objectType({
       description:
         "The amt of pomodoro cycles(pom,shortBreak) that have to happen before a long break"
     });
-    t.nonNull.field("pomCycle", {
+    t.field("pomCycle", {
       type: PomCycle,
       description: "Current cycle(shortbreak, longbreak, or pomodoro)"
     });

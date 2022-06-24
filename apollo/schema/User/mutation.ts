@@ -10,8 +10,6 @@ import {
   LogInInput,
   PomCycleUpdateInput
 } from "./types";
-import user from "pages/user";
-import { PomEntry } from "../PomEntry";
 
 export const UserMutation = extendType({
   type: "Mutation",
@@ -24,9 +22,11 @@ export const UserMutation = extendType({
         today: stringArg()
       },
       async resolve(_root, { input }, { req, res, prisma }) {
+        console.log("log in resolver was hit");
         try {
           const code = input ? input.code : null; // Comes from google after clicking sign in and being re-directed back to the app
           const token = crypto.randomBytes(16).toString("hex");
+
           const viewer = code
             ? await logInViaGoogle({ code, token, prisma, res })
             : await logInViaCookie({ token, prisma, req, res });

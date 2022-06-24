@@ -8,72 +8,76 @@ import { displaySuccessNotification } from "@/lib/utils/toast";
 import {
   useLogInMutation,
   AuthUrlDocument,
-  AuthUrlQuery
+  AuthUrlQuery,
+  useAuthUrlQuery
 } from "@/lib/generated";
 
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import { GenericLoadingScreen } from "@/lib/components/GenericLoadingScreen";
 import { LogInGoogleButton } from "./components";
+import { graphqlClient } from "@/apollo/graphql-request-client";
 
 // Google token is going come back in the url. We can get our viewers info with that <-> LOG_IN mutation
 
 export const LogInSection = () => {
   const client = useApolloClient();
-  const { setViewer, isAuthenticated, loading: loadingViewer } = useAuth();
+  // const { setViewer, isAuthenticated, loading: loadingViewer } = useAuth();
+  const { data, isLoading, error } = useAuthUrlQuery(graphqlClient);
+  console.log("data", error);
 
   const router = useRouter();
-  const [logIn] = useLogInMutation({
-    onCompleted: (data) => {
-      if (data?.logIn?.token) {
-        setViewer(data.logIn);
-        sessionStorage.setItem("token", data.logIn.token);
-      } else {
-        sessionStorage.removeItem("token");
-      }
-      if (data && data.logIn) {
-        router.replace(`user`);
-        displaySuccessNotification(
-          "You've succesfully logged in!",
-          "Thank you"
-        );
-      }
-    },
-    onError: (e) => {
-      console.log("error", e);
-    }
-  });
+  // const [logIn] = useLogInMutation({
+  //   onCompleted: (data) => {
+  //     if (data?.logIn?.token) {
+  //       setViewer(data.logIn);
+  //       sessionStorage.setItem("token", data.logIn.token);
+  //     } else {
+  //       sessionStorage.removeItem("token");
+  //     }
+  //     if (data && data.logIn) {
+  //       router.replace(`user`);
+  //       displaySuccessNotification(
+  //         "You've succesfully logged in!",
+  //         "Thank you"
+  //       );
+  //     }
+  //   },
+  //   onError: (e) => {
+  //     console.log("error", e);
+  //   }
+  // });
 
-  const logInRef = useRef(logIn);
+  // const logInRef = useRef(logIn);
 
   const handleAuthorize = async () => {
-    const { data } = await client.query<AuthUrlQuery>({
-      query: AuthUrlDocument
-    });
+    // const { data } = await client.query<AuthUrlQuery>({
+    //   query: AuthUrlDocument
+    // });
     window.location.href = data.authUrl;
   };
 
   // We wanna guarantee this runs on this client when window object is defined.
-  useEffect(() => {
-    const code = new URL(window.location.href).searchParams.get("code");
-    if (code) {
-      logInRef.current({
-        variables: {
-          date: dayjs().format("MM-DD-YYYY"),
-          today: dayjs().format("MM-DD-YYYY"),
-          input: { code }
-        }
-      });
-    }
-  }, []);
+  // useEffect(() => {
+  //   const code = new URL(window.location.href).searchParams.get("code");
+  //   if (code) {
+  //     logInRef.current({
+  //       variables: {
+  //         date: dayjs().format("MM-DD-YYYY"),
+  //         today: dayjs().format("MM-DD-YYYY"),
+  //         input: { code }
+  //       }
+  //     });
+  //   }
+  // }, []);
 
-  if (loadingViewer) {
-    return <GenericLoadingScreen />;
-  }
-  if (isAuthenticated) {
-    router.push("/user");
-    return <GenericLoadingScreen />;
-  }
+  // if (loadingViewer) {
+  //   return <GenericLoadingScreen />;
+  // }
+  // if (isAuthenticated) {
+  //   router.push("/user");
+  //   return <GenericLoadingScreen />;
+  // }
 
   return (
     <PageLayout>

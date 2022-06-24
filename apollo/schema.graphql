@@ -58,6 +58,7 @@ type PomEntry {
 
 type Query {
   authUrl: String!
+  me: User!
   viewerCurrentTasks: [Task]
   viewerPomData: User!
 }
@@ -112,7 +113,7 @@ type User {
   didRequest: Boolean!
 
   """Unique ID for the User"""
-  id: ID!
+  id: ID
 
   """Long break after a certain amt of pomodoro cycles are met"""
   longBreakDuration: Int
@@ -123,13 +124,13 @@ type User {
   longBreakInterval: Int
 
   """Name of the User"""
-  name: String!
+  name: String
 
   """Get the count for TODAY'S POM ENTRY"""
   pomCount(today: String!): Int
 
   """Current cycle(shortbreak, longbreak, or pomodoro)"""
-  pomCycle: pomCycle!
+  pomCycle: pomCycle
 
   """Generic duration for pomodoro"""
   pomDuration: Int
