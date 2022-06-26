@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { QueryClient, useQueryClient } from "react-query";
 import {
   Flex,
   Text,
@@ -36,29 +37,37 @@ export const Task = ({
   lastDraggedIndex
 }: Props) => {
   const { amt, title, isFinished, createdAt, eta, id } = task;
+  const queryClient = useQueryClient();
 
-  const { mutate: updateTaskMutation } =
-    useUpdateTaskAmtMutation(graphqlClient);
+  const { mutate: updateTask } = useUpdateTaskAmtMutation(graphqlClient);
 
-  const { mutate: deleteTaskMutation } = useDeleteTaskMutation(graphqlClient);
+  const { mutate: deleteTask } = useDeleteTaskMutation(graphqlClient);
 
   const handleAddTaskAmt = (id: string) => {
-    updateTaskMutation({
+    updateTask({
       taskId: id,
       op: "add"
     });
   };
   const handleSubTaskAmt = (id: string) => {
-    updateTaskMutation({
+    updateTask({
       taskId: id,
       op: "sub"
     });
   };
 
   const handleDeleteTask = (id: string) => {
-    deleteTaskMutation({
-      taskId: id
-    });
+    deleteTask(
+      {
+        taskId: id
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries(["viewerCurrentTasks"]);
+        },
+        onError: (e) => console.log(e)
+      }
+    );
   };
 
   const taskMenu = (

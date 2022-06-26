@@ -120,18 +120,22 @@ export const TaskMutation = extendType({
       args: {
         taskId: stringArg()
       },
-      async resolve(__root: undefined, { taskId }, { db, req }) {
-        const viewer = await authorize({ db, req });
-        if (!viewer) {
-          throw new Error("Viewer cannot be found!");
+      async resolve(__root: undefined, { taskId }, { req, prisma }) {
+        try {
+          const viewer = await authorize({ prisma, req });
+          if (!viewer) {
+            throw new Error("Viewer cannot be found!");
+          }
+          const deletedTask = await prisma.task.delete({
+            where: {
+              id: taskId
+            }
+          });
+
+          return deletedTask;
+        } catch (e) {
+          console.log(e);
         }
-        const deletedTaskRes = await db.tasks.findOneAndDelete({
-          id: taskId
-        });
-
-        const deletedTask = deletedTaskRes.value;
-
-        return deletedTask;
       }
     });
   }
