@@ -20,6 +20,7 @@ import {
   useUpdateTaskAmtMutation
 } from "@/lib/generated";
 import { graphqlClient } from "@/apollo/graphql-request-client";
+import { queryKeys } from "@/lib/utils";
 
 interface Props {
   task: any;
@@ -39,9 +40,17 @@ export const Task = ({
   const { amt, title, isFinished, createdAt, eta, id } = task;
   const queryClient = useQueryClient();
 
-  const { mutate: updateTask } = useUpdateTaskAmtMutation(graphqlClient);
+  const { mutate: updateTask } = useUpdateTaskAmtMutation(graphqlClient, {
+    onSuccess: () => {
+      queryClient.invalidateQueries([queryKeys.viewerCurrentTasks]);
+    }
+  });
 
-  const { mutate: deleteTask } = useDeleteTaskMutation(graphqlClient);
+  const { mutate: deleteTask } = useDeleteTaskMutation(graphqlClient, {
+    onSuccess: () => {
+      queryClient.invalidateQueries([queryKeys.viewerCurrentTasks]);
+    }
+  });
 
   const handleAddTaskAmt = (id: string) => {
     updateTask({
@@ -57,17 +66,9 @@ export const Task = ({
   };
 
   const handleDeleteTask = (id: string) => {
-    deleteTask(
-      {
-        taskId: id
-      },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries(["viewerCurrentTasks"]);
-        },
-        onError: (e) => console.log(e)
-      }
-    );
+    deleteTask({
+      taskId: id
+    });
   };
 
   const taskMenu = (

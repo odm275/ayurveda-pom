@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "react-query";
 import { MeDocument, MeQuery, User } from "../generated";
 import { graphqlClient } from "@/apollo/graphql-request-client";
-
+import { queryKeys } from "@/lib/utils";
 interface UseUser {
   user: User | null;
   updateUser: (user: unknown) => void;
@@ -17,7 +17,7 @@ async function getUser(): Promise<unknown | null> {
 
 export function useUser(): UseUser {
   const queryClient = useQueryClient();
-  const { data: user = null } = useQuery("me", getUser, {
+  const { data: user = null } = useQuery(queryKeys.me, getUser, {
     onSuccess: (recieved: User | null) => {
       if (!recieved) {
         sessionStorage.removeItem("token");
@@ -29,13 +29,13 @@ export function useUser(): UseUser {
 
   // meant to be called from useAuth
   function updateUser(newUser: unknown): void {
-    queryClient.setQueryData("me", newUser);
+    queryClient.setQueryData(queryKeys.me, newUser);
   }
   // meant to be called from useAuth
   function clearUser() {
-    queryClient.setQueryData("me", null);
+    queryClient.setQueryData(queryKeys.me, null);
     // ToDo: Remove queries that depend on me(user)
-    queryClient.removeQueries("viewerCurrentTasks");
+    queryClient.removeQueries(queryKeys.viewerCurrentTasks);
   }
   return { user, updateUser, clearUser };
 }
