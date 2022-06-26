@@ -14,13 +14,15 @@ import { AiOutlineEllipsis } from "react-icons/ai";
 import { RiStarSmileLine } from "react-icons/ri";
 import { Icon } from "@chakra-ui/react";
 import { getUrgencyColor, getUrgencyPercentage } from "./helper";
+import {
+  useDeleteTaskMutation,
+  useUpdateTaskAmtMutation
+} from "@/lib/generated";
+import { graphqlClient } from "@/apollo/graphql-request-client";
 
 interface Props {
   task: any;
   provided: any;
-  addAmtTask: any;
-  subAmtTask: any;
-  deleteTask: (task?) => void;
   index: number;
   snapshot: any;
   lastDraggedIndex: number;
@@ -29,19 +31,35 @@ interface Props {
 export const Task = ({
   provided,
   task,
-  addAmtTask,
-  subAmtTask,
-  deleteTask,
   index,
   snapshot,
   lastDraggedIndex
 }: Props) => {
-  const { amt, title, isFinished, createdAt, eta } = task;
-  // const etaElement = (
-  //   <Text color="gray.500" d={['none', 'block']}>
-  //     {eta.toString()}
-  //   </Text>
-  // );
+  const { amt, title, isFinished, createdAt, eta, id } = task;
+
+  const { mutate: updateTaskMutation } =
+    useUpdateTaskAmtMutation(graphqlClient);
+
+  const { mutate: deleteTaskMutation } = useDeleteTaskMutation(graphqlClient);
+
+  const handleAddTaskAmt = (id: string) => {
+    updateTaskMutation({
+      taskId: id,
+      op: "add"
+    });
+  };
+  const handleSubTaskAmt = (id: string) => {
+    updateTaskMutation({
+      taskId: id,
+      op: "sub"
+    });
+  };
+
+  const handleDeleteTask = (id: string) => {
+    deleteTaskMutation({
+      taskId: id
+    });
+  };
 
   const taskMenu = (
     <Flex align="center">
@@ -56,7 +74,7 @@ export const Task = ({
         borderColor="black"
         borderRadius={10}
         mx={2}
-        onClick={addAmtTask}
+        onClick={() => handleAddTaskAmt(id)}
       >
         <Text>{amt}</Text>
       </Button>
@@ -65,19 +83,13 @@ export const Task = ({
           <Icon as={AiOutlineEllipsis} />
         </MenuButton>
         <MenuList>
-          <MenuItem onClick={addAmtTask}>Add</MenuItem>
-          <MenuItem onClick={subAmtTask}>Remove</MenuItem>
-          <MenuItem onClick={deleteTask}>Delete</MenuItem>
+          <MenuItem onClick={() => handleAddTaskAmt(id)}>Add</MenuItem>
+          <MenuItem onClick={() => handleSubTaskAmt(id)}>Remove</MenuItem>
+          <MenuItem onClick={() => handleDeleteTask(id)}>Delete</MenuItem>
         </MenuList>
       </Menu>
     </Flex>
   );
-  // const mobileEta = (
-  //   <Text color="gray.500" d={['block', 'none']}>
-  //     {eta.toString()}
-  //   </Text>
-  // );
-  // ONLY SHOW IF TASK IS UNFINISHED
 
   function getItemStyles(isDragging, lastDraggedIndex, index) {
     if (isDragging) {
@@ -101,11 +113,7 @@ export const Task = ({
         {...provided.dragHandleProps}
         {...getItemStyles(snapshot.isDragging, lastDraggedIndex, index)}
       >
-        <Flex
-          justify="space-between"
-          align="center"
-          // bg={index === 0 ? "yellow.600" : ""}
-        >
+        <Flex justify="space-between" align="center">
           <Text>{task.title}</Text>
           <Spacer />
           {taskMenu}
@@ -115,9 +123,6 @@ export const Task = ({
             <Icon as={RiStarSmileLine} ml={3} w={6} h={6} visibility="hidden" />
           )}
         </Flex>
-        {/* <Text color="gray.500" d={['block', 'none']}>
-        {mobileEta}
-      </Text> */}
       </Box>
     </>
   );

@@ -28,10 +28,6 @@ export type CreateTaskInput = {
   title?: InputMaybe<Scalars['String']>;
 };
 
-export type DeleteTaskViewerInput = {
-  id: Scalars['String'];
-};
-
 export type LogInInput = {
   code: Scalars['String'];
 };
@@ -44,6 +40,7 @@ export type Mutation = {
   logOut: User;
   /**  Updates data that needs to be update whenever a pomodoro Cycle complates. */
   pomCycleUpdate: User;
+  updateTaskAmt: Task;
   updateTasksPositions: Tasks;
   /** Updates Viewer in database when a pomodoro counter goes up or when settings change. */
   updateViewerData: User;
@@ -58,7 +55,7 @@ export type MutationCreateTaskArgs = {
 
 
 export type MutationDeleteTaskArgs = {
-  input?: InputMaybe<DeleteTaskViewerInput>;
+  taskId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -71,6 +68,12 @@ export type MutationLogInArgs = {
 
 export type MutationPomCycleUpdateArgs = {
   input?: InputMaybe<PomCycleUpdateInput>;
+};
+
+
+export type MutationUpdateTaskAmtArgs = {
+  op?: InputMaybe<Scalars['String']>;
+  taskId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -206,7 +209,7 @@ export type CreateTaskMutationVariables = Exact<{
 export type CreateTaskMutation = { __typename?: 'Mutation', createTask: { __typename?: 'Task', title?: string | null, amt?: number | null, eta?: any | null, positionId?: number | null } };
 
 export type DeleteTaskMutationVariables = Exact<{
-  input?: InputMaybe<DeleteTaskViewerInput>;
+  taskId?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -232,6 +235,14 @@ export type PomCycleUpdateMutationVariables = Exact<{
 
 
 export type PomCycleUpdateMutation = { __typename?: 'Mutation', pomCycleUpdate: { __typename?: 'User', id?: string | null } };
+
+export type UpdateTaskAmtMutationVariables = Exact<{
+  taskId?: InputMaybe<Scalars['String']>;
+  op?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type UpdateTaskAmtMutation = { __typename?: 'Mutation', updateTaskAmt: { __typename?: 'Task', id?: string | null } };
 
 export type UpdateTasksPositionsMutationVariables = Exact<{
   input?: InputMaybe<UpdateTasksPositionsInput>;
@@ -299,8 +310,8 @@ export const useCreateTaskMutation = <
       options
     );
 export const DeleteTaskDocument = `
-    mutation deleteTask($input: DeleteTaskViewerInput) {
-  deleteTask(input: $input) {
+    mutation deleteTask($taskId: String) {
+  deleteTask(taskId: $taskId) {
     id
     positionId
   }
@@ -381,6 +392,26 @@ export const usePomCycleUpdateMutation = <
     useMutation<PomCycleUpdateMutation, TError, PomCycleUpdateMutationVariables, TContext>(
       ['pomCycleUpdate'],
       (variables?: PomCycleUpdateMutationVariables) => fetcher<PomCycleUpdateMutation, PomCycleUpdateMutationVariables>(client, PomCycleUpdateDocument, variables, headers)(),
+      options
+    );
+export const UpdateTaskAmtDocument = `
+    mutation updateTaskAmt($taskId: String, $op: String) {
+  updateTaskAmt(taskId: $taskId, op: $op) {
+    id
+  }
+}
+    `;
+export const useUpdateTaskAmtMutation = <
+      TError = unknown,
+      TContext = unknown
+    >(
+      client: GraphQLClient,
+      options?: UseMutationOptions<UpdateTaskAmtMutation, TError, UpdateTaskAmtMutationVariables, TContext>,
+      headers?: RequestInit['headers']
+    ) =>
+    useMutation<UpdateTaskAmtMutation, TError, UpdateTaskAmtMutationVariables, TContext>(
+      ['updateTaskAmt'],
+      (variables?: UpdateTaskAmtMutationVariables) => fetcher<UpdateTaskAmtMutation, UpdateTaskAmtMutationVariables>(client, UpdateTaskAmtDocument, variables, headers)(),
       options
     );
 export const UpdateTasksPositionsDocument = `

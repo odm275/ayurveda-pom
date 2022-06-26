@@ -11,6 +11,5 @@ export const updateTasksPositions = async (db, tasksData) => {
       };
     }
   );
-  console.log(JSON.stringify(bulkWriteData));
   await db.tasks.bulkWrite(bulkWriteData);
 };

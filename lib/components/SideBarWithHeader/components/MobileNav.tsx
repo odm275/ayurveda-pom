@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { FiBell, FiChevronDown, FiMenu } from "react-icons/fi";
 import { WindIcon } from "@/lib/components/WindIcon";
-import { initialViewer, useAuth } from "@/lib/context/AuthContext";
+// import { initialViewer, useAuth } from "@/lib/context/AuthContext";
 import {
   useLogInMutation,
   useLogOutMutation,
@@ -29,39 +29,37 @@ import {
   displayErrorNotification,
   displaySuccessNotification
 } from "@/lib/utils/toast";
+import { useUser, useAuth } from "@/lib/hooks";
 
 interface MobileProps extends FlexProps {
   onOpen: () => void;
 }
 
 export const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
-  const { data, loading, error } = useMeQuery();
+  const { user } = useUser();
+  const { logout } = useAuth();
 
-  const [logOut, { loading: loadingLogOut }] = useLogOutMutation({
-    onCompleted: (data) => {
-      if (data && data.logOut) {
-        sessionStorage.removeItem("token");
-        displaySuccessNotification(
-          "You've succesfully logged out!",
-          "Thank you"
-        );
-      }
-    },
-    onError: () => {
-      displayErrorNotification(
-        "Sorry! We weren't able to log you out. Please try again later!"
-      );
-    }
-  });
+  // const [logOut, { loading: loadingLogOut }] = useLogOutMutation({
+  //   onCompleted: (data) => {
+  //     if (data && data.logOut) {
+  //       sessionStorage.removeItem("token");
+  //       displaySuccessNotification(
+  //         "You've succesfully logged out!",
+  //         "Thank you"
+  //       );
+  //     }
+  //   },
+  //   onError: () => {
+  //     displayErrorNotification(
+  //       "Sorry! We weren't able to log you out. Please try again later!"
+  //     );
+  //   }
+  // });
 
-  const handleLogOut = () => {
-    logOut();
-  };
-
-  const userAvatar = loading ? (
-    <Avatar size={"sm"} />
+  const userAvatar = user ? (
+    <Avatar name={user.name} size={"sm"} src={user.avatar} />
   ) : (
-    <Avatar name={data.me.name} size={"sm"} src={data.me.avatar} />
+    <Avatar size={"sm"} />
   );
 
   return (
@@ -132,7 +130,7 @@ export const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               <MenuItem>Settings</MenuItem>
               <MenuItem>Billing</MenuItem>
               <MenuDivider />
-              <MenuItem onClick={handleLogOut}>Sign out</MenuItem>
+              <MenuItem onClick={logout}>Sign out</MenuItem>
             </MenuList>
           </Menu>
         </Flex>

@@ -1,83 +1,34 @@
-import { useEffect, useRef } from "react";
-import { useApolloClient } from "@apollo/client";
+import { useEffect } from "react";
+import Router from "next/router";
 import { Heading, Text, Box, Flex } from "@chakra-ui/react";
 import { PageLayout } from "@/lib/components/PageLayout";
-import { useAuth } from "@/lib/context/AuthContext";
-import { displaySuccessNotification } from "@/lib/utils/toast";
-
-import {
-  useLogInMutation,
-  AuthUrlDocument,
-  AuthUrlQuery,
-  useAuthUrlQuery
-} from "@/lib/generated";
-
-import { useRouter } from "next/router";
-import dayjs from "dayjs";
-import { GenericLoadingScreen } from "@/lib/components/GenericLoadingScreen";
+import { useAuth, useUser } from "@/lib/hooks";
+import { useAuthUrlQuery } from "@/lib/generated";
 import { LogInGoogleButton } from "./components";
 import { graphqlClient } from "@/apollo/graphql-request-client";
-
-// Google token is going come back in the url. We can get our viewers info with that <-> LOG_IN mutation
+import { GenericLoadingScreen } from "../GenericLoadingScreen";
 
 export const LogInSection = () => {
-  const client = useApolloClient();
-  // const { setViewer, isAuthenticated, loading: loadingViewer } = useAuth();
-  const { data, isLoading, error } = useAuthUrlQuery(graphqlClient);
-  console.log("data", error);
+  const { login } = useAuth();
+  const { user } = useUser();
+  const { data = null } = useAuthUrlQuery(graphqlClient);
 
-  const router = useRouter();
-  // const [logIn] = useLogInMutation({
-  //   onCompleted: (data) => {
-  //     if (data?.logIn?.token) {
-  //       setViewer(data.logIn);
-  //       sessionStorage.setItem("token", data.logIn.token);
-  //     } else {
-  //       sessionStorage.removeItem("token");
-  //     }
-  //     if (data && data.logIn) {
-  //       router.replace(`user`);
-  //       displaySuccessNotification(
-  //         "You've succesfully logged in!",
-  //         "Thank you"
-  //       );
-  //     }
-  //   },
-  //   onError: (e) => {
-  //     console.log("error", e);
-  //   }
-  // });
-
-  // const logInRef = useRef(logIn);
-
-  const handleAuthorize = async () => {
-    // const { data } = await client.query<AuthUrlQuery>({
-    //   query: AuthUrlDocument
-    // });
+  const handleAuthorize = () => {
     window.location.href = data.authUrl;
   };
 
-  // We wanna guarantee this runs on this client when window object is defined.
-  // useEffect(() => {
-  //   const code = new URL(window.location.href).searchParams.get("code");
-  //   if (code) {
-  //     logInRef.current({
-  //       variables: {
-  //         date: dayjs().format("MM-DD-YYYY"),
-  //         today: dayjs().format("MM-DD-YYYY"),
-  //         input: { code }
-  //       }
-  //     });
-  //   }
-  // }, []);
+  // We want to run in client because of window object.
+  useEffect(() => {
+    // With google token -> Login
+    const code = new URL(window.location.href).searchParams.get("code");
+    if (code) {
+      login();
+    }
+  }, []);
 
-  // if (loadingViewer) {
-  //   return <GenericLoadingScreen />;
-  // }
-  // if (isAuthenticated) {
-  //   router.push("/user");
-  //   return <GenericLoadingScreen />;
-  // }
+  if (user) {
+    Router.replace("/user");
+  }
 
   return (
     <PageLayout>
@@ -103,7 +54,7 @@ export const LogInSection = () => {
             Log in to Ayurveda
           </Heading>
           <Text>Sign in with Google to start booking available rentals</Text>
-          <LogInGoogleButton onClick={handleAuthorize} />
+          <LogInGoogleButton onClick={handleAuthorize} disabled={!data} />
           <Text>
             Note: By singing in, you&apos;ll be redirected to the Google consent
             form to sign in with your Google account.

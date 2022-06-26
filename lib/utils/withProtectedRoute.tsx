@@ -1,19 +1,19 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useEffect } from "react";
 import { useRouter } from "next/router";
-import { useAuth } from "../context";
+import { useUser } from "@/lib/hooks";
 import { useEffectWithoutOnMount } from "../hooks/useEffectWithoutOnMount";
 
 export const withProtectedRoute = (WrappedComponent: FunctionComponent) => {
-  const AuthenticatedComponent = (props: unknown) => {
+  const AuthenticatedComponent = (props: any) => {
     const Router = useRouter();
-    const { loading, isAuthenticated } = useAuth();
-    if (loading) return null;
+    const { user } = useUser();
 
     useEffectWithoutOnMount(() => {
-      if (!isAuthenticated) {
+      console.log("check", !user);
+      if (!user) {
         Router.replace("/login");
       }
-    }, [isAuthenticated, Router]);
+    }, [user, Router]);
 
     return <WrappedComponent {...props} />;
   };

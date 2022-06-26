@@ -78,7 +78,6 @@ export const Viewer = objectType({
         date: nonNull(stringArg())
       },
       resolve(viewer, { date }, _ctx) {
-        console.log("viewer", viewer);
         if (viewer?.pomData) {
           return 0;
         }

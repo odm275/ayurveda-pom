@@ -14,23 +14,20 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 """
 scalar DateTime
 
-input DeleteTaskViewerInput {
-  id: String!
-}
-
 input LogInInput {
   code: String!
 }
 
 type Mutation {
   createTask(input: CreateTaskInput): Task!
-  deleteTask(input: DeleteTaskViewerInput): Task!
+  deleteTask(taskId: String): Task!
   logIn(date: String, input: LogInInput, today: String): User!
   logOut: User!
 
   """ Updates data that needs to be update whenever a pomodoro Cycle complates.
   """
   pomCycleUpdate(input: PomCycleUpdateInput): User!
+  updateTaskAmt(op: String, taskId: String): Task!
   updateTasksPositions(input: UpdateTasksPositionsInput): Tasks!
 
   """

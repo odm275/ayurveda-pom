@@ -17,7 +17,6 @@ export const ViewerQuery = extendType({
         const viewer = await logInViaCookie({ token, prisma, req, res });
 
         if (!viewer) {
-          console.log("no viewer was found");
           return {
             didRequest: true
           };
@@ -68,7 +67,6 @@ export const ViewerQuery = extendType({
     t.list.field("viewerCurrentTasks", {
       type: Task,
       async resolve(_root, _args, { req, prisma }) {
-        console.log("hi boys");
         const viewer = await authorize({ prisma, req });
         if (!viewer) {
           throw new Error("viewer cannot be found");

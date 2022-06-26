@@ -7,59 +7,24 @@ import {
   DrawerHeader,
   DrawerContent
 } from "@chakra-ui/react";
-import { useTaskHandlers } from "./hooks";
 import {
   DraggableTaskCards,
   TaskListBody,
   OutsideClick,
   Task
 } from "./components";
-import {
-  Task as TaskType,
-  useDeleteTaskMutation,
-  useViewerCurrentTasksQuery
-} from "@/lib/generated";
+import { Task as TaskType } from "@/lib/generated";
 import { LoadingOverlay } from "../LoadingOverlay";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   btnRef: unknown;
   tasks: TaskType[];
-  setTasks: (any) => void;
-  loadingUpdateTasks?: boolean;
-  tasksLoading: boolean;
 }
 
-export const TaskListSection = ({
-  isOpen,
-  onClose,
-  btnRef,
-  tasks,
-  setTasks,
-  loadingUpdateTasks,
-  tasksLoading
-}: Props) => {
+export const TaskListSection = ({ isOpen, onClose, btnRef, tasks }: Props) => {
   const [lastDraggedIndex, setLastDraggedIndex] = useState(null);
   const [lastDraggedSourceIndex, setLastDraggedSourceIndex] = useState(null);
-
-  const { addAmtTask, removeAmtTask, deleteTask } = useTaskHandlers();
-
-  const [deleteViewerTask] = useDeleteTaskMutation({
-    onCompleted: (task) => {
-      const newTaskArr = deleteTask(task);
-      setTasks(newTaskArr);
-    }
-  });
-
-  const handleDeleteTask = ({ task }) => {
-    deleteViewerTask({
-      variables: {
-        input: {
-          id: task.id
-        }
-      }
-    });
-  };
 
   const taskCards = tasks.map((task, i) => {
     return (
@@ -68,9 +33,6 @@ export const TaskListSection = ({
           <Task
             task={task}
             provided={provided}
-            addAmtTask={() => setTasks(addAmtTask)}
-            subAmtTask={() => setTasks(removeAmtTask)}
-            deleteTask={() => handleDeleteTask({ task })}
             index={i}
             snapshot={snapshot}
             lastDraggedIndex={lastDraggedIndex}
@@ -79,10 +41,6 @@ export const TaskListSection = ({
       </Draggable>
     );
   });
-
-  if (tasksLoading) {
-    return null;
-  }
 
   return (
     <Drawer
@@ -97,11 +55,10 @@ export const TaskListSection = ({
           <DrawerContent>
             <DrawerCloseButton />
             <DrawerHeader>My Tasks</DrawerHeader>
-            <TaskListBody tasks={tasks} setTasks={setTasks}>
+            <TaskListBody tasks={tasks}>
               <OutsideClick setLastDraggedIndex={setLastDraggedIndex}>
                 <DraggableTaskCards
                   tasks={tasks}
-                  setTasks={setTasks}
                   setLastDraggedIndex={setLastDraggedIndex}
                   setLastDraggedSourceIndex={setLastDraggedSourceIndex}
                 >

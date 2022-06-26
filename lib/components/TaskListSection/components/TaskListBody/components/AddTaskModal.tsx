@@ -17,6 +17,7 @@ import { Controller, useForm } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useCreateTaskMutation } from "@/lib/generated";
+import { graphqlClient } from "@/apollo/graphql-request-client";
 interface Task {
   title: string;
   amt: number;
@@ -28,30 +29,20 @@ interface Task {
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  setTasks: (tasks) => void;
   tasks: [Task];
 }
 
-export const AddTaskModal = ({ isOpen, onClose, tasks, setTasks }: Props) => {
+export const AddTaskModal = ({ isOpen, onClose, tasks }: Props) => {
   const { control, register, handleSubmit } = useForm();
-  const [createTask, { loading, error }] = useCreateTaskMutation({
-    onCompleted: (data) => {
-      const newTask = data.createTask;
-      const newTasks = [...tasks, newTask];
-      setTasks(newTasks);
-      onClose();
-    }
-  });
+  const { mutate: createTask } = useCreateTaskMutation(graphqlClient);
   const onSubmit = (data) => {
     const { title, amt, eta } = data;
     createTask({
-      variables: {
-        input: {
-          title,
-          amt: parseInt(amt),
-          eta,
-          positionId: tasks.length + 1
-        }
+      input: {
+        title,
+        amt: parseInt(amt),
+        eta,
+        positionId: tasks.length + 1
       }
     });
   };

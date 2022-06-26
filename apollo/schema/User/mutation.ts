@@ -22,7 +22,6 @@ export const UserMutation = extendType({
         today: stringArg()
       },
       async resolve(_root, { input }, { req, res, prisma }) {
-        console.log("log in resolver was hit");
         try {
           const code = input ? input.code : null; // Comes from google after clicking sign in and being re-directed back to the app
           const token = crypto.randomBytes(16).toString("hex");
@@ -32,7 +31,6 @@ export const UserMutation = extendType({
             : await logInViaCookie({ token, prisma, req, res });
 
           if (!viewer) {
-            console.log("no viewer was found");
             return {
               didRequest: true
             };
@@ -161,7 +159,6 @@ export const UserMutation = extendType({
         { input },
         { db, req, res }: { db; req; res }
       ) {
-        console.log("update viewer data");
         const viewer = await authorize({ db, req });
         if (!viewer) {
           throw new Error("viewer cannot be found");

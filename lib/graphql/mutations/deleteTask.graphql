@@ -1,5 +1,5 @@
-mutation deleteTask($input: DeleteTaskViewerInput) {
-  deleteTask(input: $input) {
+mutation deleteTask($taskId: String) {
+  deleteTask(taskId: $taskId) {
     id
     positionId
   }

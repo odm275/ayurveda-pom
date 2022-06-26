@@ -24,7 +24,7 @@ import {
 import { useAuth } from "@/lib/context";
 
 const Settings = () => {
-  const { viewer } = useAuth();
+  // const { viewer } = useAuth();
 
   const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
@@ -35,135 +35,139 @@ const Settings = () => {
     }
   });
 
-  useEffect(() => {
-    if (
-      viewer?.pomDuration &&
-      viewer?.shortBreakDuration &&
-      viewer?.longBreakDuration
-    ) {
-      setValue("pomDuration", milliSecondsToMinutes(viewer.pomDuration));
-      setValue(
-        "shortBreakDuration",
-        milliSecondsToMinutes(viewer.shortBreakDuration)
-      );
-      setValue(
-        "longBreakDuration",
-        milliSecondsToMinutes(viewer.longBreakDuration)
-      );
-      setValue("longBreakInterval", viewer.longBreakInterval);
-    }
-  }, [viewer]);
+  // useEffect(() => {
+  //   if (
+  //     viewer?.pomDuration &&
+  //     viewer?.shortBreakDuration &&
+  //     viewer?.longBreakDuration
+  //   ) {
+  //     setValue("pomDuration", milliSecondsToMinutes(viewer.pomDuration));
+  //     setValue(
+  //       "shortBreakDuration",
+  //       milliSecondsToMinutes(viewer.shortBreakDuration)
+  //     );
+  //     setValue(
+  //       "longBreakDuration",
+  //       milliSecondsToMinutes(viewer.longBreakDuration)
+  //     );
+  //     setValue("longBreakInterval", viewer.longBreakInterval);
+  //   }
+  // }, [viewer]);
 
-  const [updateViewerSettings, { loading, error }] =
-    useUpdateViewerSettingsMutation({
-      onCompleted: () => {
-        displaySuccessNotification(
-          "Your settings have been succesfully updated",
-          "Thank you!"
-        );
-      },
-      onError: () => {
-        displayErrorNotification(
-          "There was an error while trying to update your settings",
-          "Please Try Again Later"
-        );
-      }
-    });
+  // const [updateViewerSettings, { loading, error }] =
+  //   useUpdateViewerSettingsMutation({
+  //     onCompleted: () => {
+  //       displaySuccessNotification(
+  //         "Your settings have been succesfully updated",
+  //         "Thank you!"
+  //       );
+  //     },
+  //     onError: () => {
+  //       displayErrorNotification(
+  //         "There was an error while trying to update your settings",
+  //         "Please Try Again Later"
+  //       );
+  //     }
+  //   });
 
-  const onSubmit = (data) => {
-    const formattedTimeDurations = {
-      pomDuration: minutesToMilliseconds(data.pomDuration),
-      shortBreakDuration: minutesToMilliseconds(data.shortBreakDuration),
-      longBreakDuration: minutesToMilliseconds(data.longBreakDuration),
-      longBreakInterval: parseInt(data.longBreakInterval)
-    };
-    updateViewerSettings({
-      variables: {
-        input: formattedTimeDurations
-      }
-    });
-  };
+  // const onSubmit = (data) => {
+  //   const formattedTimeDurations = {
+  //     pomDuration: minutesToMilliseconds(data.pomDuration),
+  //     shortBreakDuration: minutesToMilliseconds(data.shortBreakDuration),
+  //     longBreakDuration: minutesToMilliseconds(data.longBreakDuration),
+  //     longBreakInterval: parseInt(data.longBreakInterval)
+  //   };
+  //   updateViewerSettings({
+  //     variables: {
+  //       input: formattedTimeDurations
+  //     }
+  //   });
+  // };
+
+  function onSubmit() {
+    return;
+  }
 
   return (
     <AppLayout>
-      <LoadingOverlay isOpen={loading}>
-        {/* {loading ? "loading" : "not loading"} */}
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack spacing={2}>
-            <FormControl id="pomDuration">
-              <FormLabel>Pomodoro Duration</FormLabel>
-              <Controller
-                name="pomDuration"
-                control={control}
-                render={({ field }) => (
-                  <NumberInput {...field}>
-                    <NumberInputField />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                )}
-              />
-            </FormControl>
+      {/* <LoadingOverlay isOpen={loading}> */}
+      {/* {loading ? "loading" : "not loading"} */}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Stack spacing={2}>
+          <FormControl id="pomDuration">
+            <FormLabel>Pomodoro Duration</FormLabel>
+            <Controller
+              name="pomDuration"
+              control={control}
+              render={({ field }) => (
+                <NumberInput {...field}>
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              )}
+            />
+          </FormControl>
 
-            <FormControl id="shortBreakDuration">
-              <FormLabel>Short Break Duration</FormLabel>
-              <Controller
-                name="shortBreakDuration"
-                control={control}
-                render={({ field }) => (
-                  <NumberInput {...field}>
-                    <NumberInputField />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                )}
-              />
-            </FormControl>
+          <FormControl id="shortBreakDuration">
+            <FormLabel>Short Break Duration</FormLabel>
+            <Controller
+              name="shortBreakDuration"
+              control={control}
+              render={({ field }) => (
+                <NumberInput {...field}>
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              )}
+            />
+          </FormControl>
 
-            <FormControl id="longBreakDuration">
-              <FormLabel>Long Break Duration</FormLabel>
-              <Controller
-                name="longBreakDuration"
-                control={control}
-                render={({ field }) => (
-                  <NumberInput {...field}>
-                    <NumberInputField />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                )}
-              />
-            </FormControl>
+          <FormControl id="longBreakDuration">
+            <FormLabel>Long Break Duration</FormLabel>
+            <Controller
+              name="longBreakDuration"
+              control={control}
+              render={({ field }) => (
+                <NumberInput {...field}>
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              )}
+            />
+          </FormControl>
 
-            <FormControl id="longBreakInterval">
-              <FormLabel>Long Break Interval</FormLabel>
-              <Controller
-                name="longBreakInterval"
-                control={control}
-                render={({ field }) => (
-                  <NumberInput {...field}>
-                    <NumberInputField />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                )}
-              />
-            </FormControl>
+          <FormControl id="longBreakInterval">
+            <FormLabel>Long Break Interval</FormLabel>
+            <Controller
+              name="longBreakInterval"
+              control={control}
+              render={({ field }) => (
+                <NumberInput {...field}>
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              )}
+            />
+          </FormControl>
 
-            <Button mt={4} colorScheme="teal" type="submit">
-              Submit
-            </Button>
-          </Stack>
-        </form>
-      </LoadingOverlay>
+          <Button mt={4} colorScheme="teal" type="submit">
+            Submit
+          </Button>
+        </Stack>
+      </form>
+      {/* </LoadingOverlay> */}
     </AppLayout>
   );
 };

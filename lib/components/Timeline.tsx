@@ -68,7 +68,6 @@ export const Timeline = ({ data, xAccessor, yAccessor }: Props) => {
 
   const firstDayOfMonths = dateRange.filter((date) => date.getDate() === 1);
 
-  // console.log(firstDayOfMonths);
   const markers = firstDayOfMonths.map((day, i) => {
     const xAccessorScaled = xScale(day);
     const text = MONTHS[day.getMonth()];

@@ -1,6 +1,7 @@
 import { authorize } from "@/apollo/utils/authorize";
 import { ObjectId } from "mongodb";
-import { objectType, extendType, inputObjectType, arg } from "nexus";
+import { objectType, extendType, inputObjectType, arg, stringArg } from "nexus";
+import { string } from "prop-types";
 import { CreateTaskInput, UpdateTasksPositionsInput } from "./types";
 
 export const Task = objectType({
@@ -33,7 +34,32 @@ const DeleteTaskViewerInput = inputObjectType({
 
 export const TaskMutation = extendType({
   type: "Mutation",
+
   definition(t) {
+    t.nonNull.field("updateTaskAmt", {
+      type: Task,
+      args: {
+        taskId: stringArg(),
+        op: stringArg()
+      },
+      async resolve(__root: undefined, { taskId, op }, { db, req, prisma }) {
+        const viewer = await authorize({ prisma, req });
+        if (!viewer) {
+          throw new Error("Viewer cannot be found!");
+        }
+        const operation = op === "add" ? { increment: 1 } : { decrement: 1 };
+
+        const updatedTask = await prisma.task.update({
+          where: {
+            id: taskId
+          },
+          data: {
+            amt: operation
+          }
+        });
+        return updatedTask;
+      }
+    });
     t.nonNull.field("createTask", {
       type: Task,
       args: {
@@ -85,7 +111,6 @@ export const TaskMutation = extendType({
         });
 
         const resolveRes = await Promise.all(response);
-        console.log("resolveRes", resolveRes);
         return resolveRes;
       }
     });
@@ -93,15 +118,15 @@ export const TaskMutation = extendType({
     t.nonNull.field("deleteTask", {
       type: Task,
       args: {
-        input: arg({ type: DeleteTaskViewerInput })
+        taskId: stringArg()
       },
-      async resolve(__root: undefined, { input }, { db, req }) {
+      async resolve(__root: undefined, { taskId }, { db, req }) {
         const viewer = await authorize({ db, req });
         if (!viewer) {
           throw new Error("Viewer cannot be found!");
         }
         const deletedTaskRes = await db.tasks.findOneAndDelete({
-          _id: new ObjectId(input.id)
+          id: taskId
         });
 
         const deletedTask = deletedTaskRes.value;

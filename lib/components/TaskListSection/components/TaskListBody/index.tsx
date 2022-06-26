@@ -5,10 +5,9 @@ import { AddTaskButton, AddTaskModal } from "./components";
 interface Props {
   children: ReactNode;
   tasks: any;
-  setTasks: (tasks) => void;
 }
 
-export const TaskListBody = ({ children, tasks, setTasks }: Props) => {
+export const TaskListBody = ({ children, tasks }: Props) => {
   const {
     isOpen: openAddTask,
     onOpen: openNewTaskForm,
@@ -22,7 +21,6 @@ export const TaskListBody = ({ children, tasks, setTasks }: Props) => {
           isOpen={openAddTask}
           onClose={closeAddTaskForm}
           tasks={tasks}
-          setTasks={setTasks}
         />
       </Box>
       <Box mt={10}>{children}</Box>

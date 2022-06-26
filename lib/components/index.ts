@@ -17,3 +17,4 @@ export * from "./SideBarWithHeader";
 export * from "./LoadingOverlay";
 export * from "./Pomodoro";
 export * from "./ClientOnly";
+export * from "./LoadingSpinner";

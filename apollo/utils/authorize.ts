@@ -16,8 +16,6 @@ export const authorize = async ({
   req,
   includeTasks = false
 }: Params): Promise<User | null> => {
-  console.log(process.env.NODE_ENV);
-
   const token = req.headers?.["x-csrf-token"] as string | null;
 
   const viewerCookie = req.cookies.viewer;

@@ -2,11 +2,11 @@ import { ReactNode } from "react";
 import { Stack, Box } from "@chakra-ui/react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useUpdateTasksPositionsMutation } from "@/lib/generated";
+import { graphqlClient } from "@/apollo/graphql-request-client";
 import { customSplice } from "./helpers";
 interface Props {
   children: ReactNode;
   tasks: any;
-  setTasks: (tasks) => void;
   setLastDraggedIndex: any;
   setLastDraggedSourceIndex: (arg: number) => void;
 }
@@ -14,18 +14,11 @@ interface Props {
 export const DraggableTaskCards = ({
   children,
   tasks,
-  setTasks,
   setLastDraggedIndex,
   setLastDraggedSourceIndex
 }: Props) => {
-  const [updateTasksPositions] = useUpdateTasksPositionsMutation({
-    onCompleted: (data) => {
-      console.log(data);
-    },
-    onError: (err) => {
-      console.log(err);
-    }
-  });
+  const { mutate: updateTasksPositions } =
+    useUpdateTasksPositionsMutation(graphqlClient);
 
   const handleSeverTasksPositionUpdate = ({
     tasks,
@@ -45,9 +38,7 @@ export const DraggableTaskCards = ({
     });
 
     updateTasksPositions({
-      variables: {
-        input: { taskIds }
-      }
+      input: { taskIds }
     });
   };
   const handleOnDragEnd = (result) => {
@@ -63,7 +54,6 @@ export const DraggableTaskCards = ({
     });
 
     setLastDraggedIndex(result.destination.index);
-    setTasks(items);
   };
 
   return (

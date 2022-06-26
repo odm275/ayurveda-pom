@@ -3,9 +3,10 @@ import GoogleLogo from "../../../../public/btn_google_light_normal_ios.svg";
 
 interface Props {
   onClick: () => void;
+  disabled?: boolean;
 }
 
-export const LogInGoogleButton = ({ onClick }: Props) => (
+export const LogInGoogleButton = ({ onClick, disabled }: Props) => (
   <Button
     my="10"
     background="#4285f4"
@@ -14,6 +15,7 @@ export const LogInGoogleButton = ({ onClick }: Props) => (
     onClick={onClick}
     leftIcon={<GoogleLogo />}
     borderRadius={3}
+    disabled={disabled}
   >
     Sign in with Google
   </Button>

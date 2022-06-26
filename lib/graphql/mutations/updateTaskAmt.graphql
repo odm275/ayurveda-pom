@@ -1,0 +1,5 @@
+mutation updateTaskAmt($taskId: String, $op: String) {
+  updateTaskAmt(taskId: $taskId, op: $op) {
+    id
+  }
+}
