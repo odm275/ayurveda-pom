@@ -18,6 +18,9 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useCreateTaskMutation } from "@/lib/generated";
 import { graphqlClient } from "@/apollo/graphql-request-client";
+import { queryKeys } from "@/lib/utils";
+import { useQueryClient } from "react-query";
+
 interface Task {
   title: string;
   amt: number;
@@ -33,8 +36,15 @@ interface Props {
 }
 
 export const AddTaskModal = ({ isOpen, onClose, tasks }: Props) => {
+  const queryClient = useQueryClient();
+
   const { control, register, handleSubmit } = useForm();
-  const { mutate: createTask } = useCreateTaskMutation(graphqlClient);
+  const { mutate: createTask } = useCreateTaskMutation(graphqlClient, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(queryKeys.viewerCurrentTasks);
+      onClose();
+    }
+  });
   const onSubmit = (data) => {
     const { title, amt, eta } = data;
     createTask({
