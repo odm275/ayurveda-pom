@@ -41,7 +41,7 @@ export type Mutation = {
   /**  Updates data that needs to be update whenever a pomodoro Cycle complates. */
   pomCycleUpdate: User;
   updateTaskAmt: Task;
-  updateTasksPositions: Tasks;
+  updateTasksPositions?: Maybe<Array<Maybe<Task>>>;
   /** Updates Viewer in database when a pomodoro counter goes up or when settings change. */
   updateViewerData: User;
   /** Update when Viewer Settings change */
@@ -78,7 +78,7 @@ export type MutationUpdateTaskAmtArgs = {
 
 
 export type MutationUpdateTasksPositionsArgs = {
-  input?: InputMaybe<UpdateTasksPositionsInput>;
+  taskIds?: InputMaybe<Array<InputMaybe<TaskId>>>;
 };
 
 
@@ -133,10 +133,6 @@ export type TaskId = {
 export type Tasks = {
   __typename?: 'Tasks';
   tasks?: Maybe<Array<Maybe<Task>>>;
-};
-
-export type UpdateTasksPositionsInput = {
-  taskIds?: InputMaybe<Array<InputMaybe<TaskId>>>;
 };
 
 export type UpdateViewerDataInput = {
@@ -245,11 +241,11 @@ export type UpdateTaskAmtMutationVariables = Exact<{
 export type UpdateTaskAmtMutation = { __typename?: 'Mutation', updateTaskAmt: { __typename?: 'Task', id?: string | null } };
 
 export type UpdateTasksPositionsMutationVariables = Exact<{
-  input?: InputMaybe<UpdateTasksPositionsInput>;
+  taskIds?: InputMaybe<Array<InputMaybe<TaskId>> | InputMaybe<TaskId>>;
 }>;
 
 
-export type UpdateTasksPositionsMutation = { __typename?: 'Mutation', updateTasksPositions: { __typename?: 'Tasks', tasks?: Array<{ __typename?: 'Task', id?: string | null } | null> | null } };
+export type UpdateTasksPositionsMutation = { __typename?: 'Mutation', updateTasksPositions?: Array<{ __typename?: 'Task', id?: string | null } | null> | null };
 
 export type UpdateViewerDataMutationVariables = Exact<{
   input?: InputMaybe<UpdateViewerDataInput>;
@@ -415,11 +411,9 @@ export const useUpdateTaskAmtMutation = <
       options
     );
 export const UpdateTasksPositionsDocument = `
-    mutation updateTasksPositions($input: UpdateTasksPositionsInput) {
-  updateTasksPositions(input: $input) {
-    tasks {
-      id
-    }
+    mutation updateTasksPositions($taskIds: [TaskId]) {
+  updateTasksPositions(taskIds: $taskIds) {
+    id
   }
 }
     `;

@@ -28,7 +28,7 @@ type Mutation {
   """
   pomCycleUpdate(input: PomCycleUpdateInput): User!
   updateTaskAmt(op: String, taskId: String): Task!
-  updateTasksPositions(input: UpdateTasksPositionsInput): Tasks!
+  updateTasksPositions(taskIds: [TaskId]): [Task]
 
   """
   Updates Viewer in database when a pomodoro counter goes up or when settings change.
@@ -77,10 +77,6 @@ input TaskId {
 
 type Tasks {
   tasks: [Task]
-}
-
-input UpdateTasksPositionsInput {
-  taskIds: [TaskId]
 }
 
 input UpdateViewerDataInput {

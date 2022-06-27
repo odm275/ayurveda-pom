@@ -1,14 +1,24 @@
-import { ReactNode } from "react";
+import { ReactNode, useRef } from "react";
 import { Stack, Box } from "@chakra-ui/react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useUpdateTasksPositionsMutation } from "@/lib/generated";
 import { graphqlClient } from "@/apollo/graphql-request-client";
 import { customSplice } from "./helpers";
+import { queryKeys } from "@/lib/utils";
+import { useQueryClient } from "react-query";
+
 interface Props {
   children: ReactNode;
   tasks: any;
   setLastDraggedIndex: any;
   setLastDraggedSourceIndex: (arg: number) => void;
+}
+
+function sortTasks(tasks, result) {
+  const items = Array.from(tasks);
+  const [reorderedItem] = items.splice(result.source.index, 1);
+  items.splice(result.destination.index, 0, reorderedItem);
+  return items;
 }
 
 export const DraggableTaskCards = ({
@@ -17,14 +27,36 @@ export const DraggableTaskCards = ({
   setLastDraggedIndex,
   setLastDraggedSourceIndex
 }: Props) => {
-  const { mutate: updateTasksPositions } =
-    useUpdateTasksPositionsMutation(graphqlClient);
+  let tasksRef = useRef(); // Re-asign this ref during handleDragEnd to have tasks accesible onMutate
+  const queryClient = useQueryClient();
+
+  const { mutate: updateTasksPositions } = useUpdateTasksPositionsMutation(
+    graphqlClient,
+    {
+      // onSuccess: () => {
+      //   queryClient.invalidateQueries([queryKeys.viewerCurrentTasks]);
+      // },
+      onMutate: () => {
+        console.log("tasksRef", tasksRef);
+        queryClient.cancelQueries(queryKeys.viewerCurrentTasks);
+        const prevData: [] = queryClient.getQueryData(
+          queryKeys.viewerCurrentTasks
+        );
+        queryClient.setQueryData(
+          queryKeys.viewerCurrentTasks,
+          tasksRef.current
+        );
+        return { prevData };
+      }
+    }
+  );
 
   const handleSeverTasksPositionUpdate = ({
     tasks,
     draggedSourceIndex,
     draggedDestIndex
   }) => {
+    // Get the tasks whose position changed from re-ordering the list of tasks.
     const tasksToUpdate = customSplice({
       tasks,
       index1: draggedSourceIndex,
@@ -37,18 +69,18 @@ export const DraggableTaskCards = ({
       };
     });
 
-    updateTasksPositions({
-      input: { taskIds }
-    });
+    updateTasksPositions({ taskIds });
   };
+
   const handleOnDragEnd = (result) => {
     if (!result.destination) return;
-    const items = Array.from(tasks);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
+    // Here we already calculated what the new tasks should be in state -> get to onMutate and update cache!
+
+    const sortedTasks = sortTasks(tasks, result);
+    tasksRef.current = sortedTasks;
 
     handleSeverTasksPositionUpdate({
-      tasks: items,
+      tasks: sortedTasks,
       draggedSourceIndex: result.source.index,
       draggedDestIndex: result.destination.index
     });

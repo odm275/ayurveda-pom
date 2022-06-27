@@ -30,5 +30,5 @@ export function getUrgencyColor(num: number) {
   if (num < 20 && num >= 10) return generateBgGradient(1, 9);
   if (num < 10) return generateBgGradient(0, 10);
 
-  console.log("something went wrong");
+  console.log("something went wrong when getting the Urgency Color");
 }

@@ -1,8 +1,15 @@
 import { authorize } from "@/apollo/utils/authorize";
 import { ObjectId } from "mongodb";
-import { objectType, extendType, inputObjectType, arg, stringArg } from "nexus";
+import {
+  objectType,
+  extendType,
+  inputObjectType,
+  arg,
+  stringArg,
+  list
+} from "nexus";
 import { string } from "prop-types";
-import { CreateTaskInput, UpdateTasksPositionsInput } from "./types";
+import { CreateTaskInput, TaskId, UpdateTasksPositionsInput } from "./types";
 
 export const Task = objectType({
   name: "Task",
@@ -82,18 +89,19 @@ export const TaskMutation = extendType({
         return newTask;
       }
     });
-    t.nonNull.field("updateTasksPositions", {
-      type: Tasks,
+
+    t.list.field("updateTasksPositions", {
+      type: Task,
       args: {
-        input: arg({ type: UpdateTasksPositionsInput })
+        taskIds: arg({ type: list(TaskId) })
       },
-      async resolve(__root: undefined, { input }, { db, req, prisma }) {
+      async resolve(__root: undefined, { taskIds }, { req, prisma }) {
         const viewer = await authorize({ prisma, req });
         if (!viewer) {
           throw new Error("Viewer cannot be found!");
         }
 
-        const updaterArr = input.taskIds.map((taskId, i) => ({
+        const updaterArr = taskIds.map((taskId, i) => ({
           id: taskId.id,
           positionId: i
         }));

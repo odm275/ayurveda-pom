@@ -9,7 +9,8 @@ import {
   MenuList,
   MenuItem,
   Menu,
-  Box
+  Box,
+  toast
 } from "@chakra-ui/react";
 import { AiOutlineEllipsis } from "react-icons/ai";
 import { RiStarSmileLine } from "react-icons/ri";
@@ -21,6 +22,7 @@ import {
 } from "@/lib/generated";
 import { graphqlClient } from "@/apollo/graphql-request-client";
 import { queryKeys } from "@/lib/utils";
+import { useCustomToast } from "@/lib/hooks";
 
 interface Props {
   task: any;
@@ -39,10 +41,48 @@ export const Task = ({
 }: Props) => {
   const { amt, title, isFinished, createdAt, eta, id } = task;
   const queryClient = useQueryClient();
+  const toast = useCustomToast();
 
   const { mutate: updateTask } = useUpdateTaskAmtMutation(graphqlClient, {
-    onSuccess: () => {
-      queryClient.invalidateQueries([queryKeys.viewerCurrentTasks]);
+    onMutate: async ({ taskId, op }) => {
+      // cancel any outgoing queries for user data, so old server data
+      // doesn't override our optimisitc update
+      queryClient.cancelQueries(queryKeys.viewerCurrentTasks);
+      // snapshot of previous viewerCurrent Tasks
+      const prevData: [] = queryClient.getQueryData(
+        queryKeys.viewerCurrentTasks
+      );
+      const tasksCopy = Array.from(prevData);
+      const indexOfTask = tasksCopy.findIndex((task) => task.id === taskId);
+      const taskToUpdateCopy = tasksCopy.find((task) => task.id === taskId);
+      const updatedTask = {
+        ...taskToUpdateCopy,
+        amt: op === "add" ? taskToUpdateCopy.amt + 1 : taskToUpdateCopy.amt - 1
+      };
+
+      tasksCopy.splice(indexOfTask, 1, updatedTask);
+      // optimistically update the cache with the new value
+      queryClient.setQueryData(queryKeys.viewerCurrentTasks, tasksCopy);
+      // return context with snapshotted object value
+      return { prevData };
+    },
+    onError: async (error, newData, context) => {
+      if (context.prevData) {
+        queryClient.setQueryData(
+          queryKeys.viewerCurrentTasks,
+          context.prevData
+        );
+
+        toast({
+          title: "Update Failed; restoring previous values",
+          status: "warning"
+        });
+      }
+      // rollback cache to saved value
+    },
+    onSettled: () => {
+      // invalidate query to make sure we're both in sync with server
+      queryClient.invalidateQueries(queryKeys.viewerCurrentTasks);
     }
   });
 
