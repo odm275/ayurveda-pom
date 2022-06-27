@@ -6,6 +6,7 @@ import { graphqlClient } from "@/apollo/graphql-request-client";
 import { customSplice } from "./helpers";
 import { queryKeys } from "@/lib/utils";
 import { useQueryClient } from "react-query";
+import { useCustomToast } from "@/lib/hooks/useCustomToast";
 
 interface Props {
   children: ReactNode;
@@ -29,6 +30,7 @@ export const DraggableTaskCards = ({
 }: Props) => {
   let tasksRef = useRef(); // Re-asign this ref during handleDragEnd to have tasks accesible onMutate
   const queryClient = useQueryClient();
+  const toast = useCustomToast();
 
   const { mutate: updateTasksPositions } = useUpdateTasksPositionsMutation(
     graphqlClient,
@@ -47,6 +49,24 @@ export const DraggableTaskCards = ({
           tasksRef.current
         );
         return { prevData };
+      },
+      onError: async (error, newData, context) => {
+        if (context.prevData) {
+          queryClient.setQueryData(
+            queryKeys.viewerCurrentTasks,
+            context.prevData
+          );
+
+          toast({
+            title: "Update Failed; restoring previous values",
+            status: "warning"
+          });
+        }
+        // rollback cache to saved value
+      },
+      onSettled: () => {
+        // invalidate query to make sure we're both in sync with server
+        queryClient.invalidateQueries(queryKeys.viewerCurrentTasks);
       }
     }
   );
