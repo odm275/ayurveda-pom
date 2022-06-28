@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "react-query";
-import { MeDocument, MeQuery, User } from "../generated";
+import { MeDocument, MeQuery, User } from "../../generated";
 import { graphqlClient } from "@/apollo/graphql-request-client";
 import { queryKeys } from "@/lib/utils";
 interface UseUser {

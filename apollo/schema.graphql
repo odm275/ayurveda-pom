@@ -119,8 +119,10 @@ type User {
   """Name of the User"""
   name: String
 
-  """Get the count for TODAY'S POM ENTRY"""
-  pomCount(today: String!): Int
+  """
+  Get the count for TODAY'S POM ENTRIES aka pomodoros completed for today
+  """
+  pomCount: Int
 
   """Current cycle(shortbreak, longbreak, or pomodoro)"""
   pomCycle: pomCycle

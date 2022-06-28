@@ -166,7 +166,7 @@ export type User = {
   longBreakInterval?: Maybe<Scalars['Int']>;
   /** Name of the User */
   name?: Maybe<Scalars['String']>;
-  /** Get the count for TODAY'S POM ENTRY */
+  /** Get the count for TODAY'S POM ENTRIES aka pomodoros completed for today */
   pomCount?: Maybe<Scalars['Int']>;
   /** Current cycle(shortbreak, longbreak, or pomodoro) */
   pomCycle?: Maybe<PomCycle>;
@@ -179,11 +179,6 @@ export type User = {
   /** All tasks for an User */
   tasks: Array<Maybe<Task>>;
   token?: Maybe<Scalars['String']>;
-};
-
-
-export type UserPomCountArgs = {
-  today: Scalars['String'];
 };
 
 
@@ -269,7 +264,7 @@ export type AuthUrlQuery = { __typename?: 'Query', authUrl: string };
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id?: string | null, name?: string | null, token?: string | null, avatar?: string | null, didRequest: boolean } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', id?: string | null, name?: string | null, token?: string | null, avatar?: string | null, didRequest: boolean, pomCycle?: PomCycle | null, pomDuration?: number | null, shortBreakDuration?: number | null, longBreakDuration?: number | null, longBreakInterval?: number | null, pomCount?: number | null } };
 
 export type ViewerCurrentTasksQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -505,6 +500,12 @@ export const MeDocument = `
     token
     avatar
     didRequest
+    pomCycle
+    pomDuration
+    shortBreakDuration
+    longBreakDuration
+    longBreakInterval
+    pomCount
   }
 }
     `;

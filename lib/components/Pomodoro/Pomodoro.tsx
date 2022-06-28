@@ -41,6 +41,9 @@ import {
 } from "./utils";
 import { pomReducer } from "./reducer";
 import { ActionButton } from "./components";
+import { useUser, useUserTasks } from "@/lib/hooks";
+import { graphqlClient } from "@/apollo/graphql-request-client";
+import { pomCycle } from "@prisma/client";
 
 interface Props {
   pomCycle: PomCycle;
@@ -49,9 +52,7 @@ interface Props {
   longBreakDuration: number;
   longBreakInterval: number;
   pomCount: number;
-  setViewer: (unknown) => void;
   tasks: null | Task[];
-  setTasks: (unknown) => void;
 }
 
 const removeAmtCurrentTask = (tasks: TaskType[]) => {
@@ -70,71 +71,26 @@ const removeAmtCurrentTask = (tasks: TaskType[]) => {
   return newTasksArray;
 };
 
-export const Pomodoro = ({ pomCount, setViewer, setTasks, tasks }: Props) => {
-  const pomData = useViewerPomDataQuery({
-    onCompleted: (data) => {
-      // Set pomReducer here
-      const {
-        longBreakDuration,
-        longBreakInterval,
-        pomCycle,
-        pomDuration,
-        shortBreakDuration
-      } = data.viewerPomData;
-
-      const values = {
-        cycle: pomCycle,
-        timer: selectTimePerCycle({
-          cycle: pomCycle,
-          pomDuration,
-          shortBreakDuration,
-          longBreakDuration
-        }),
-        isRunning: false,
-        pomCount: pomCount,
-        timerReset: false,
-        pomDuration,
-        shortBreakDuration,
-        longBreakDuration,
-        longBreakInterval
-      };
-      dispatch({ type: VIEWER_POM_DATA_QUERY_COMPLETE, payload: values });
-    }
-  });
+export const Pomodoro = () => {
+  const { user } = useUser();
+  const { tasks } = useUserTasks();
 
   const [state, dispatch] = useReducer(pomReducer, {
-    cycle: null,
-    timer: null,
-    isRunning: null,
-    pomCount: null,
+    cycle: user.pomCycle,
+    timer: selectTimePerCycle({
+      cycle: user.pomCycle,
+      pomDuration: user.pomDuration,
+      shortBreakDuration: user.shortBreakDuration,
+      longBreakDuration: user.longBreakDuration
+    }),
+    isRunning: false,
+    pomCount: user.pomCount,
     timerReset: false,
-    pomDuration: null,
-    shortBreakDuration: null,
-    longBreakDuration: null,
-    longBreakInterval: null
+    pomDuration: user.pomDuration,
+    shortBreakDuration: user.shortBreakDuration,
+    longBreakDuration: user.longBreakDuration,
+    longBreakInterval: user.longBreakInterval
   });
-
-  useInterval(
-    () => {
-      const newTime = state.timer - SECOND;
-      dispatch({ type: NEW_TIME, payload: newTime });
-    },
-    state.isRunning ? 10 : null
-  );
-
-  const [updatePomCycle] = usePomCycleUpdateMutation({
-    onCompleted: () => {
-      displaySuccessNotification("Updated User Settings");
-    },
-    onError: () => {
-      displayErrorNotification("Sorry! Could't update your user settings");
-    }
-  });
-
-  const handleTaskCompletion = () => {
-    const newTasksData = removeAmtCurrentTask(tasks);
-    setTasks(newTasksData);
-  };
 
   const setUpdate = {
     pomodoro: () => {
@@ -170,6 +126,22 @@ export const Pomodoro = ({ pomCount, setViewer, setTasks, tasks }: Props) => {
       cycleAlert("Take a long break! Walk around or go outside!");
     }
   };
+
+  useInterval(
+    () => {
+      const newTime = state.timer - SECOND;
+      dispatch({ type: NEW_TIME, payload: newTime });
+    },
+    state.isRunning ? 10 : null
+  );
+
+  const { mutate: updatePomCycle } = usePomCycleUpdateMutation(graphqlClient);
+
+  const handleTaskCompletion = () => {
+    // const newTasksData = removeAmtCurrentTask(tasks);
+    // setTasks(newTasksData);
+  };
+
   const timeEnded = state.timer === 0;
 
   const nextCycle = getNextCycle({
@@ -180,12 +152,10 @@ export const Pomodoro = ({ pomCount, setViewer, setTasks, tasks }: Props) => {
 
   useEffectWithoutOnMount(() => {
     updatePomCycle({
-      variables: {
-        input: {
-          pomCycle: state.cycle,
-          date: dayjs().format("MM-DD-YYYY"),
-          increasePomCounter: state.cycle !== PomCycle.Pomodoro
-        }
+      input: {
+        pomCycle: state.cycle,
+        date: dayjs().format("MM-DD-YYYY"),
+        increasePomCounter: state.cycle !== PomCycle.Pomodoro
       }
     });
   }, [state.pomCount, state.cycle]);

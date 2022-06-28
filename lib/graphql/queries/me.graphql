@@ -5,5 +5,11 @@ query Me {
     token
     avatar
     didRequest
+    pomCycle
+    pomDuration
+    shortBreakDuration
+    longBreakDuration
+    longBreakInterval
+    pomCount
   }
 }

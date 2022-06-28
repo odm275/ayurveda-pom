@@ -3,6 +3,7 @@ import { PomCycle } from "../enums/PomCycle";
 import { Task } from "../Task";
 import { PomEntry } from "../PomEntry";
 import { PomData, LogInInput } from "./types";
+import dayjs from "dayjs";
 
 export const User = objectType({
   name: "User",
@@ -35,12 +36,11 @@ export const User = objectType({
       description: "Current cycle(shortbreak, longbreak, or pomodoro)"
     });
     t.int("pomCount", {
-      description: "Get the count for TODAY'S POM ENTRY",
-      args: {
-        today: nonNull(stringArg())
-      },
-      async resolve({ id }, { today }, { prisma }): Promise<any> {
+      description:
+        "Get the count for TODAY'S POM ENTRIES aka pomodoros completed for today",
+      async resolve({ id }, _args, { prisma }): Promise<any> {
         try {
+          const today = dayjs().format("MM-DD-YYYY");
           const todaysPomEntry = await prisma.pomEntry.findFirst({
             where: {
               id,
