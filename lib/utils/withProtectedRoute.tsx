@@ -9,7 +9,6 @@ export const withProtectedRoute = (WrappedComponent: FunctionComponent) => {
     const { user } = useUser();
 
     useEffectWithoutOnMount(() => {
-      console.log("check", !user);
       if (!user) {
         Router.replace("/login");
       }

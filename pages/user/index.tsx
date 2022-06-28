@@ -10,6 +10,7 @@ import { ClientOnly } from "@/lib/components/ClientOnly";
 
 const Index = () => {
   const { user } = useUser();
+  // console.log("user", user);
   const { tasks } = useUserTasks();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -19,6 +20,7 @@ const Index = () => {
   return (
     <ClientOnly>
       <AppLayout>
+        {/* Only Render if User is defined so we don't have to worry about handling the user being null */}
         {user && (
           <>
             <TaskListSection

@@ -73,6 +73,8 @@ const removeAmtCurrentTask = (tasks: TaskType[]) => {
 
 export const Pomodoro = () => {
   const { user } = useUser();
+  console.log("user", user);
+
   const { tasks } = useUserTasks();
 
   const [state, dispatch] = useReducer(pomReducer, {
